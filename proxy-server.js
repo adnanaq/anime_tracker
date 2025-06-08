@@ -20,7 +20,6 @@ const ANILIST_CLIENT_SECRET = '5rUv0GnpO2dwYtV6PnxtEMmMRFWWUiocUtox8HNt'
 // Proxy middleware for AniList OAuth token exchange
 app.post('/anilist/oauth/token', async (req, res) => {
   try {
-    console.log('AniList OAuth token request:', req.body)
     
     const response = await axios.post('https://anilist.co/api/v2/oauth/token', req.body, {
       headers: {
@@ -29,7 +28,6 @@ app.post('/anilist/oauth/token', async (req, res) => {
       },
     })
     
-    console.log('AniList OAuth token response:', response.data)
     res.json(response.data)
   } catch (error) {
     console.error('AniList OAuth token error:', error.response?.status, error.response?.data)
@@ -44,12 +42,9 @@ app.post('/anilist/oauth/token', async (req, res) => {
 // Proxy middleware for MAL OAuth token exchange
 app.post('/mal/oauth/token', async (req, res) => {
   try {
-    console.log('MAL OAuth token request body:', req.body)
-    console.log('MAL OAuth token request headers:', req.headers)
     
     // Parse the form data to log individual fields
     const bodyString = Object.keys(req.body).map(key => `${key}=${req.body[key]}`).join('&')
-    console.log('MAL OAuth parsed body:', bodyString)
     
     const response = await axios.post('https://myanimelist.net/v1/oauth2/token', req.body, {
       headers: {
@@ -58,7 +53,6 @@ app.post('/mal/oauth/token', async (req, res) => {
       },
     })
     
-    console.log('MAL OAuth token response:', response.data)
     res.json(response.data)
   } catch (error) {
     console.error('MAL OAuth token error details:', {
@@ -81,20 +75,62 @@ app.get('/mal/*', async (req, res) => {
     const malPath = req.path.replace('/mal', '')
     const malUrl = `${MAL_BASE_URL}${malPath}`
     
-    console.log('Proxying MAL request:', malUrl, req.query)
+    
+    // Forward authorization header if present
+    const headers = {
+      'X-MAL-CLIENT-ID': CLIENT_ID,
+    }
+    
+    // Forward Authorization header from client to MAL API
+    if (req.headers.authorization) {
+      headers.Authorization = req.headers.authorization
+    } else {
+    }
     
     const response = await axios.get(malUrl, {
-      headers: {
-        'X-MAL-CLIENT-ID': CLIENT_ID,
-      },
+      headers,
       params: req.query,
     })
     
     res.json(response.data)
   } catch (error) {
     console.error('MAL Proxy Error:', error.response?.status, error.response?.statusText)
+    if (error.response?.data) {
+      console.error('MAL Error Details:', error.response.data)
+    }
     res.status(error.response?.status || 500).json({
       error: 'MAL API Error',
+      message: error.message,
+      status: error.response?.status,
+    })
+  }
+})
+
+// Proxy middleware for AniList GraphQL API
+app.post('/anilist/graphql', async (req, res) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    }
+    
+    // Forward Authorization header if present
+    if (req.headers.authorization) {
+      headers.Authorization = req.headers.authorization
+    }
+    
+    const response = await axios.post('https://graphql.anilist.co/', req.body, {
+      headers,
+    })
+    
+    res.json(response.data)
+  } catch (error) {
+    console.error('AniList Proxy Error:', error.response?.status, error.response?.statusText)
+    if (error.response?.data) {
+      console.error('AniList Error Details:', error.response.data)
+    }
+    res.status(error.response?.status || 500).json({
+      error: 'AniList API Error',
       message: error.message,
       status: error.response?.status,
     })
@@ -112,6 +148,7 @@ app.listen(PORT, () => {
   console.log(`MAL API proxy: http://localhost:${PORT}/mal/...`)
   console.log(`MAL OAuth proxy: http://localhost:${PORT}/mal/oauth/token`)
   console.log(`AniList OAuth proxy: http://localhost:${PORT}/anilist/oauth/token`)
+  console.log(`AniList GraphQL proxy: http://localhost:${PORT}/anilist/graphql`)
 })
 
 export default app

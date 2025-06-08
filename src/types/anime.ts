@@ -5,6 +5,7 @@ export interface AnimeBase {
   image?: string
   coverImage?: string
   score?: number
+  userScore?: number
   episodes?: number
   status?: string
   genres?: string[]
@@ -12,6 +13,7 @@ export interface AnimeBase {
   season?: string
   format?: string
   source: 'mal' | 'anilist'
+  relatedAnime?: AnimeBase[]
 }
 
 export interface MALAnime {
@@ -28,6 +30,11 @@ export interface MALAnime {
   genres?: Array<{ id: number; name: string }>
   start_date?: string
   media_type?: string
+  related_anime?: Array<{
+    node: MALAnime
+    relation_type: string
+    relation_type_formatted: string
+  }>
 }
 
 export interface AniListAnime {
@@ -51,6 +58,12 @@ export interface AniListAnime {
   }
   season?: string
   format?: string
+  relations?: {
+    edges: Array<{
+      relationType: string
+      node: AniListAnime
+    }>
+  }
 }
 
 export interface AnimeListResponse {

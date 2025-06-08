@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { animate } from 'animejs'
 import { AnimeBase } from '../../types/anime'
 import { HoverCard } from '../HoverCard/HoverCard'
+import { getAuthService } from '../../services/auth'
 
 interface AnimeCardProps {
   anime: AnimeBase
@@ -15,6 +16,11 @@ export const AnimeCard = ({ anime: animeItem }: AnimeCardProps) => {
   const overlayRef = useRef<HTMLDivElement>(null)
   const badgeRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLDivElement>(null)
+  
+  // Check if user is authenticated for this anime's source
+  const authServiceInstance = getAuthService(animeItem.source)
+  const isAuthenticated = authServiceInstance?.isAuthenticated() ?? false
+  
 
   const handleMouseEnter = () => {
     setShowHover(true)
@@ -170,14 +176,24 @@ export const AnimeCard = ({ anime: animeItem }: AnimeCardProps) => {
               style={{ opacity: 0 }}
             />
             
-            {/* Score badge */}
+            {/* Global Score badge - top left */}
             {animeItem.score && (
               <div 
                 ref={badgeRef}
-                className="absolute top-2 right-2 bg-blue-500 text-white px-2 py-1 rounded-md text-sm font-semibold"
+                className="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded-md text-sm font-semibold"
                 style={{ transform: 'scale(1) rotateZ(0deg)' }}
               >
                 {animeItem.score.toFixed(1)}
+              </div>
+            )}
+            
+            {/* User Score badge - top right (only show when authenticated) */}
+            {isAuthenticated && animeItem.userScore && (
+              <div 
+                className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-md text-sm font-semibold"
+                style={{ transform: 'scale(1) rotateZ(0deg)' }}
+              >
+                {animeItem.userScore}
               </div>
             )}
             

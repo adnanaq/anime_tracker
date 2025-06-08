@@ -1,0 +1,412 @@
+Access to XMLHttpRequest at 'https://graphql.anilist.co/' from origin 'http://localhost:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.Understand this error
+anilistApi.ts:18 AniList API Error: {status: undefined, message: 'Network Error'}
+overrideMethod @ hook.js:608
+(anonymous) @ anilistApi.ts:18
+Promise.then
+_request @ axios.js?v=21424f4f:2231
+request @ axios.js?v=21424f4f:2115
+httpMethod @ axios.js?v=21424f4f:2253
+wrap @ axios.js?v=21424f4f:8
+getCurrentSeasonAnime @ anilistApi.ts:138
+getCurrentSeasonAnime @ animeService.ts:75
+fetchCurrentSeasonAnime @ animeStore.ts:125
+fetchData @ Dashboard.tsx:39
+(anonymous) @ Dashboard.tsx:47
+commitHookEffectListMount @ chunk-GKJBSOWT.js?v=21424f4f:16915
+commitPassiveMountOnFiber @ chunk-GKJBSOWT.js?v=21424f4f:18156
+commitPassiveMountEffects_complete @ chunk-GKJBSOWT.js?v=21424f4f:18129
+commitPassiveMountEffects_begin @ chunk-GKJBSOWT.js?v=21424f4f:18119
+commitPassiveMountEffects @ chunk-GKJBSOWT.js?v=21424f4f:18109
+flushPassiveEffectsImpl @ chunk-GKJBSOWT.js?v=21424f4f:19490
+flushPassiveEffects @ chunk-GKJBSOWT.js?v=21424f4f:19447
+commitRootImpl @ chunk-GKJBSOWT.js?v=21424f4f:19416
+commitRoot @ chunk-GKJBSOWT.js?v=21424f4f:19277
+performSyncWorkOnRoot @ chunk-GKJBSOWT.js?v=21424f4f:18895
+flushSyncCallbacks @ chunk-GKJBSOWT.js?v=21424f4f:9119
+(anonymous) @ chunk-GKJBSOWT.js?v=21424f4f:18627Understand this error
+anilistApi.ts:141 AniList current season error: AxiosError {message: 'Network Error', name: 'AxiosError', code: 'ERR_NETWORK', config: {…}, request: XMLHttpRequest, …}
+overrideMethod @ hook.js:608
+getCurrentSeasonAnime @ anilistApi.ts:141
+await in getCurrentSeasonAnime
+getCurrentSeasonAnime @ animeService.ts:75
+fetchCurrentSeasonAnime @ animeStore.ts:125
+fetchData @ Dashboard.tsx:39
+(anonymous) @ Dashboard.tsx:47
+commitHookEffectListMount @ chunk-GKJBSOWT.js?v=21424f4f:16915
+commitPassiveMountOnFiber @ chunk-GKJBSOWT.js?v=21424f4f:18156
+commitPassiveMountEffects_complete @ chunk-GKJBSOWT.js?v=21424f4f:18129
+commitPassiveMountEffects_begin @ chunk-GKJBSOWT.js?v=21424f4f:18119
+commitPassiveMountEffects @ chunk-GKJBSOWT.js?v=21424f4f:18109
+flushPassiveEffectsImpl @ chunk-GKJBSOWT.js?v=21424f4f:19490
+flushPassiveEffects @ chunk-GKJBSOWT.js?v=21424f4f:19447
+commitRootImpl @ chunk-GKJBSOWT.js?v=21424f4f:19416
+commitRoot @ chunk-GKJBSOWT.js?v=21424f4f:19277
+performSyncWorkOnRoot @ chunk-GKJBSOWT.js?v=21424f4f:18895
+flushSyncCallbacks @ chunk-GKJBSOWT.js?v=21424f4f:9119
+(anonymous) @ chunk-GKJBSOWT.js?v=21424f4f:18627Understand this error
+t.js:1 
+            
+            
+           POST https://graphql.anilist.co/ net::ERR_FAILED
+apply @ t.js:1
+dispatchXhrRequest @ axios.js?v=21424f4f:1648
+xhr @ axios.js?v=21424f4f:1528
+dispatchRequest @ axios.js?v=21424f4f:2003
+_request @ axios.js?v=21424f4f:2224
+request @ axios.js?v=21424f4f:2115
+httpMethod @ axios.js?v=21424f4f:2253
+wrap @ axios.js?v=21424f4f:8
+getCurrentSeasonAnime @ anilistApi.ts:138
+getCurrentSeasonAnime @ animeService.ts:75
+fetchCurrentSeasonAnime @ animeStore.ts:125
+fetchData @ Dashboard.tsx:39
+(anonymous) @ Dashboard.tsx:47
+commitHookEffectListMount @ chunk-GKJBSOWT.js?v=21424f4f:16915
+commitPassiveMountOnFiber @ chunk-GKJBSOWT.js?v=21424f4f:18156
+commitPassiveMountEffects_complete @ chunk-GKJBSOWT.js?v=21424f4f:18129
+commitPassiveMountEffects_begin @ chunk-GKJBSOWT.js?v=21424f4f:18119
+commitPassiveMountEffects @ chunk-GKJBSOWT.js?v=21424f4f:18109
+flushPassiveEffectsImpl @ chunk-GKJBSOWT.js?v=21424f4f:19490
+flushPassiveEffects @ chunk-GKJBSOWT.js?v=21424f4f:19447
+commitRootImpl @ chunk-GKJBSOWT.js?v=21424f4f:19416
+commitRoot @ chunk-GKJBSOWT.js?v=21424f4f:19277
+performSyncWorkOnRoot @ chunk-GKJBSOWT.js?v=21424f4f:18895
+flushSyncCallbacks @ chunk-GKJBSOWT.js?v=21424f4f:9119
+(anonymous) @ chunk-GKJBSOWT.js?v=21424f4f:18627Understand this error
+(index):1 Access to XMLHttpRequest at 'https://graphql.anilist.co/' from origin 'http://localhost:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.Understand this error
+anilistApi.ts:18 AniList API Error: {status: undefined, message: 'Network Error'}
+overrideMethod @ hook.js:608
+(anonymous) @ anilistApi.ts:18
+Promise.then
+_request @ axios.js?v=21424f4f:2231
+request @ axios.js?v=21424f4f:2115
+httpMethod @ axios.js?v=21424f4f:2253
+wrap @ axios.js?v=21424f4f:8
+getPopularAnime @ anilistApi.ts:98
+getPopularAnime @ animeService.ts:40
+fetchPopularAnime @ animeStore.ts:99
+fetchData @ Dashboard.tsx:37
+(anonymous) @ Dashboard.tsx:47
+commitHookEffectListMount @ chunk-GKJBSOWT.js?v=21424f4f:16915
+commitPassiveMountOnFiber @ chunk-GKJBSOWT.js?v=21424f4f:18156
+commitPassiveMountEffects_complete @ chunk-GKJBSOWT.js?v=21424f4f:18129
+commitPassiveMountEffects_begin @ chunk-GKJBSOWT.js?v=21424f4f:18119
+commitPassiveMountEffects @ chunk-GKJBSOWT.js?v=21424f4f:18109
+flushPassiveEffectsImpl @ chunk-GKJBSOWT.js?v=21424f4f:19490
+flushPassiveEffects @ chunk-GKJBSOWT.js?v=21424f4f:19447
+commitRootImpl @ chunk-GKJBSOWT.js?v=21424f4f:19416
+commitRoot @ chunk-GKJBSOWT.js?v=21424f4f:19277
+performSyncWorkOnRoot @ chunk-GKJBSOWT.js?v=21424f4f:18895
+flushSyncCallbacks @ chunk-GKJBSOWT.js?v=21424f4f:9119
+(anonymous) @ chunk-GKJBSOWT.js?v=21424f4f:18627Understand this error
+anilistApi.ts:101 AniList popular error: AxiosError {message: 'Network Error', name: 'AxiosError', code: 'ERR_NETWORK', config: {…}, request: XMLHttpRequest, …}
+overrideMethod @ hook.js:608
+getPopularAnime @ anilistApi.ts:101
+await in getPopularAnime
+getPopularAnime @ animeService.ts:40
+fetchPopularAnime @ animeStore.ts:99
+fetchData @ Dashboard.tsx:37
+(anonymous) @ Dashboard.tsx:47
+commitHookEffectListMount @ chunk-GKJBSOWT.js?v=21424f4f:16915
+commitPassiveMountOnFiber @ chunk-GKJBSOWT.js?v=21424f4f:18156
+commitPassiveMountEffects_complete @ chunk-GKJBSOWT.js?v=21424f4f:18129
+commitPassiveMountEffects_begin @ chunk-GKJBSOWT.js?v=21424f4f:18119
+commitPassiveMountEffects @ chunk-GKJBSOWT.js?v=21424f4f:18109
+flushPassiveEffectsImpl @ chunk-GKJBSOWT.js?v=21424f4f:19490
+flushPassiveEffects @ chunk-GKJBSOWT.js?v=21424f4f:19447
+commitRootImpl @ chunk-GKJBSOWT.js?v=21424f4f:19416
+commitRoot @ chunk-GKJBSOWT.js?v=21424f4f:19277
+performSyncWorkOnRoot @ chunk-GKJBSOWT.js?v=21424f4f:18895
+flushSyncCallbacks @ chunk-GKJBSOWT.js?v=21424f4f:9119
+(anonymous) @ chunk-GKJBSOWT.js?v=21424f4f:18627Understand this error
+t.js:1 
+            
+            
+           POST https://graphql.anilist.co/ net::ERR_FAILED
+apply @ t.js:1
+dispatchXhrRequest @ axios.js?v=21424f4f:1648
+xhr @ axios.js?v=21424f4f:1528
+dispatchRequest @ axios.js?v=21424f4f:2003
+_request @ axios.js?v=21424f4f:2224
+request @ axios.js?v=21424f4f:2115
+httpMethod @ axios.js?v=21424f4f:2253
+wrap @ axios.js?v=21424f4f:8
+getPopularAnime @ anilistApi.ts:98
+getPopularAnime @ animeService.ts:40
+fetchPopularAnime @ animeStore.ts:99
+fetchData @ Dashboard.tsx:37
+(anonymous) @ Dashboard.tsx:47
+commitHookEffectListMount @ chunk-GKJBSOWT.js?v=21424f4f:16915
+commitPassiveMountOnFiber @ chunk-GKJBSOWT.js?v=21424f4f:18156
+commitPassiveMountEffects_complete @ chunk-GKJBSOWT.js?v=21424f4f:18129
+commitPassiveMountEffects_begin @ chunk-GKJBSOWT.js?v=21424f4f:18119
+commitPassiveMountEffects @ chunk-GKJBSOWT.js?v=21424f4f:18109
+flushPassiveEffectsImpl @ chunk-GKJBSOWT.js?v=21424f4f:19490
+flushPassiveEffects @ chunk-GKJBSOWT.js?v=21424f4f:19447
+commitRootImpl @ chunk-GKJBSOWT.js?v=21424f4f:19416
+commitRoot @ chunk-GKJBSOWT.js?v=21424f4f:19277
+performSyncWorkOnRoot @ chunk-GKJBSOWT.js?v=21424f4f:18895
+flushSyncCallbacks @ chunk-GKJBSOWT.js?v=21424f4f:9119
+(anonymous) @ chunk-GKJBSOWT.js?v=21424f4f:18627Understand this error
+(index):1 Access to XMLHttpRequest at 'https://graphql.anilist.co/' from origin 'http://localhost:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.Understand this error
+anilistApi.ts:18 AniList API Error: {status: undefined, message: 'Network Error'}
+overrideMethod @ hook.js:608
+(anonymous) @ anilistApi.ts:18
+Promise.then
+_request @ axios.js?v=21424f4f:2231
+request @ axios.js?v=21424f4f:2115
+httpMethod @ axios.js?v=21424f4f:2253
+wrap @ axios.js?v=21424f4f:8
+getTrendingAnime @ anilistApi.ts:78
+getTrendingAnime @ animeService.ts:27
+fetchTrendingAnime @ animeStore.ts:86
+fetchData @ Dashboard.tsx:36
+(anonymous) @ Dashboard.tsx:47
+commitHookEffectListMount @ chunk-GKJBSOWT.js?v=21424f4f:16915
+commitPassiveMountOnFiber @ chunk-GKJBSOWT.js?v=21424f4f:18156
+commitPassiveMountEffects_complete @ chunk-GKJBSOWT.js?v=21424f4f:18129
+commitPassiveMountEffects_begin @ chunk-GKJBSOWT.js?v=21424f4f:18119
+commitPassiveMountEffects @ chunk-GKJBSOWT.js?v=21424f4f:18109
+flushPassiveEffectsImpl @ chunk-GKJBSOWT.js?v=21424f4f:19490
+flushPassiveEffects @ chunk-GKJBSOWT.js?v=21424f4f:19447
+commitRootImpl @ chunk-GKJBSOWT.js?v=21424f4f:19416
+commitRoot @ chunk-GKJBSOWT.js?v=21424f4f:19277
+performSyncWorkOnRoot @ chunk-GKJBSOWT.js?v=21424f4f:18895
+flushSyncCallbacks @ chunk-GKJBSOWT.js?v=21424f4f:9119
+(anonymous) @ chunk-GKJBSOWT.js?v=21424f4f:18627Understand this error
+anilistApi.ts:81 AniList trending error: AxiosError {message: 'Network Error', name: 'AxiosError', code: 'ERR_NETWORK', config: {…}, request: XMLHttpRequest, …}
+overrideMethod @ hook.js:608
+getTrendingAnime @ anilistApi.ts:81
+await in getTrendingAnime
+getTrendingAnime @ animeService.ts:27
+fetchTrendingAnime @ animeStore.ts:86
+fetchData @ Dashboard.tsx:36
+(anonymous) @ Dashboard.tsx:47
+commitHookEffectListMount @ chunk-GKJBSOWT.js?v=21424f4f:16915
+commitPassiveMountOnFiber @ chunk-GKJBSOWT.js?v=21424f4f:18156
+commitPassiveMountEffects_complete @ chunk-GKJBSOWT.js?v=21424f4f:18129
+commitPassiveMountEffects_begin @ chunk-GKJBSOWT.js?v=21424f4f:18119
+commitPassiveMountEffects @ chunk-GKJBSOWT.js?v=21424f4f:18109
+flushPassiveEffectsImpl @ chunk-GKJBSOWT.js?v=21424f4f:19490
+flushPassiveEffects @ chunk-GKJBSOWT.js?v=21424f4f:19447
+commitRootImpl @ chunk-GKJBSOWT.js?v=21424f4f:19416
+commitRoot @ chunk-GKJBSOWT.js?v=21424f4f:19277
+performSyncWorkOnRoot @ chunk-GKJBSOWT.js?v=21424f4f:18895
+flushSyncCallbacks @ chunk-GKJBSOWT.js?v=21424f4f:9119
+(anonymous) @ chunk-GKJBSOWT.js?v=21424f4f:18627Understand this error
+t.js:1 
+            
+            
+           POST https://graphql.anilist.co/ net::ERR_FAILED
+apply @ t.js:1
+dispatchXhrRequest @ axios.js?v=21424f4f:1648
+xhr @ axios.js?v=21424f4f:1528
+dispatchRequest @ axios.js?v=21424f4f:2003
+_request @ axios.js?v=21424f4f:2224
+request @ axios.js?v=21424f4f:2115
+httpMethod @ axios.js?v=21424f4f:2253
+wrap @ axios.js?v=21424f4f:8
+getTrendingAnime @ anilistApi.ts:78
+getTrendingAnime @ animeService.ts:27
+fetchTrendingAnime @ animeStore.ts:86
+fetchData @ Dashboard.tsx:36
+(anonymous) @ Dashboard.tsx:47
+commitHookEffectListMount @ chunk-GKJBSOWT.js?v=21424f4f:16915
+commitPassiveMountOnFiber @ chunk-GKJBSOWT.js?v=21424f4f:18156
+commitPassiveMountEffects_complete @ chunk-GKJBSOWT.js?v=21424f4f:18129
+commitPassiveMountEffects_begin @ chunk-GKJBSOWT.js?v=21424f4f:18119
+commitPassiveMountEffects @ chunk-GKJBSOWT.js?v=21424f4f:18109
+flushPassiveEffectsImpl @ chunk-GKJBSOWT.js?v=21424f4f:19490
+flushPassiveEffects @ chunk-GKJBSOWT.js?v=21424f4f:19447
+commitRootImpl @ chunk-GKJBSOWT.js?v=21424f4f:19416
+commitRoot @ chunk-GKJBSOWT.js?v=21424f4f:19277
+performSyncWorkOnRoot @ chunk-GKJBSOWT.js?v=21424f4f:18895
+flushSyncCallbacks @ chunk-GKJBSOWT.js?v=21424f4f:9119
+(anonymous) @ chunk-GKJBSOWT.js?v=21424f4f:18627Understand this error
+(index):1 Access to XMLHttpRequest at 'https://graphql.anilist.co/' from origin 'http://localhost:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.Understand this error
+anilistApi.ts:18 AniList API Error: {status: undefined, message: 'Network Error'}
+overrideMethod @ hook.js:608
+(anonymous) @ anilistApi.ts:18
+Promise.then
+_request @ axios.js?v=21424f4f:2231
+request @ axios.js?v=21424f4f:2115
+httpMethod @ axios.js?v=21424f4f:2253
+wrap @ axios.js?v=21424f4f:8
+getTopRatedAnime @ anilistApi.ts:118
+getTopRatedAnime @ animeService.ts:53
+fetchTopRatedAnime @ animeStore.ts:112
+fetchData @ Dashboard.tsx:38
+(anonymous) @ Dashboard.tsx:47
+commitHookEffectListMount @ chunk-GKJBSOWT.js?v=21424f4f:16915
+commitPassiveMountOnFiber @ chunk-GKJBSOWT.js?v=21424f4f:18156
+commitPassiveMountEffects_complete @ chunk-GKJBSOWT.js?v=21424f4f:18129
+commitPassiveMountEffects_begin @ chunk-GKJBSOWT.js?v=21424f4f:18119
+commitPassiveMountEffects @ chunk-GKJBSOWT.js?v=21424f4f:18109
+flushPassiveEffectsImpl @ chunk-GKJBSOWT.js?v=21424f4f:19490
+flushPassiveEffects @ chunk-GKJBSOWT.js?v=21424f4f:19447
+commitRootImpl @ chunk-GKJBSOWT.js?v=21424f4f:19416
+commitRoot @ chunk-GKJBSOWT.js?v=21424f4f:19277
+performSyncWorkOnRoot @ chunk-GKJBSOWT.js?v=21424f4f:18895
+flushSyncCallbacks @ chunk-GKJBSOWT.js?v=21424f4f:9119
+(anonymous) @ chunk-GKJBSOWT.js?v=21424f4f:18627Understand this error
+anilistApi.ts:121 AniList top rated error: AxiosError {message: 'Network Error', name: 'AxiosError', code: 'ERR_NETWORK', config: {…}, request: XMLHttpRequest, …}
+overrideMethod @ hook.js:608
+getTopRatedAnime @ anilistApi.ts:121
+await in getTopRatedAnime
+getTopRatedAnime @ animeService.ts:53
+fetchTopRatedAnime @ animeStore.ts:112
+fetchData @ Dashboard.tsx:38
+(anonymous) @ Dashboard.tsx:47
+commitHookEffectListMount @ chunk-GKJBSOWT.js?v=21424f4f:16915
+commitPassiveMountOnFiber @ chunk-GKJBSOWT.js?v=21424f4f:18156
+commitPassiveMountEffects_complete @ chunk-GKJBSOWT.js?v=21424f4f:18129
+commitPassiveMountEffects_begin @ chunk-GKJBSOWT.js?v=21424f4f:18119
+commitPassiveMountEffects @ chunk-GKJBSOWT.js?v=21424f4f:18109
+flushPassiveEffectsImpl @ chunk-GKJBSOWT.js?v=21424f4f:19490
+flushPassiveEffects @ chunk-GKJBSOWT.js?v=21424f4f:19447
+commitRootImpl @ chunk-GKJBSOWT.js?v=21424f4f:19416
+commitRoot @ chunk-GKJBSOWT.js?v=21424f4f:19277
+performSyncWorkOnRoot @ chunk-GKJBSOWT.js?v=21424f4f:18895
+flushSyncCallbacks @ chunk-GKJBSOWT.js?v=21424f4f:9119
+(anonymous) @ chunk-GKJBSOWT.js?v=21424f4f:18627Understand this error
+t.js:1 
+            
+            
+           POST https://graphql.anilist.co/ net::ERR_FAILED
+apply @ t.js:1
+dispatchXhrRequest @ axios.js?v=21424f4f:1648
+xhr @ axios.js?v=21424f4f:1528
+dispatchRequest @ axios.js?v=21424f4f:2003
+_request @ axios.js?v=21424f4f:2224
+request @ axios.js?v=21424f4f:2115
+httpMethod @ axios.js?v=21424f4f:2253
+wrap @ axios.js?v=21424f4f:8
+getTopRatedAnime @ anilistApi.ts:118
+getTopRatedAnime @ animeService.ts:53
+fetchTopRatedAnime @ animeStore.ts:112
+fetchData @ Dashboard.tsx:38
+(anonymous) @ Dashboard.tsx:47
+commitHookEffectListMount @ chunk-GKJBSOWT.js?v=21424f4f:16915
+commitPassiveMountOnFiber @ chunk-GKJBSOWT.js?v=21424f4f:18156
+commitPassiveMountEffects_complete @ chunk-GKJBSOWT.js?v=21424f4f:18129
+commitPassiveMountEffects_begin @ chunk-GKJBSOWT.js?v=21424f4f:18119
+commitPassiveMountEffects @ chunk-GKJBSOWT.js?v=21424f4f:18109
+flushPassiveEffectsImpl @ chunk-GKJBSOWT.js?v=21424f4f:19490
+flushPassiveEffects @ chunk-GKJBSOWT.js?v=21424f4f:19447
+commitRootImpl @ chunk-GKJBSOWT.js?v=21424f4f:19416
+commitRoot @ chunk-GKJBSOWT.js?v=21424f4f:19277
+performSyncWorkOnRoot @ chunk-GKJBSOWT.js?v=21424f4f:18895
+flushSyncCallbacks @ chunk-GKJBSOWT.js?v=21424f4f:9119
+(anonymous) @ chunk-GKJBSOWT.js?v=21424f4f:18627Understand this error
+t.js:1 
+            
+            
+           POST http://localhost:3002/anilist/graphql 429 (Too Many Requests)
+apply @ t.js:1
+getUserWatchingAnime @ anilistApiFetch.ts:480
+fetchCurrentlyWatching @ animeStore.ts:261
+fetchData @ Dashboard.tsx:44
+await in fetchData
+(anonymous) @ Dashboard.tsx:47
+commitHookEffectListMount @ chunk-GKJBSOWT.js?v=21424f4f:16915
+commitPassiveMountOnFiber @ chunk-GKJBSOWT.js?v=21424f4f:18156
+commitPassiveMountEffects_complete @ chunk-GKJBSOWT.js?v=21424f4f:18129
+commitPassiveMountEffects_begin @ chunk-GKJBSOWT.js?v=21424f4f:18119
+commitPassiveMountEffects @ chunk-GKJBSOWT.js?v=21424f4f:18109
+flushPassiveEffectsImpl @ chunk-GKJBSOWT.js?v=21424f4f:19490
+flushPassiveEffects @ chunk-GKJBSOWT.js?v=21424f4f:19447
+commitRootImpl @ chunk-GKJBSOWT.js?v=21424f4f:19416
+commitRoot @ chunk-GKJBSOWT.js?v=21424f4f:19277
+performSyncWorkOnRoot @ chunk-GKJBSOWT.js?v=21424f4f:18895
+flushSyncCallbacks @ chunk-GKJBSOWT.js?v=21424f4f:9119
+(anonymous) @ chunk-GKJBSOWT.js?v=21424f4f:18627Understand this error
+anilistApiFetch.ts:521 AniList getUserWatchingAnime error: Error: HTTP error! status: 429
+    at Object.getUserWatchingAnime (anilistApiFetch.ts:491:15)
+    at async fetchCurrentlyWatching (animeStore.ts:261:25)
+overrideMethod @ hook.js:608
+getUserWatchingAnime @ anilistApiFetch.ts:521
+await in getUserWatchingAnime
+fetchCurrentlyWatching @ animeStore.ts:261
+fetchData @ Dashboard.tsx:44
+await in fetchData
+(anonymous) @ Dashboard.tsx:47
+commitHookEffectListMount @ chunk-GKJBSOWT.js?v=21424f4f:16915
+commitPassiveMountOnFiber @ chunk-GKJBSOWT.js?v=21424f4f:18156
+commitPassiveMountEffects_complete @ chunk-GKJBSOWT.js?v=21424f4f:18129
+commitPassiveMountEffects_begin @ chunk-GKJBSOWT.js?v=21424f4f:18119
+commitPassiveMountEffects @ chunk-GKJBSOWT.js?v=21424f4f:18109
+flushPassiveEffectsImpl @ chunk-GKJBSOWT.js?v=21424f4f:19490
+flushPassiveEffects @ chunk-GKJBSOWT.js?v=21424f4f:19447
+commitRootImpl @ chunk-GKJBSOWT.js?v=21424f4f:19416
+commitRoot @ chunk-GKJBSOWT.js?v=21424f4f:19277
+performSyncWorkOnRoot @ chunk-GKJBSOWT.js?v=21424f4f:18895
+flushSyncCallbacks @ chunk-GKJBSOWT.js?v=21424f4f:9119
+(anonymous) @ chunk-GKJBSOWT.js?v=21424f4f:18627Understand this error
+animeStore.ts:266 Failed to fetch currently watching anime: Error: HTTP error! status: 429
+    at Object.getUserWatchingAnime (anilistApiFetch.ts:491:15)
+    at async fetchCurrentlyWatching (animeStore.ts:261:25)
+overrideMethod @ hook.js:608
+fetchCurrentlyWatching @ animeStore.ts:266
+await in fetchCurrentlyWatching
+fetchData @ Dashboard.tsx:44
+await in fetchData
+(anonymous) @ Dashboard.tsx:47
+commitHookEffectListMount @ chunk-GKJBSOWT.js?v=21424f4f:16915
+commitPassiveMountOnFiber @ chunk-GKJBSOWT.js?v=21424f4f:18156
+commitPassiveMountEffects_complete @ chunk-GKJBSOWT.js?v=21424f4f:18129
+commitPassiveMountEffects_begin @ chunk-GKJBSOWT.js?v=21424f4f:18119
+commitPassiveMountEffects @ chunk-GKJBSOWT.js?v=21424f4f:18109
+flushPassiveEffectsImpl @ chunk-GKJBSOWT.js?v=21424f4f:19490
+flushPassiveEffects @ chunk-GKJBSOWT.js?v=21424f4f:19447
+commitRootImpl @ chunk-GKJBSOWT.js?v=21424f4f:19416
+commitRoot @ chunk-GKJBSOWT.js?v=21424f4f:19277
+performSyncWorkOnRoot @ chunk-GKJBSOWT.js?v=21424f4f:18895
+flushSyncCallbacks @ chunk-GKJBSOWT.js?v=21424f4f:9119
+(anonymous) @ chunk-GKJBSOWT.js?v=21424f4f:18627Understand this error
+t.js:1 
+            
+            
+           POST http://localhost:3002/anilist/graphql 429 (Too Many Requests)
+apply @ t.js:1
+getCurrentUser @ anilistApiFetch.ts:409
+fetchUserScores @ animeStore.ts:186
+fetchData @ Dashboard.tsx:43
+await in fetchData
+(anonymous) @ Dashboard.tsx:47
+commitHookEffectListMount @ chunk-GKJBSOWT.js?v=21424f4f:16915
+commitPassiveMountOnFiber @ chunk-GKJBSOWT.js?v=21424f4f:18156
+commitPassiveMountEffects_complete @ chunk-GKJBSOWT.js?v=21424f4f:18129
+commitPassiveMountEffects_begin @ chunk-GKJBSOWT.js?v=21424f4f:18119
+commitPassiveMountEffects @ chunk-GKJBSOWT.js?v=21424f4f:18109
+flushPassiveEffectsImpl @ chunk-GKJBSOWT.js?v=21424f4f:19490
+flushPassiveEffects @ chunk-GKJBSOWT.js?v=21424f4f:19447
+commitRootImpl @ chunk-GKJBSOWT.js?v=21424f4f:19416
+commitRoot @ chunk-GKJBSOWT.js?v=21424f4f:19277
+performSyncWorkOnRoot @ chunk-GKJBSOWT.js?v=21424f4f:18895
+flushSyncCallbacks @ chunk-GKJBSOWT.js?v=21424f4f:9119
+(anonymous) @ chunk-GKJBSOWT.js?v=21424f4f:18627Understand this error
+anilistApiFetch.ts:431 AniList get current user error: Error: HTTP error! status: 429
+    at Object.getCurrentUser (anilistApiFetch.ts:420:15)
+    at async fetchUserScores (animeStore.ts:186:22)
+overrideMethod @ hook.js:608
+getCurrentUser @ anilistApiFetch.ts:431
+await in getCurrentUser
+fetchUserScores @ animeStore.ts:186
+fetchData @ Dashboard.tsx:43
+await in fetchData
+(anonymous) @ Dashboard.tsx:47
+commitHookEffectListMount @ chunk-GKJBSOWT.js?v=21424f4f:16915
+commitPassiveMountOnFiber @ chunk-GKJBSOWT.js?v=21424f4f:18156
+commitPassiveMountEffects_complete @ chunk-GKJBSOWT.js?v=21424f4f:18129
+commitPassiveMountEffects_begin @ chunk-GKJBSOWT.js?v=21424f4f:18119
+commitPassiveMountEffects @ chunk-GKJBSOWT.js?v=21424f4f:18109
+flushPassiveEffectsImpl @ chunk-GKJBSOWT.js?v=21424f4f:19490
+flushPassiveEffects @ chunk-GKJBSOWT.js?v=21424f4f:19447
+commitRootImpl @ chunk-GKJBSOWT.js?v=21424f4f:19416
+commitRoot @ chunk-GKJBSOWT.js?v=21424f4f:19277
+performSyncWorkOnRoot @ chunk-GKJBSOWT.js?v=21424f4f:18895
+flushSyncCallbacks @ chunk-GKJBSOWT.js?v=21424f4f:9119
+(anonymous) @ chunk-GKJBSOWT.js?v=21424f4f:18627Understand this error
+animeStore.ts:224 Failed to fetch user scores: Error: HTTP error! status: 429
+    at Object.getCurrentUser (anilistApiFetch.ts:420:15)
+    at async fetchUserScores (animeStore.ts:186:22)

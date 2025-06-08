@@ -18,20 +18,34 @@ export const Dashboard = () => {
     topRatedAnime,
     currentSeasonAnime,
     searchResults,
+    currentlyWatching,
     loading,
     fetchTrendingAnime,
     fetchPopularAnime,
     fetchTopRatedAnime,
     fetchCurrentSeasonAnime,
+    fetchUserScores,
+    fetchCurrentlyWatching,
   } = useAnimeStore()
 
   useEffect(() => {
     // Fetch initial data when component mounts or source changes
-    fetchTrendingAnime()
-    fetchPopularAnime()
-    fetchTopRatedAnime()
-    fetchCurrentSeasonAnime()
-  }, [currentSource, fetchTrendingAnime, fetchPopularAnime, fetchTopRatedAnime, fetchCurrentSeasonAnime])
+    const fetchData = async () => {
+      // First fetch the anime lists
+      await Promise.all([
+        fetchTrendingAnime(),
+        fetchPopularAnime(),
+        fetchTopRatedAnime(),
+        fetchCurrentSeasonAnime()
+      ])
+      
+      // Then fetch user-specific data after anime lists are loaded
+      fetchUserScores()
+      fetchCurrentlyWatching()
+    }
+    
+    fetchData()
+  }, [currentSource, fetchTrendingAnime, fetchPopularAnime, fetchTopRatedAnime, fetchCurrentSeasonAnime, fetchUserScores, fetchCurrentlyWatching])
 
   useEffect(() => {
     // Initial page load animations
@@ -143,6 +157,15 @@ export const Dashboard = () => {
         {/* Content sections - only show if no search results */}
         {searchResults.length === 0 && (
           <>
+            {/* Currently Watching section - only show when authenticated and has watching anime */}
+            {currentlyWatching.length > 0 && (
+              <AnimeSection
+                title="Currently Watching"
+                anime={currentlyWatching}
+                isLoading={loading.currentlyWatching}
+              />
+            )}
+
             <AnimeSection
               title="Trending Now"
               anime={trendingAnime}

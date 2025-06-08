@@ -7,6 +7,9 @@ A modern, dual-source anime tracking and recommendation platform powered by **My
 ✅ **What's Been Completed:**
 - Full dual API integration (MyAnimeList + AniList)
 - OAuth authentication for both platforms  
+- User score display on anime cards (personal ratings with green badges)
+- Currently watching section on dashboard
+- Related anime exploration with full hover details and user scores
 - Stunning animation system with Anime.js v4 + Three.js
 - Interactive anime cards with smooth hover effects
 - Comprehensive detail pages with 3D transitions
@@ -15,13 +18,16 @@ A modern, dual-source anime tracking and recommendation platform powered by **My
 - Responsive design with Tailwind CSS
 - Three.js particle background animations
 - Custom loading spinners and micro-interactions
+- Performance optimizations (reduced API calls from 20 to 6 per section)
+- Fixed CORS issues and proxy server authentication
 - Clean console output and production-ready build
 
 🔜 **Next Phase Focus:**
 - Vector-based recommendations with FAISS
-- Related anime connections (prequels/sequels)
+- Watch status updates and progress tracking
 - Offline caching with IndexedDB
 - Social features and friend comparisons
+- Cross-platform sync between MAL and AniList
 
 ---
 
@@ -37,13 +43,16 @@ A modern, dual-source anime tracking and recommendation platform powered by **My
 - ✅ **COMPLETED:** OAuth login for both platforms
 - ✅ **COMPLETED:** Hover cards with detailed anime information
 - ✅ **COMPLETED:** Detail view with comprehensive anime information
+- ✅ **COMPLETED:** User score display on anime cards (personal ratings)
+- ✅ **COMPLETED:** Currently watching section on dashboard
+- ✅ **COMPLETED:** Related anime on detail pages with full hover details and user scores
+- ✅ **COMPLETED:** Performance optimizations (6 anime per section vs 20)
 - ✅ **COMPLETED:** Stunning animations and visual effects:
   - ✅ Smooth hover effects with scale, translate, and shadow animations
   - ✅ Page load animations with staggered entrance effects
   - ✅ Three.js particle background with floating geometric shapes
   - ✅ Custom loading spinners with rotating elements
   - ✅ Detailed page transitions with element choreography
-- 🔜 **TODO:** Detail view with related anime (prequel/sequel/adaptations)
 - 🔜 **TODO:** Recommendation system using **vector indexing**, not genre/tags
 - 🔜 **TODO:** Cross-platform sync (MAL ↔ AniList)
 - 🔜 **TODO:** Social compare: view shared anime & overlap stats

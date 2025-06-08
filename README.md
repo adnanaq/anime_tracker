@@ -64,6 +64,9 @@ MyAnimeList API has CORS restrictions that prevent direct browser requests. The 
 - **🔍 Real-time Search**: Search across both platforms instantly
 - **🎴 Interactive Cards**: Hover for detailed anime information with smooth animations
 - **📱 Detail Pages**: Comprehensive anime information with 3D transitions
+- **⭐ User Score Display**: Personal ratings displayed on anime cards when authenticated
+- **📺 Currently Watching**: Dedicated section for anime you're currently watching
+- **🔗 Related Anime**: View and explore related anime (prequels, sequels, adaptations) with full hover details
 - **💫 Responsive Design**: Beautiful UI that works on all devices
 - **🎨 Stunning Animations**: 
   - Smooth hover effects with scale, translate, and shadow animations
@@ -77,8 +80,9 @@ MyAnimeList API has CORS restrictions that prevent direct browser requests. The 
 - Vector-based recommendations (FAISS)
 - Social features and friend comparison
 - Offline caching with IndexedDB
-- Watch status tracking
-- Cross-platform sync
+- Watch status updates and progress tracking
+- Cross-platform sync between MAL and AniList
+- Advanced filtering and sorting options
 
 ## 🛠 Tech Stack
 
@@ -132,10 +136,13 @@ VITE_ANILIST_CLIENT_SECRET=your_anilist_client_secret
 
 1. **🔑 Authentication**: Login with MyAnimeList or AniList for full features
 2. **📊 Browse Anime**: Explore categories like Popular, Top Rated, Seasonal
-3. **🔄 Switch Sources**: Toggle between MyAnimeList and AniList data
-4. **🔍 Search**: Find specific anime across both platforms
-5. **👆 View Details**: Click anime cards for comprehensive information
-6. **🎴 Quick Preview**: Hover over cards for instant details
+3. **⭐ View Your Scores**: See your personal ratings on anime cards (green badges)
+4. **📺 Track Progress**: View your currently watching anime in dedicated section
+5. **🔄 Switch Sources**: Toggle between MyAnimeList and AniList data
+6. **🔍 Search**: Find specific anime across both platforms
+7. **👆 View Details**: Click anime cards for comprehensive information
+8. **🎴 Quick Preview**: Hover over cards for instant details with synopsis, genres, and stats
+9. **🔗 Explore Related**: Discover prequels, sequels, and adaptations with full hover details
 
 ## 🔐 Authentication Setup
 

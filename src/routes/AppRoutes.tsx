@@ -9,7 +9,6 @@ export const AppRoutes = () => {
       <Route path="/" element={<Dashboard />} />
       <Route path="/anime/:source/:id" element={<AnimeDetail />} />
       <Route path="/auth/:source/callback" element={<AuthCallback />} />
-      {/* Add more routes as needed */}
     </Routes>
   )
 }

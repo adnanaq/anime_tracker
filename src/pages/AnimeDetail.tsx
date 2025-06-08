@@ -4,6 +4,10 @@ import { animate, stagger } from 'animejs'
 import { AnimeBase } from '../types/anime'
 import { animeService } from '../services/animeService'
 import { LoadingSpinner } from '../components/LoadingSpinner'
+import { AnimeCard } from '../components/AnimeCard/AnimeCard'
+import { getAuthService } from '../services/auth'
+import { malService } from '../services/malApi'
+import { anilistService } from '../services/anilistApiFetch'
 
 export const AnimeDetail = () => {
   const { source, id } = useParams<{ source: string; id: string }>()
@@ -16,6 +20,7 @@ export const AnimeDetail = () => {
   const contentRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const genresRef = useRef<HTMLDivElement>(null)
+  const genresContainerRef = useRef<HTMLDivElement>(null)
   const synopsisRef = useRef<HTMLDivElement>(null)
   const buttonsRef = useRef<HTMLDivElement>(null)
 
@@ -33,12 +38,62 @@ export const AnimeDetail = () => {
         animeService.setSource(source as 'mal' | 'anilist')
         
         const animeData = await animeService.getAnimeDetails(parseInt(id))
-        setAnimeData(animeData)
         
-        // Trigger animations when data loads
-        setTimeout(() => {
-          animatePageElements()
-        }, 100)
+        // Fetch user score if authenticated
+        const authServiceInstance = getAuthService(source as 'mal' | 'anilist')
+        const isAuth = authServiceInstance?.isAuthenticated()
+        
+        if (isAuth && authServiceInstance) {
+          const tokenObj = authServiceInstance.getToken()
+          
+          if (tokenObj) {
+            try {
+              const token = tokenObj.access_token
+              if (source === 'mal') {
+                const userScores = await malService.getUserScoresForAnime([parseInt(id)], token)
+                const userScore = userScores.get(parseInt(id))
+                animeData.userScore = userScore
+              } else if (source === 'anilist') {
+                const user = await anilistService.getCurrentUser(token)
+                const userScores = await anilistService.getUserAnimeList(user.id)
+                const userScore = userScores.get(parseInt(id))
+                animeData.userScore = userScore
+              }
+            } catch (error) {
+              console.error('🎬 AnimeDetail: Failed to fetch user score:', error)
+            }
+          }
+        }
+        
+        // Fetch user scores for related anime if available
+        if (isAuth && authServiceInstance && animeData.relatedAnime && animeData.relatedAnime.length > 0) {
+          const relatedTokenObj = authServiceInstance.getToken()
+          if (relatedTokenObj) {
+            try {
+              const token = relatedTokenObj.access_token
+              const relatedAnimeIds = animeData.relatedAnime.map(anime => anime.id)
+              
+              if (source === 'mal') {
+                const userScores = await malService.getUserScoresForAnime(relatedAnimeIds, token)
+                animeData.relatedAnime = animeData.relatedAnime.map(anime => ({
+                  ...anime,
+                  userScore: userScores.get(anime.id)
+                }))
+              } else if (source === 'anilist') {
+                const user = await anilistService.getCurrentUser(token)
+                const userScores = await anilistService.getUserAnimeList(user.id)
+                animeData.relatedAnime = animeData.relatedAnime.map(anime => ({
+                  ...anime,
+                  userScore: userScores.get(anime.id)
+                }))
+              }
+            } catch (error) {
+              console.error('🎬 AnimeDetail: Failed to fetch user scores for related anime:', error)
+            }
+          }
+        }
+        
+        setAnimeData(animeData)
       } catch (err) {
         const errorMessage = `Failed to load anime details: ${err instanceof Error ? err.message : 'Unknown error'}`
         setError(errorMessage)
@@ -55,6 +110,18 @@ export const AnimeDetail = () => {
 
     fetchAnime()
   }, [source, id])
+
+  // Trigger animations only after data is loaded and component is ready
+  useEffect(() => {
+    if (animeData && !loading && !error) {
+      // Small delay to ensure DOM is fully rendered
+      const timer = setTimeout(() => {
+        animatePageElements()
+      }, 50)
+      
+      return () => clearTimeout(timer)
+    }
+  }, [animeData, loading, error])
 
   const animatePageElements = () => {
     // Header animation
@@ -90,18 +157,29 @@ export const AnimeDetail = () => {
       })
     }
 
-    // Content stagger animation
-    if (contentRef.current?.children) {
-      animate(Array.from(contentRef.current.children), {
+    // Content stagger animation (stats section)
+    if (contentRef.current) {
+      animate(contentRef.current, {
         translateY: [30, 0],
         opacity: [0, 1],
         duration: 500,
         easing: 'easeOutQuart',
-        delay: stagger(100, { start: 600 })
+        delay: 600
       })
     }
 
-    // Genres animation
+    // Genres container animation
+    if (genresContainerRef.current) {
+      animate(genresContainerRef.current, {
+        translateY: [20, 0],
+        opacity: [0, 1],
+        duration: 500,
+        easing: 'easeOutQuart',
+        delay: 700
+      })
+    }
+
+    // Individual genre tags animation
     if (genresRef.current?.children) {
       animate(Array.from(genresRef.current.children), {
         scale: [0, 1],
@@ -119,7 +197,7 @@ export const AnimeDetail = () => {
         opacity: [0, 1],
         duration: 600,
         easing: 'easeOutQuart',
-        delay: 1000
+        delay: 900
       })
     }
 
@@ -131,7 +209,7 @@ export const AnimeDetail = () => {
         opacity: [0, 1],
         duration: 500,
         easing: 'easeOutElastic(1, .8)',
-        delay: stagger(100, { start: 1200 })
+        delay: stagger(100, { start: 1000 })
       })
     }
   }
@@ -224,13 +302,23 @@ export const AnimeDetail = () => {
                 {/* Stats */}
                 <div 
                   ref={contentRef}
-                  className="flex flex-wrap gap-4 text-sm text-gray-600 mb-4"
+                  className="flex flex-wrap gap-4 text-sm text-gray-600 mb-4 opacity-0"
+                  style={{ transform: 'translateY(30px)' }}
                 >
                   {animeData.score && (
                     <div className="flex items-center">
-                      <span className="font-medium mr-1">Score:</span>
+                      <span className="font-medium mr-1">Global Score:</span>
                       <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded font-semibold">
                         {animeData.score.toFixed(1)}
+                      </span>
+                    </div>
+                  )}
+                  
+                  {animeData.userScore && (
+                    <div className="flex items-center">
+                      <span className="font-medium mr-1">Your Score:</span>
+                      <span className="bg-green-100 text-green-800 px-2 py-1 rounded font-semibold">
+                        {animeData.userScore}
                       </span>
                     </div>
                   )}
@@ -266,7 +354,7 @@ export const AnimeDetail = () => {
 
                 {/* Genres */}
                 {animeData.genres && animeData.genres.length > 0 && (
-                  <div className="mb-4">
+                  <div ref={genresContainerRef} className="mb-4 opacity-0" style={{ transform: 'translateY(20px)' }}>
                     <h3 className="font-medium text-gray-900 mb-2">Genres</h3>
                     <div ref={genresRef} className="flex flex-wrap gap-2">
                       {animeData.genres.map((genre, index) => (
@@ -314,13 +402,19 @@ export const AnimeDetail = () => {
           </div>
         </div>
 
-        {/* Related anime section placeholder */}
-        <div className="mt-8 bg-white/90 backdrop-blur-md rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">Related Anime</h2>
-          <div className="text-gray-500 text-center py-8">
-            Related anime feature coming soon...
+        {/* Related anime section */}
+        {animeData.relatedAnime && animeData.relatedAnime.length > 0 && (
+          <div className="mt-8 bg-white/90 backdrop-blur-md rounded-lg shadow-lg p-6">
+            <h2 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+              Related Anime
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+              {animeData.relatedAnime.map((relatedItem) => (
+                <AnimeCard key={`${relatedItem.source}-${relatedItem.id}`} anime={relatedItem} />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </main>
     </div>
   )

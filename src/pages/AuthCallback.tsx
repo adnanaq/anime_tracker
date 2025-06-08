@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { getAuthService } from '../services/auth'
+import { useAnimeStore } from '../store/animeStore'
 // import { AnimeSource } from '../types/anime'
 
 export const AuthCallback = () => {
@@ -9,6 +10,7 @@ export const AuthCallback = () => {
   const [searchParams] = useSearchParams()
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
   const [message, setMessage] = useState('')
+  const { fetchUserScores } = useAnimeStore()
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -46,6 +48,13 @@ export const AuthCallback = () => {
         if (token) {
           setStatus('success')
           setMessage(`Successfully logged in to ${source === 'mal' ? 'MyAnimeList' : 'AniList'}!`)
+          
+          // Fetch user scores after successful login
+          try {
+            await fetchUserScores()
+          } catch (error) {
+            console.error('Failed to fetch user scores after login:', error)
+          }
           
           // Redirect to dashboard after a short delay
           setTimeout(() => {

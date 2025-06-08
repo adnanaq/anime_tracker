@@ -1,6 +1,6 @@
 import { AnimeBase, AnimeSource } from '../types/anime'
 import { malService } from './malApi'
-import { anilistService } from './anilistApi'
+import { anilistService } from './anilistApiFetch'
 
 export class AnimeService {
   private currentSource: AnimeSource = 'mal'

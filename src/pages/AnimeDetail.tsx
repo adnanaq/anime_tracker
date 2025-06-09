@@ -5,6 +5,7 @@ import { AnimeBase } from '../types/anime'
 import { animeService } from '../services/animeService'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { AnimeCard } from '../components/AnimeCard/AnimeCard'
+import { AnimeStatus } from '../components/AnimeStatus'
 import { getAuthService } from '../services/auth'
 import { malService } from '../services/malApi'
 import { anilistService } from '../services/anilistApiFetch'
@@ -39,7 +40,7 @@ export const AnimeDetail = () => {
         
         const animeData = await animeService.getAnimeDetails(parseInt(id))
         
-        // Fetch user score if authenticated
+        // Fetch user score and status if authenticated
         const authServiceInstance = getAuthService(source as 'mal' | 'anilist')
         const isAuth = authServiceInstance?.isAuthenticated()
         
@@ -50,17 +51,21 @@ export const AnimeDetail = () => {
             try {
               const token = tokenObj.access_token
               if (source === 'mal') {
-                const userScores = await malService.getUserScoresForAnime([parseInt(id)], token)
-                const userScore = userScores.get(parseInt(id))
-                animeData.userScore = userScore
+                // For MAL, fetch detailed anime info which includes my_list_status
+                const detailResponse = await malService.getAnimeDetails(parseInt(id))
+                if (detailResponse.userScore) {
+                  animeData.userScore = detailResponse.userScore
+                }
+                // Note: MAL my_list_status includes status info that we could extract here
               } else if (source === 'anilist') {
                 const user = await anilistService.getCurrentUser(token)
                 const userScores = await anilistService.getUserAnimeList(user.id)
                 const userScore = userScores.get(parseInt(id))
                 animeData.userScore = userScore
+                // Note: AniList user list also includes status info we could extract
               }
             } catch (error) {
-              console.error('🎬 AnimeDetail: Failed to fetch user score:', error)
+              console.error('🎬 AnimeDetail: Failed to fetch user data:', error)
             }
           }
         }
@@ -383,24 +388,23 @@ export const AnimeDetail = () => {
                 )}
               </div>
 
-              {/* Action buttons */}
-              <div ref={buttonsRef} className="flex space-x-4">
-                <button 
-                  className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl opacity-0"
-                  style={{ transform: 'scale(0.8) translateY(20px)' }}
-                >
-                  Add to Watchlist
-                </button>
-                <button 
-                  className="bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 px-6 py-2 rounded-lg hover:from-gray-300 hover:to-gray-400 transition-all duration-300 shadow-lg hover:shadow-xl opacity-0"
-                  style={{ transform: 'scale(0.8) translateY(20px)' }}
-                >
-                  Mark as Watched
-                </button>
-              </div>
             </div>
           </div>
         </div>
+
+        {/* Anime Status Component */}
+        <AnimeStatus 
+          anime={animeData} 
+          onStatusUpdate={(_newStatus, newScore) => {
+            // Update the local state when status changes
+            if (animeData) {
+              setAnimeData({
+                ...animeData,
+                userScore: newScore || animeData.userScore
+              })
+            }
+          }} 
+        />
 
         {/* Related anime section */}
         {animeData.relatedAnime && animeData.relatedAnime.length > 0 && (

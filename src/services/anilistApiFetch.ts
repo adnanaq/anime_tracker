@@ -5,6 +5,7 @@ const isDevelopment = import.meta.env.DEV;
 const ANILIST_BASE_URL = isDevelopment 
   ? 'http://localhost:3002/anilist/graphql' 
   : 'https://graphql.anilist.co'
+const ANILIST_GRAPHQL_URL = ANILIST_BASE_URL
 
 export const normalizeAniListAnime = (anime: AniListAnime, includeRelated: boolean = false): AnimeBase => {
   const normalized: AnimeBase = {
@@ -435,15 +436,12 @@ export const anilistService = {
 
   async getUserWatchingAnime(token: string) {
     try {
+      // First get the current user
+      const user = await this.getCurrentUser(token)
       
       const query = `
-        query {
-          Viewer {
-            mediaListOptions {
-              scoreFormat
-            }
-          }
-          MediaListCollection(userId: null, type: ANIME, status: CURRENT) {
+        query($userId: Int) {
+          MediaListCollection(userId: $userId, type: ANIME, status: CURRENT) {
             lists {
               entries {
                 id
@@ -484,7 +482,10 @@ export const anilistService = {
           'Accept': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ query })
+        body: JSON.stringify({ 
+          query,
+          variables: { userId: user.id }
+        })
       })
 
       if (!response.ok) {
@@ -519,6 +520,162 @@ export const anilistService = {
       return watchingAnime
     } catch (error) {
       console.error('AniList getUserWatchingAnime error:', error)
+      throw error
+    }
+  },
+
+  async updateAnimeStatus(animeId: number, token: string, statusData: {
+    status?: 'CURRENT' | 'COMPLETED' | 'PAUSED' | 'DROPPED' | 'PLANNING' | 'REPEATING';
+    score?: number;
+    progress?: number;
+    startedAt?: { year?: number; month?: number; day?: number };
+    completedAt?: { year?: number; month?: number; day?: number };
+    notes?: string;
+  }) {
+    try {
+      const mutation = `
+        mutation($mediaId: Int, $status: MediaListStatus, $score: Int, $progress: Int, $startedAt: FuzzyDateInput, $completedAt: FuzzyDateInput, $notes: String) {
+          SaveMediaListEntry(mediaId: $mediaId, status: $status, score: $score, progress: $progress, startedAt: $startedAt, completedAt: $completedAt, notes: $notes) {
+            id
+            status
+            score
+            progress
+            startedAt {
+              year
+              month
+              day
+            }
+            completedAt {
+              year
+              month
+              day
+            }
+            notes
+          }
+        }
+      `
+
+      const variables = {
+        mediaId: animeId,
+        ...statusData
+      }
+
+      const response = await fetch(ANILIST_GRAPHQL_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          query: mutation,
+          variables: variables
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data = await response.json()
+      
+      if (data.errors) {
+        throw new Error(data.errors[0]?.message || 'GraphQL error')
+      }
+
+      return data.data.SaveMediaListEntry
+    } catch (error) {
+      console.error('AniList updateAnimeStatus error:', error)
+      throw error
+    }
+  },
+
+  async deleteAnimeFromList(animeId: number, token: string) {
+    try {
+      // First we need to get the list entry ID
+      const user = await this.getCurrentUser(token)
+      
+      // Find the entry for this anime
+      const query = `
+        query($userId: Int, $mediaId: Int) {
+          MediaListCollection(userId: $userId, type: ANIME) {
+            lists {
+              entries {
+                id
+                media {
+                  id
+                }
+              }
+            }
+          }
+        }
+      `
+
+      const response = await fetch(ANILIST_GRAPHQL_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          query: query,
+          variables: { userId: user.id, mediaId: animeId }
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const listData = await response.json()
+      
+      if (listData.errors) {
+        throw new Error(listData.errors[0]?.message || 'GraphQL error')
+      }
+
+      const allEntries = listData.data.MediaListCollection?.lists?.flatMap((list: any) => list.entries) || []
+      const entry = allEntries.find((entry: any) => entry.media.id === animeId)
+
+      if (!entry) {
+        throw new Error('Anime not found in user list')
+      }
+
+      // Now delete the entry
+      const mutation = `
+        mutation($id: Int) {
+          DeleteMediaListEntry(id: $id) {
+            deleted
+          }
+        }
+      `
+
+      const deleteResponse = await fetch(ANILIST_GRAPHQL_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          query: mutation,
+          variables: { id: entry.id }
+        })
+      })
+
+      if (!deleteResponse.ok) {
+        throw new Error(`HTTP error! status: ${deleteResponse.status}`)
+      }
+
+      const data = await deleteResponse.json()
+      
+      if (data.errors) {
+        throw new Error(data.errors[0]?.message || 'GraphQL error')
+      }
+
+      return data.data.DeleteMediaListEntry
+    } catch (error) {
+      console.error('AniList deleteAnimeFromList error:', error)
       throw error
     }
   }

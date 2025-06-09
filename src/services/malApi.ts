@@ -279,4 +279,52 @@ export const malService = {
       throw error;
     }
   },
+
+  async updateAnimeStatus(animeId: number, accessToken: string, statusData: {
+    status?: 'watching' | 'completed' | 'on_hold' | 'dropped' | 'plan_to_watch';
+    score?: number;
+    num_watched_episodes?: number;
+    start_date?: string;
+    finish_date?: string;
+    comments?: string;
+  }) {
+    try {
+      // Convert to form data
+      const formData = new URLSearchParams();
+      Object.entries(statusData).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          formData.append(key, value.toString());
+        }
+      });
+
+      const response = await malApi.put(`/anime/${animeId}/my_list_status`, formData.toString(), {
+        headers: {
+          ...getHeaders(),
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error("MAL updateAnimeStatus error:", error);
+      throw error;
+    }
+  },
+
+  async deleteAnimeFromList(animeId: number, accessToken: string) {
+    try {
+      const response = await malApi.delete(`/anime/${animeId}/my_list_status`, {
+        headers: {
+          ...getHeaders(),
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error("MAL deleteAnimeFromList error:", error);
+      throw error;
+    }
+  },
 };

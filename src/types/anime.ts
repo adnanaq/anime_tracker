@@ -6,6 +6,8 @@ export interface AnimeBase {
   coverImage?: string
   score?: number
   userScore?: number
+  userStatus?: string // User's watch status (watching, completed, etc.)
+  userProgress?: number // Episodes watched by user
   episodes?: number
   status?: string
   genres?: string[]

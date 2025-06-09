@@ -28,6 +28,7 @@ A modern, dual-source anime tracking and recommendation platform powered by **My
 - Offline caching with IndexedDB
 - Social features and friend comparisons
 - Cross-platform sync between MAL and AniList
+- **MCP Server Integration**: Convert backend to Model Context Protocol server for AI assistant integration
 
 ---
 
@@ -256,6 +257,196 @@ AI Features by Phase
 📱 Offline-first PWA Mode for cached dashboard
 
 📺 Streaming Player Integration (Future Module)
+
+### 🔧 Phase 6 – MCP Server Integration
+
+🤖 **Model Context Protocol (MCP) Server**: Convert AnimeTrackr backend to MCP server for seamless AI assistant integration
+
+🔌 **AI Assistant Tools**: Enable Claude/GPT to directly interact with user's anime data through standardized protocol
+
+🚀 **FastAPI Backend Migration**: Transition from Express.js proxy to FastAPI-based MCP server
+
+---
+
+## 🔧 MCP Server Integration Plan
+
+### 🎯 **MCP Server Vision**
+
+Convert AnimeTrackr's backend infrastructure into a **Model Context Protocol (MCP) server** to enable seamless AI assistant integration. This will allow Claude, GPT, and other AI assistants to directly interact with users' anime data, preferences, and tracking information through standardized tools.
+
+### 🚀 **FastAPI Backend Migration**
+
+**Current State**: Express.js proxy server for CORS handling
+**Target State**: FastAPI-based MCP server with comprehensive anime management tools
+
+#### **Why FastAPI?**
+- **Performance**: Async/await support for concurrent API calls to MAL/AniList
+- **Type Safety**: Pydantic models for robust data validation
+- **Documentation**: Auto-generated OpenAPI/Swagger docs
+- **MCP Compatibility**: Python ecosystem has mature MCP server implementations
+- **Scalability**: Better handling of vector operations for recommendations
+
+### 🛠️ **MCP Server Implementation Roadmap**
+
+#### **Phase 1: Backend Migration**
+- **FastAPI Setup**: Replace Express.js proxy with FastAPI server
+- **API Integration**: Migrate MAL/AniList API clients to Python
+- **Authentication**: Implement OAuth flows for both platforms
+- **Database Layer**: Add PostgreSQL/SQLite for user data persistence
+- **CORS Handling**: Maintain existing CORS proxy functionality
+
+#### **Phase 2: MCP Protocol Implementation**
+- **MCP Server Framework**: Implement MCP server using `mcp` Python package
+- **Tool Registration**: Define standardized tools for anime operations
+- **Resource Management**: Expose user anime lists and preferences as resources
+- **Prompt Templates**: Create context-aware prompts for anime recommendations
+
+#### **Phase 3: AI Assistant Tools**
+
+**Core MCP Tools**:
+```python
+# Anime Discovery Tools
+@mcp_tool
+async def search_anime(query: str, source: str = "both") -> List[Anime]:
+    """Search for anime across MAL and AniList"""
+
+@mcp_tool  
+async def get_anime_details(anime_id: int, source: str) -> AnimeDetails:
+    """Get comprehensive anime information"""
+
+@mcp_tool
+async def get_recommendations(user_id: str, preferences: dict) -> List[Anime]:
+    """Get personalized anime recommendations using FAISS vectors"""
+
+# User List Management Tools
+@mcp_tool
+async def add_to_watchlist(user_id: str, anime_id: int, status: str) -> bool:
+    """Add anime to user's tracking list"""
+
+@mcp_tool
+async def update_anime_status(user_id: str, anime_id: int, status: str, score: int) -> bool:
+    """Update anime watch status and rating"""
+
+@mcp_tool
+async def get_user_stats(user_id: str) -> UserStats:
+    """Get user's anime watching statistics and preferences"""
+
+# Social Features
+@mcp_tool
+async def compare_anime_lists(user1_id: str, user2_id: str) -> ComparisonResult:
+    """Compare anime lists between users"""
+
+@mcp_tool
+async def get_trending_discussions(timeframe: str = "week") -> List[Discussion]:
+    """Get trending anime discussions and community insights"""
+```
+
+**MCP Resources**:
+```python
+# User's anime data as queryable resources
+@mcp_resource("user_watchlist")
+async def get_user_watchlist(user_id: str) -> str:
+    """User's complete anime watchlist with scores and status"""
+
+@mcp_resource("user_preferences") 
+async def get_user_preferences(user_id: str) -> str:
+    """User's anime genre preferences and rating patterns"""
+
+@mcp_resource("anime_database")
+async def get_anime_database() -> str:
+    """Searchable anime database with metadata"""
+```
+
+#### **Phase 4: Advanced AI Features**
+
+**Vector Recommendations**:
+- **FAISS Integration**: Implement vector similarity search for anime recommendations
+- **User Embeddings**: Create user preference vectors from watch history
+- **Contextual Recommendations**: AI can ask "recommend anime similar to Attack on Titan but more lighthearted"
+
+**Natural Language Interface**:
+- **Conversational Updates**: "Mark Demon Slayer as completed with a score of 9"
+- **Complex Queries**: "Show me anime I might like based on my recent 10/10 ratings"
+- **Smart Scheduling**: "What should I watch next for a 2-hour session?"
+
+### 🏗️ **Technical Architecture**
+
+```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   AI Assistant  │◄──►│   MCP Server     │◄──►│  AnimeTrackr    │
+│   (Claude/GPT)  │    │   (FastAPI)      │    │   Frontend      │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+                              │
+                              ▼
+                    ┌──────────────────┐
+                    │  Data Sources    │
+                    │ ┌──────────────┐ │
+                    │ │ MAL API      │ │
+                    │ │ AniList API  │ │  
+                    │ │ User DB      │ │
+                    │ │ Vector Store │ │
+                    │ └──────────────┘ │
+                    └──────────────────┘
+```
+
+### 🔌 **Integration Benefits**
+
+**For Users**:
+- **Natural Interaction**: "Hey Claude, update my anime list and recommend something new"
+- **Smart Discovery**: AI-powered recommendations based on conversation context
+- **Cross-Platform Sync**: Unified management across MAL and AniList through AI
+- **Contextual Help**: "What anime should I watch while studying?" gets personalized suggestions
+
+**For Developers**:
+- **Standardized API**: MCP protocol provides consistent interface for AI integration
+- **Modular Architecture**: Easy to add new anime sources or AI capabilities
+- **Type Safety**: FastAPI + Pydantic ensures robust data handling
+- **Scalability**: FastAPI's async support handles concurrent user requests efficiently
+
+### 📋 **Implementation Checklist**
+
+#### **Backend Migration (FastAPI)**
+- [ ] Set up FastAPI project structure
+- [ ] Migrate MAL API client to Python (httpx/aiohttp)
+- [ ] Migrate AniList GraphQL client to Python (gql/httpx)
+- [ ] Implement OAuth flows for both platforms
+- [ ] Add database models (SQLAlchemy/Prisma)
+- [ ] Create user session management
+- [ ] Implement CORS middleware
+- [ ] Add API rate limiting and caching
+- [ ] Write comprehensive tests
+
+#### **MCP Server Implementation**
+- [ ] Install and configure MCP server framework
+- [ ] Define MCP tools for anime operations
+- [ ] Implement MCP resources for user data
+- [ ] Create prompt templates for AI context
+- [ ] Add authentication/authorization for MCP
+- [ ] Test MCP integration with Claude Desktop
+- [ ] Document MCP tool usage and examples
+
+#### **Vector Recommendations**
+- [ ] Set up FAISS vector store
+- [ ] Create anime embedding pipeline
+- [ ] Implement user preference vectors
+- [ ] Build similarity search algorithms
+- [ ] Add recommendation explanation system
+- [ ] Integrate with MCP recommendation tools
+
+#### **Frontend Updates**
+- [ ] Update API endpoints to FastAPI backend
+- [ ] Add MCP status indicators in UI
+- [ ] Implement AI recommendation display
+- [ ] Add MCP tool usage analytics
+- [ ] Update authentication flows
+
+### 🌟 **Future Possibilities**
+
+- **Multi-Modal AI**: Upload anime screenshots for AI identification and recommendations
+- **Voice Integration**: "Alexa, add this anime to my watchlist" through MCP
+- **Smart Notifications**: AI suggests optimal watch times based on user patterns
+- **Community Integration**: AI facilitates anime discussions and watch parties
+- **Content Creation**: AI helps generate anime reviews and recommendation posts
 
 ---
 

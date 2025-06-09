@@ -533,32 +533,31 @@ export const anilistService = {
     notes?: string;
   }) {
     try {
+      console.log('🎬 AniList updateAnimeStatus:', { animeId, statusData })
+      
       const mutation = `
-        mutation($mediaId: Int, $status: MediaListStatus, $score: Int, $progress: Int, $startedAt: FuzzyDateInput, $completedAt: FuzzyDateInput, $notes: String) {
-          SaveMediaListEntry(mediaId: $mediaId, status: $status, score: $score, progress: $progress, startedAt: $startedAt, completedAt: $completedAt, notes: $notes) {
+        mutation($mediaId: Int, $status: MediaListStatus, $score: Float, $progress: Int, $notes: String) {
+          SaveMediaListEntry(mediaId: $mediaId, status: $status, score: $score, progress: $progress, notes: $notes) {
             id
             status
             score
             progress
-            startedAt {
-              year
-              month
-              day
-            }
-            completedAt {
-              year
-              month
-              day
-            }
             notes
           }
         }
       `
 
-      const variables = {
-        mediaId: animeId,
-        ...statusData
+      // Clean up variables - remove undefined values
+      const variables: any = {
+        mediaId: animeId
       }
+      
+      if (statusData.status !== undefined) variables.status = statusData.status
+      if (statusData.score !== undefined && statusData.score > 0) variables.score = statusData.score
+      if (statusData.progress !== undefined) variables.progress = statusData.progress
+      if (statusData.notes) variables.notes = statusData.notes
+
+      console.log('🎬 Variables:', variables)
 
       const response = await fetch(ANILIST_GRAPHQL_URL, {
         method: 'POST',
@@ -573,6 +572,217 @@ export const anilistService = {
         })
       })
 
+      const responseText = await response.text()
+      console.log('🎬 Response status:', response.status)
+      console.log('🎬 Response text:', responseText)
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}, body: ${responseText}`)
+      }
+
+      const data = JSON.parse(responseText)
+      
+      if (data.errors) {
+        console.error('🎬 GraphQL errors:', data.errors)
+        throw new Error(data.errors[0]?.message || 'GraphQL error')
+      }
+
+      return data.data.SaveMediaListEntry
+    } catch (error) {
+      console.error('AniList updateAnimeStatus error:', error)
+      throw error
+    }
+  },
+
+  // Optimized method to get specific anime details with user data
+  async getAnimeWithUserDetails(animeId: number, token: string, _relatedAnimeIds: number[] = []) {
+    try {
+      // First get user ID
+      const user = await this.getCurrentUser(token)
+
+      // Single GraphQL query that gets everything we need
+      const query = `
+        query($animeId: Int, $userId: Int) {
+          Media(id: $animeId, type: ANIME) {
+            id
+            title {
+              romaji
+              english
+              native
+            }
+            description(asHtml: false)
+            coverImage {
+              large
+              medium
+            }
+            averageScore
+            episodes
+            status
+            genres
+            startDate {
+              year
+            }
+            format
+            relations {
+              edges {
+                relationType
+                node {
+                  id
+                  title {
+                    romaji
+                    english
+                    native
+                  }
+                  description(asHtml: false)
+                  coverImage {
+                    large
+                    medium
+                  }
+                  averageScore
+                  episodes
+                  status
+                  genres
+                  startDate {
+                    year
+                  }
+                  format
+                  type
+                }
+              }
+            }
+          }
+          
+          MediaListCollection(userId: $userId, type: ANIME) {
+            lists {
+              entries {
+                id
+                status
+                score
+                progress
+                media {
+                  id
+                }
+              }
+            }
+          }
+        }
+      `
+
+      const response = await fetch(ANILIST_GRAPHQL_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          query,
+          variables: { 
+            animeId, 
+            userId: user.id
+          }
+        })
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('🚨 AniList GraphQL Response Error:', {
+          status: response.status,
+          statusText: response.statusText,
+          body: errorText,
+          query: query,
+          variables: { animeId, userId: user.id }
+        })
+        throw new Error(`HTTP error! status: ${response.status} - ${errorText}`)
+      }
+
+      const data = await response.json()
+      
+      if (data.errors) {
+        console.error('🚨 AniList GraphQL Errors:', data.errors)
+        throw new Error(data.errors[0]?.message || 'GraphQL error')
+      }
+
+      // Process the results
+      const animeData = normalizeAniListAnime(data.data.Media, true)
+      
+      // Create user list lookup
+      const userListMap = new Map()
+      if (data.data.MediaListCollection?.lists) {
+        data.data.MediaListCollection.lists.forEach((list: any) => {
+          list.entries?.forEach((entry: any) => {
+            userListMap.set(entry.media.id, {
+              status: entry.status,
+              score: entry.score,
+              progress: entry.progress,
+              id: entry.id
+            })
+          })
+        })
+      }
+
+      // Add user data to main anime
+      const userEntry = userListMap.get(animeId)
+      if (userEntry) {
+        animeData.userScore = userEntry.score || undefined
+      }
+
+      // Add user scores to related anime
+      if (animeData.relatedAnime) {
+        animeData.relatedAnime = animeData.relatedAnime.map(related => ({
+          ...related,
+          userScore: userListMap.get(related.id)?.score || undefined
+        }))
+      }
+
+      return {
+        animeData,
+        userEntry: userEntry || null,
+        userListMap
+      }
+    } catch (error) {
+      console.error('AniList getAnimeWithUserDetails error:', error)
+      throw error
+    }
+  },
+
+  // Keep the old method for backward compatibility but mark it as deprecated
+  async getUserAnimeDetails(animeId: number, token: string) {
+    console.warn('⚠️ getUserAnimeDetails is deprecated, use getAnimeWithUserDetails instead')
+    try {
+      const user = await this.getCurrentUser(token)
+      
+      const query = `
+        query($userId: Int) {
+          MediaListCollection(userId: $userId, type: ANIME) {
+            lists {
+              entries {
+                id
+                status
+                score
+                progress
+                media {
+                  id
+                }
+              }
+            }
+          }
+        }
+      `
+
+      const response = await fetch(ANILIST_GRAPHQL_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          query: query,
+          variables: { userId: user.id }
+        })
+      })
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
@@ -583,9 +793,13 @@ export const anilistService = {
         throw new Error(data.errors[0]?.message || 'GraphQL error')
       }
 
-      return data.data.SaveMediaListEntry
+      // Find the specific anime entry
+      const allEntries = data.data.MediaListCollection?.lists?.flatMap((list: any) => list.entries) || []
+      const entry = allEntries.find((entry: any) => entry.media.id === animeId)
+
+      return entry || null
     } catch (error) {
-      console.error('AniList updateAnimeStatus error:', error)
+      console.error('AniList getUserAnimeDetails error:', error)
       throw error
     }
   },

@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react'
-import { animate } from 'animejs'
+import { animate, createScope, stagger, onScroll } from 'animejs'
 import { useAnimeStore } from '../../store/animeStore'
 import { AnimeCard } from '../AnimeCard/AnimeCard'
 import { SourceToggle } from '../SourceToggle'
+import { ThemeToggle } from '../ThemeToggle'
 import { SearchBar } from '../SearchBar'
 import { AuthButton } from '../AuthButton'
 
@@ -10,6 +11,7 @@ export const Dashboard = () => {
   const headerRef = useRef<HTMLElement>(null)
   const mainRef = useRef<HTMLElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
+  const scope = useRef<any>(null)
   
   const {
     currentSource,
@@ -48,47 +50,115 @@ export const Dashboard = () => {
   }, [currentSource, fetchTrendingAnime, fetchPopularAnime, fetchTopRatedAnime, fetchCurrentSeasonAnime, fetchUserScores, fetchCurrentlyWatching])
 
   useEffect(() => {
-    // Initial page load animations
-    if (headerRef.current) {
-      animate(headerRef.current, {
-        translateY: [-50, 0],
-        opacity: [0, 1],
-        duration: 800,
-        easing: 'easeOutQuart',
-        delay: 200
-      })
-    }
+    if (!headerRef.current || !mainRef.current || !titleRef.current) return
 
-    if (titleRef.current) {
-      animate(titleRef.current, {
-        scale: [0.8, 1],
+    // Create main dashboard scope
+    scope.current = createScope({ root: document.body }).add(() => {
+      // Cinematic header entrance
+      animate(headerRef.current!, {
+        translateY: [-80, 0],
         opacity: [0, 1],
-        duration: 1000,
-        easing: 'easeOutElastic(1, .8)',
-        delay: 400
+        scale: [0.95, 1],
+        backdropFilter: ['blur(0px)', 'blur(20px)'],
+        duration: 1200,
+        ease: 'outElastic(1, 0.8)',
+        delay: 100
       })
-    }
 
-    if (mainRef.current) {
-      animate(mainRef.current, {
-        translateY: [30, 0],
+      // Title with glitch effect
+      animate(titleRef.current!, {
+        scale: [0.7, 1.05, 1],
         opacity: [0, 1],
-        duration: 1000,
-        easing: 'easeOutQuart',
-        delay: 600
+        textShadow: [
+          '0 0 0px rgba(99, 102, 241, 0)',
+          '0 0 20px rgba(99, 102, 241, 0.5)',
+          '0 0 0px rgba(99, 102, 241, 0)'
+        ],
+        duration: 1500,
+        ease: 'outElastic(1, 0.6)',
+        delay: 300
       })
+
+      // Main content with depth
+      animate(mainRef.current!, {
+        translateY: [50, 0],
+        opacity: [0, 1],
+        scale: [0.98, 1],
+        rotateX: [5, 0],
+        duration: 1200,
+        ease: 'outQuart',
+        delay: 500
+      })
+
+      // Floating background elements
+      const bgElements = document.querySelectorAll('.floating-bg')
+      if (bgElements.length > 0) {
+        animate(Array.from(bgElements), {
+          translateY: [100, 0],
+          opacity: [0, 0.1],
+          scale: stagger([0.5, 1.2]),
+          rotate: stagger([-10, 10]),
+          delay: stagger(200),
+          duration: 2000,
+          ease: 'outQuart'
+        })
+      }
+    })
+
+    return () => {
+      if (scope.current) {
+        scope.current.revert()
+      }
     }
   }, [])
 
-  const LoadingGrid = () => (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-      {Array.from({ length: 10 }).map((_, i) => (
-        <div key={i} className="animate-pulse">
-          <div className="bg-gray-300 aspect-[3/4] rounded-lg"></div>
-        </div>
-      ))}
-    </div>
-  )
+  const LoadingGrid = () => {
+    const loadingRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+      if (!loadingRef.current) return
+
+      const cards = Array.from(loadingRef.current.children)
+      
+      // Organic breathing animation
+      animate(cards, {
+        scale: [1, 1.02, 1],
+        opacity: [0.3, 0.7, 0.3],
+        background: [
+          'linear-gradient(45deg, #e5e7eb, #f3f4f6)',
+          'linear-gradient(45deg, #f3f4f6, #e5e7eb)',
+          'linear-gradient(45deg, #e5e7eb, #f3f4f6)'
+        ],
+        delay: stagger(150),
+        duration: 2000,
+        loop: true,
+        ease: 'inOutSine'
+      })
+    }, [])
+
+    return (
+      <div ref={loadingRef} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        {Array.from({ length: 10 }).map((_, i) => (
+          <div 
+            key={i} 
+            className="bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 aspect-[3/4] rounded-xl shadow-lg"
+            style={{ opacity: 0.3 }}
+          >
+            <div className="p-4 h-full flex flex-col justify-between">
+              <div className="space-y-2">
+                <div className="h-3 bg-white/30 rounded-full"></div>
+                <div className="h-2 bg-white/20 rounded-full w-3/4"></div>
+              </div>
+              <div className="space-y-1">
+                <div className="h-2 bg-white/20 rounded-full w-1/2"></div>
+                <div className="h-2 bg-white/20 rounded-full w-1/3"></div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    )
+  }
 
   const AnimeSection = ({
     title,
@@ -98,34 +168,85 @@ export const Dashboard = () => {
     title: string
     anime: any[]
     isLoading: boolean
-  }) => (
-    <section className="mb-8">
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">{title}</h2>
-      {isLoading ? (
-        <LoadingGrid />
-      ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {anime.map((item) => (
-            <AnimeCard key={`${item.source}-${item.id}`} anime={item} />
-          ))}
-        </div>
-      )}
-    </section>
-  )
+  }) => {
+    const sectionRef = useRef<HTMLElement>(null)
+    const gridRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+      if (!sectionRef.current || isLoading || anime.length === 0) return
+
+      // Create scroll-triggered section animation
+      const sectionScope = createScope({ root: sectionRef.current }).add(() => {
+        // Title animation with typewriter effect
+        const titleElement = sectionRef.current?.querySelector('h2')
+        if (titleElement) {
+          animate(titleElement, {
+            opacity: [0, 1],
+            translateY: [30, 0],
+            scale: [0.9, 1],
+            duration: 800,
+            ease: 'outElastic(1, 0.8)',
+            autoplay: onScroll({
+              onEnter: () => console.log(`${title} section entered`)
+            })
+          })
+        }
+
+        // Grid stagger animation with wave effect
+        if (gridRef.current) {
+          const cards = gridRef.current.children
+          animate(Array.from(cards), {
+            opacity: [0, 1],
+            translateY: [60, 0],
+            scale: [0.8, 1],
+            rotateX: [20, 0],
+            delay: stagger(120, { from: 'center', grid: [5, 2] }),
+            duration: 1000,
+            ease: 'outElastic(1, 0.6)',
+            autoplay: onScroll({
+              onEnter: () => console.log(`${title} cards animated`)
+            })
+          })
+        }
+      })
+
+      return () => sectionScope.revert()
+    }, [title, anime.length, isLoading])
+
+    return (
+      <section ref={sectionRef} className="mb-12">
+        <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6 transition-theme tracking-tight">
+          {title}
+        </h2>
+        {isLoading ? (
+          <LoadingGrid />
+        ) : (
+          <div 
+            ref={gridRef}
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
+          >
+            {anime.map((item) => (
+              <AnimeCard key={`${item.source}-${item.id}`} anime={item} />
+            ))}
+          </div>
+        )}
+      </section>
+    )
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50/80 backdrop-blur-sm">
+    <div className="min-h-screen bg-gray-50/80 dark:bg-gray-900/80 backdrop-blur-sm transition-theme">
       {/* Header */}
       <header 
         ref={headerRef} 
-        className="bg-white/90 backdrop-blur-md shadow-sm border-b opacity-0"
+        className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md shadow-sm border-b border-gray-200 dark:border-gray-700 opacity-0 transition-theme"
         style={{ transform: 'translateY(-50px)' }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <h1 
               ref={titleRef}
-              className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent opacity-0"
+              className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent opacity-0 transition-theme"
               style={{ transform: 'scale(0.8)' }}
             >
               AnimeTrackr
@@ -133,6 +254,7 @@ export const Dashboard = () => {
             <div className="flex items-center space-x-4">
               <SearchBar />
               <SourceToggle />
+              <ThemeToggle />
               <AuthButton source={currentSource} />
             </div>
           </div>

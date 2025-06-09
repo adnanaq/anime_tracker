@@ -1,0 +1,1 @@
+export { DraggableScoreSlider } from './DraggableScoreSlider'

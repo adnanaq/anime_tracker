@@ -21,6 +21,9 @@ A modern, dual-source anime tracking and recommendation platform powered by **My
 - Performance optimizations (reduced API calls from 20 to 6 per section)
 - Fixed CORS issues and proxy server authentication
 - Clean console output and production-ready build
+- Smart hover system with intelligent animation delays
+- Enhanced hover cards with changeable status management
+- Proper z-index management for overlay interactions
 
 🔜 **Next Phase Focus:**
 - Vector-based recommendations with FAISS
@@ -54,6 +57,9 @@ A modern, dual-source anime tracking and recommendation platform powered by **My
   - ✅ Three.js particle background with floating geometric shapes
   - ✅ Custom loading spinners with rotating elements
   - ✅ Detailed page transitions with element choreography
+  - ✅ Smart hover delays to prevent animation spam during fast mouse movement
+  - ✅ Enhanced hover cards with actionable status management buttons
+  - ✅ Proper z-index layering for seamless overlay interactions
 - 🔜 **TODO:** Recommendation system using **vector indexing**, not genre/tags
 - 🔜 **TODO:** Cross-platform sync (MAL ↔ AniList)
 - 🔜 **TODO:** Social compare: view shared anime & overlap stats

@@ -51,7 +51,10 @@ malApi.interceptors.response.use(
   }
 );
 
-export const normalizeMALAnime = (anime: MALAnime, includeRelated: boolean = false): AnimeBase => {
+export const normalizeMALAnime = (
+  anime: MALAnime,
+  includeRelated: boolean = false
+): AnimeBase => {
   const userScore = (anime as any).my_list_status?.score || undefined;
 
   const normalized: AnimeBase = {
@@ -75,9 +78,9 @@ export const normalizeMALAnime = (anime: MALAnime, includeRelated: boolean = fal
   // Process related anime if requested and available
   if (includeRelated && anime.related_anime) {
     normalized.relatedAnime = anime.related_anime
-      .filter(related => related.node && related.node.id !== anime.id) // Avoid self-references
+      .filter((related) => related.node && related.node.id !== anime.id) // Avoid self-references
       .slice(0, 10) // Limit to 10 related anime to avoid too much data
-      .map(related => normalizeMALAnime(related.node, false)); // Don't include nested related anime
+      .map((related) => normalizeMALAnime(related.node, false)); // Don't include nested related anime
   }
 
   return normalized;
@@ -168,12 +171,16 @@ export const malService = {
         const detailedRelatedAnime = await Promise.all(
           animeData.relatedAnime.slice(0, 5).map(async (relatedAnime) => {
             try {
-              const detailedResponse = await malApi.get(`/anime/${relatedAnime.id}`, {
-                headers,
-                params: {
-                  fields: "id,title,main_picture,synopsis,mean,num_episodes,status,genres,start_date,media_type",
-                },
-              });
+              const detailedResponse = await malApi.get(
+                `/anime/${relatedAnime.id}`,
+                {
+                  headers,
+                  params: {
+                    fields:
+                      "id,title,main_picture,synopsis,mean,num_episodes,status,genres,start_date,media_type",
+                  },
+                }
+              );
               return normalizeMALAnime(detailedResponse.data, false);
             } catch (error) {
               // If we can't fetch details, return the basic info
@@ -255,7 +262,8 @@ export const malService = {
         },
         params: {
           status: "watching",
-          fields: "id,title,main_picture,synopsis,mean,num_episodes,status,genres,start_date,media_type,my_list_status",
+          fields:
+            "id,title,main_picture,synopsis,mean,num_episodes,status,genres,start_date,media_type,my_list_status",
           limit: 50,
         },
       });
@@ -280,15 +288,30 @@ export const malService = {
     }
   },
 
-  async updateAnimeStatus(animeId: number, accessToken: string, statusData: {
-    status?: 'watching' | 'completed' | 'on_hold' | 'dropped' | 'plan_to_watch';
-    score?: number;
-    num_watched_episodes?: number;
-    start_date?: string;
-    finish_date?: string;
-    comments?: string;
-  }) {
+  async updateAnimeStatus(
+    animeId: number,
+    accessToken: string,
+    statusData: {
+      status?:
+        | "watching"
+        | "completed"
+        | "on_hold"
+        | "dropped"
+        | "plan_to_watch";
+      score?: number;
+      num_watched_episodes?: number;
+      start_date?: string;
+      finish_date?: string;
+      comments?: string;
+    }
+  ) {
     try {
+      console.log("🎬 MAL updateAnimeStatus:", {
+        animeId,
+        statusData,
+        baseURL: MAL_BASE_URL,
+      });
+
       // Convert to form data
       const formData = new URLSearchParams();
       Object.entries(statusData).forEach(([key, value]) => {
@@ -297,17 +320,32 @@ export const malService = {
         }
       });
 
-      const response = await malApi.put(`/anime/${animeId}/my_list_status`, formData.toString(), {
-        headers: {
-          ...getHeaders(),
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      });
+      console.log("🎬 Form data:", formData.toString());
+      const fullUrl = `${MAL_BASE_URL}/anime/${animeId}/my_list_status`;
+      console.log("🎬 Full URL:", fullUrl);
+
+      const response = await malApi.put(
+        `/anime/${animeId}/my_list_status`,
+        formData.toString(),
+        {
+          headers: {
+            ...getHeaders(),
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
 
       return response.data;
     } catch (error) {
       console.error("MAL updateAnimeStatus error:", error);
+      console.error("Error details:", {
+        status: (error as any).response?.status,
+        statusText: (error as any).response?.statusText,
+        data: (error as any).response?.data,
+        url: (error as any).config?.url,
+        method: (error as any).config?.method,
+      });
       throw error;
     }
   },
@@ -324,6 +362,25 @@ export const malService = {
       return response.data;
     } catch (error) {
       console.error("MAL deleteAnimeFromList error:", error);
+      throw error;
+    }
+  },
+
+  async getUserAnimeDetails(animeId: number, accessToken: string) {
+    try {
+      const response = await malApi.get(`/anime/${animeId}`, {
+        headers: {
+          ...getHeaders(),
+          Authorization: `Bearer ${accessToken}`,
+        },
+        params: {
+          fields: "my_list_status",
+        },
+      });
+
+      return response.data.my_list_status;
+    } catch (error) {
+      console.error("MAL getUserAnimeDetails error:", error);
       throw error;
     }
   },

@@ -5,16 +5,45 @@ import { AnimeBase } from '../types/anime'
 import { animeService } from '../services/animeService'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { AnimeCard } from '../components/AnimeCard/AnimeCard'
-import { AnimeStatus } from '../components/AnimeStatus'
 import { getAuthService } from '../services/auth'
 import { malService } from '../services/malApi'
 import { anilistService } from '../services/anilistApiFetch'
+
+const MAL_STATUS_OPTIONS = [
+  { value: 'watching', label: 'Watching' },
+  { value: 'completed', label: 'Completed' },
+  { value: 'on_hold', label: 'On Hold' },
+  { value: 'dropped', label: 'Dropped' },
+  { value: 'plan_to_watch', label: 'Plan to Watch' },
+]
+
+const ANILIST_STATUS_OPTIONS = [
+  { value: 'CURRENT', label: 'Watching' },
+  { value: 'COMPLETED', label: 'Completed' },
+  { value: 'PAUSED', label: 'On Hold' },
+  { value: 'DROPPED', label: 'Dropped' },
+  { value: 'PLANNING', label: 'Plan to Watch' },
+  { value: 'REPEATING', label: 'Rewatching' },
+]
+
+const getStatusOptions = (source: 'mal' | 'anilist') => {
+  return source === 'mal' ? MAL_STATUS_OPTIONS : ANILIST_STATUS_OPTIONS
+}
 
 export const AnimeDetail = () => {
   const { source, id } = useParams<{ source: string; id: string }>()
   const [animeData, setAnimeData] = useState<AnimeBase | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [userStatus, setUserStatus] = useState<string | null>(null)
+  const [userScore, setUserScore] = useState<number>(0)
+  const [userEpisodes, setUserEpisodes] = useState<number>(0)
+  const [tempEpisodes, setTempEpisodes] = useState<number>(0)
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false)
+  const [isUpdatingScore, setIsUpdatingScore] = useState(false)
+  const [isUpdatingEpisodes, setIsUpdatingEpisodes] = useState(false)
+  const scoreTimeoutRef = useRef<number | null>(null)
+  const episodesTimeoutRef = useRef<number | null>(null)
   
   const headerRef = useRef<HTMLElement>(null)
   const imageRef = useRef<HTMLDivElement>(null)
@@ -52,17 +81,49 @@ export const AnimeDetail = () => {
               const token = tokenObj.access_token
               if (source === 'mal') {
                 // For MAL, fetch detailed anime info which includes my_list_status
-                const detailResponse = await malService.getAnimeDetails(parseInt(id))
+                const detailResponse: any = await malService.getAnimeDetails(parseInt(id))
                 if (detailResponse.userScore) {
                   animeData.userScore = detailResponse.userScore
                 }
-                // Note: MAL my_list_status includes status info that we could extract here
+                // For MAL, we need to make a separate API call to get user status
+                try {
+                  const userAnimeResponse = await malService.getUserAnimeDetails(parseInt(id), token)
+                  if (userAnimeResponse) {
+                    setUserStatus(userAnimeResponse.status || null)
+                    const score = userAnimeResponse.score || 0
+                    const episodes = userAnimeResponse.num_episodes_watched || 0
+                    setUserScore(score)
+                    setUserEpisodes(episodes)
+                    setTempEpisodes(episodes)
+                  }
+                } catch (error) {
+                  console.log('User has not added this anime to their list yet')
+                }
               } else if (source === 'anilist') {
-                const user = await anilistService.getCurrentUser(token)
-                const userScores = await anilistService.getUserAnimeList(user.id)
-                const userScore = userScores.get(parseInt(id))
-                animeData.userScore = userScore
-                // Note: AniList user list also includes status info we could extract
+                // For AniList, use optimized single call to get everything
+                try {
+                  const relatedAnimeIds = animeData.relatedAnime?.map(anime => anime.id) || []
+                  const result = await anilistService.getAnimeWithUserDetails(parseInt(id), token, relatedAnimeIds)
+                  
+                  if (result.userEntry) {
+                    setUserStatus(result.userEntry.status || null)
+                    const score = result.userEntry.score || 0
+                    const episodes = result.userEntry.progress || 0
+                    setUserScore(score)
+                    setUserEpisodes(episodes)
+                    setTempEpisodes(episodes)
+                  }
+                  
+                  // Update anime data with optimized result
+                  animeData.userScore = result.userEntry?.score || undefined
+                  
+                  // Update related anime with user scores (already included in optimized call)
+                  if (result.animeData.relatedAnime) {
+                    animeData.relatedAnime = result.animeData.relatedAnime
+                  }
+                } catch (error) {
+                  console.log('User has not added this anime to their AniList yet')
+                }
               }
             } catch (error) {
               console.error('🎬 AnimeDetail: Failed to fetch user data:', error)
@@ -70,28 +131,19 @@ export const AnimeDetail = () => {
           }
         }
         
-        // Fetch user scores for related anime if available
-        if (isAuth && authServiceInstance && animeData.relatedAnime && animeData.relatedAnime.length > 0) {
+        // Fetch user scores for related anime if available (MAL only, AniList handled above)
+        if (source === 'mal' && isAuth && authServiceInstance && animeData.relatedAnime && animeData.relatedAnime.length > 0) {
           const relatedTokenObj = authServiceInstance.getToken()
           if (relatedTokenObj) {
             try {
               const token = relatedTokenObj.access_token
               const relatedAnimeIds = animeData.relatedAnime.map(anime => anime.id)
               
-              if (source === 'mal') {
-                const userScores = await malService.getUserScoresForAnime(relatedAnimeIds, token)
-                animeData.relatedAnime = animeData.relatedAnime.map(anime => ({
-                  ...anime,
-                  userScore: userScores.get(anime.id)
-                }))
-              } else if (source === 'anilist') {
-                const user = await anilistService.getCurrentUser(token)
-                const userScores = await anilistService.getUserAnimeList(user.id)
-                animeData.relatedAnime = animeData.relatedAnime.map(anime => ({
-                  ...anime,
-                  userScore: userScores.get(anime.id)
-                }))
-              }
+              const userScores = await malService.getUserScoresForAnime(relatedAnimeIds, token)
+              animeData.relatedAnime = animeData.relatedAnime.map(anime => ({
+                ...anime,
+                userScore: userScores.get(anime.id)
+              }))
             } catch (error) {
               console.error('🎬 AnimeDetail: Failed to fetch user scores for related anime:', error)
             }
@@ -115,6 +167,163 @@ export const AnimeDetail = () => {
 
     fetchAnime()
   }, [source, id])
+
+  const handleStatusChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const newStatus = event.target.value
+    if (!source || !id || !newStatus) return
+
+    const authServiceInstance = getAuthService(source as 'mal' | 'anilist')
+    if (!authServiceInstance?.isAuthenticated()) return
+
+    setIsUpdatingStatus(true)
+    try {
+      const token = authServiceInstance.getToken()?.access_token
+      if (!token) throw new Error('No auth token')
+
+      if (source === 'mal') {
+        await malService.updateAnimeStatus(parseInt(id), token, { status: newStatus as any })
+      } else {
+        await anilistService.updateAnimeStatus(parseInt(id), token, { status: newStatus as any })
+      }
+
+      setUserStatus(newStatus)
+      console.log(`Successfully updated anime status to: ${newStatus}`)
+    } catch (error) {
+      console.error('Failed to update anime status:', error)
+      alert('Failed to update anime status. Please try again.')
+      // Reset the dropdown to previous value
+      event.target.value = userStatus || ''
+    } finally {
+      setIsUpdatingStatus(false)
+    }
+  }
+
+  const handleScoreUpdate = async (newScore: number) => {
+    if (!source || !id) return
+
+    const authServiceInstance = getAuthService(source as 'mal' | 'anilist')
+    if (!authServiceInstance?.isAuthenticated()) return
+
+    setIsUpdatingScore(true)
+    try {
+      const token = authServiceInstance.getToken()?.access_token
+      if (!token) throw new Error('No auth token')
+
+      if (source === 'mal') {
+        await malService.updateAnimeStatus(parseInt(id), token, { score: newScore })
+      } else {
+        await anilistService.updateAnimeStatus(parseInt(id), token, { score: newScore })
+      }
+
+      setUserScore(newScore)
+      console.log(`Successfully updated anime score to: ${newScore}`)
+    } catch (error) {
+      console.error('Failed to update anime score:', error)
+      alert('Failed to update anime score. Please try again.')
+      // Reset score on error handled by component
+    } finally {
+      setIsUpdatingScore(false)
+    }
+  }
+
+  const handleEpisodesUpdate = async (newEpisodes: number) => {
+    if (!source || !id) return
+
+    const authServiceInstance = getAuthService(source as 'mal' | 'anilist')
+    if (!authServiceInstance?.isAuthenticated()) return
+
+    setIsUpdatingEpisodes(true)
+    try {
+      const token = authServiceInstance.getToken()?.access_token
+      if (!token) throw new Error('No auth token')
+
+      // Determine if status should auto-change based on episode progress
+      let newStatus = userStatus
+      const maxEpisodes = animeData?.episodes
+      
+      if (maxEpisodes && newEpisodes > 0) {
+        if (newEpisodes >= maxEpisodes) {
+          // Watched all episodes = Completed
+          newStatus = source === 'mal' ? 'completed' : 'COMPLETED'
+        } else if (newEpisodes > 0 && (userStatus === (source === 'mal' ? 'completed' : 'COMPLETED') || !userStatus)) {
+          // Watching some episodes (and was completed or not in list) = Watching
+          newStatus = source === 'mal' ? 'watching' : 'CURRENT'
+        }
+      }
+
+      // Update both episodes and status if needed
+      const updateData: any = source === 'mal' 
+        ? { num_watched_episodes: newEpisodes }
+        : { progress: newEpisodes }
+      
+      if (newStatus !== userStatus) {
+        updateData.status = newStatus
+      }
+
+      if (source === 'mal') {
+        await malService.updateAnimeStatus(parseInt(id), token, updateData)
+      } else {
+        await anilistService.updateAnimeStatus(parseInt(id), token, updateData)
+      }
+
+      setUserEpisodes(newEpisodes)
+      
+      // Update status if it changed
+      if (newStatus !== userStatus) {
+        setUserStatus(newStatus)
+        console.log(`Auto-updated status to: ${newStatus}`)
+      }
+      
+      console.log(`Successfully updated episodes watched to: ${newEpisodes}`)
+    } catch (error) {
+      console.error('Failed to update episodes watched:', error)
+      alert('Failed to update episodes watched. Please try again.')
+      // Reset temp value to actual value on error
+      setTempEpisodes(userEpisodes)
+    } finally {
+      setIsUpdatingEpisodes(false)
+    }
+  }
+
+  const debouncedScoreUpdate = (newScore: number) => {
+(newScore)
+    
+    // Clear existing timeout
+    if (scoreTimeoutRef.current) {
+      clearTimeout(scoreTimeoutRef.current)
+    }
+    
+    // Set new timeout
+    scoreTimeoutRef.current = window.setTimeout(() => {
+      if (newScore !== userScore) {
+        handleScoreUpdate(newScore)
+      }
+    }, 1000) // 1 second delay
+  }
+
+  const debouncedEpisodesUpdate = (newEpisodes: number) => {
+    setTempEpisodes(newEpisodes)
+    
+    // Clear existing timeout
+    if (episodesTimeoutRef.current) {
+      clearTimeout(episodesTimeoutRef.current)
+    }
+    
+    // Set new timeout
+    episodesTimeoutRef.current = window.setTimeout(() => {
+      if (newEpisodes !== userEpisodes) {
+        handleEpisodesUpdate(newEpisodes)
+      }
+    }, 1000) // 1 second delay
+  }
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (scoreTimeoutRef.current) clearTimeout(scoreTimeoutRef.current)
+      if (episodesTimeoutRef.current) clearTimeout(episodesTimeoutRef.current)
+    }
+  }, [])
 
   // Trigger animations only after data is loaded and component is ready
   useEffect(() => {
@@ -355,6 +564,108 @@ export const AnimeDetail = () => {
                       <span className="capitalize">{animeData.format.toLowerCase()}</span>
                     </div>
                   )}
+                  
+                  {/* User Status Section */}
+                  {getAuthService(source as 'mal' | 'anilist')?.isAuthenticated() && (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
+                      {/* Status Dropdown */}
+                      <div className="flex flex-col">
+                        <label className="text-sm font-medium text-gray-700 mb-1">My Status</label>
+                        <div className="flex items-center space-x-2">
+                          <select
+                            value={userStatus || ''}
+                            onChange={handleStatusChange}
+                            disabled={isUpdatingStatus}
+                            className="flex-1 bg-white border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="">Add to List</option>
+                            {getStatusOptions(source as 'mal' | 'anilist').map((option) => (
+                              <option key={option.value} value={option.value}>
+                                {option.label}
+                              </option>
+                            ))}
+                          </select>
+                          {isUpdatingStatus && (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Score Input */}
+                      <div className="flex flex-col">
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">My Score (1-10)</label>
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="number"
+                            min="0"
+                            max="10"
+                            value={userScore || ''}
+                            onChange={(e) => {
+                              const newScore = parseInt(e.target.value) || 0
+                              if (newScore >= 0 && newScore <= 10) {
+                                debouncedScoreUpdate(newScore)
+                              }
+                            }}
+                            disabled={isUpdatingScore}
+                            className="flex-1 bg-white border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="0"
+                          />
+                          {isUpdatingScore && (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+                          )}
+                        </div>
+                        {userScore > 0 && (
+                          <div className="mt-1">
+                            <span className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded text-xs font-semibold">
+                              {userScore}/10
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Episodes Input */}
+                      <div className="flex flex-col">
+                        <label className="text-sm font-medium text-gray-700 mb-1">
+                          Episodes Watched {animeData.episodes && `(max: ${animeData.episodes})`}
+                        </label>
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="number"
+                            min="0"
+                            max={animeData.episodes || undefined}
+                            value={tempEpisodes || ''}
+                            onChange={(e) => {
+                              const newEpisodes = parseInt(e.target.value) || 0
+                              const maxEpisodes = animeData.episodes || Infinity
+                              if (newEpisodes >= 0 && newEpisodes <= maxEpisodes) {
+                                debouncedEpisodesUpdate(newEpisodes)
+                              }
+                            }}
+                            disabled={isUpdatingEpisodes}
+                            className={`flex-1 bg-white border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                              tempEpisodes !== userEpisodes ? 'border-yellow-400 bg-yellow-50' : ''
+                            }`}
+                            placeholder="0"
+                          />
+                          {isUpdatingEpisodes && (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+                          )}
+                          {tempEpisodes !== userEpisodes && !isUpdatingEpisodes && (
+                            <div className="text-yellow-600 text-xs">
+                              {animeData.episodes && tempEpisodes >= animeData.episodes ? 'Completing...' : 'Saving...'}
+                            </div>
+                          )}
+                        </div>
+                        {userEpisodes > 0 && (
+                          <div className="mt-1">
+                            <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-semibold">
+                              {userEpisodes}{animeData.episodes ? `/${animeData.episodes}` : ''} episodes {tempEpisodes !== userEpisodes && '(pending)'}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Genres */}
@@ -392,19 +703,6 @@ export const AnimeDetail = () => {
           </div>
         </div>
 
-        {/* Anime Status Component */}
-        <AnimeStatus 
-          anime={animeData} 
-          onStatusUpdate={(_newStatus, newScore) => {
-            // Update the local state when status changes
-            if (animeData) {
-              setAnimeData({
-                ...animeData,
-                userScore: newScore || animeData.userScore
-              })
-            }
-          }} 
-        />
 
         {/* Related anime section */}
         {animeData.relatedAnime && animeData.relatedAnime.length > 0 && (

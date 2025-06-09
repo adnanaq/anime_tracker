@@ -106,9 +106,88 @@ app.get('/mal/*', async (req, res) => {
   }
 })
 
+// Proxy middleware for MAL API PUT requests (for updating anime status)
+app.put('/mal/*', async (req, res) => {
+  try {
+    const malPath = req.path.replace('/mal', '')
+    const malUrl = `${MAL_BASE_URL}${malPath}`
+    
+    console.log('🎬 MAL PUT Proxy:', { malUrl, body: req.body })
+    
+    // Forward authorization header if present
+    const headers = {
+      'X-MAL-CLIENT-ID': CLIENT_ID,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    }
+    
+    // Forward Authorization header from client to MAL API
+    if (req.headers.authorization) {
+      headers.Authorization = req.headers.authorization
+    }
+    
+    const response = await axios.put(malUrl, req.body, {
+      headers,
+    })
+    
+    res.json(response.data)
+  } catch (error) {
+    console.error('MAL PUT Proxy Error:', error.response?.status, error.response?.statusText)
+    if (error.response?.data) {
+      console.error('MAL PUT Error Details:', error.response.data)
+    }
+    res.status(error.response?.status || 500).json({
+      error: 'MAL API Error',
+      message: error.message,
+      status: error.response?.status,
+    })
+  }
+})
+
+// Proxy middleware for MAL API DELETE requests (for removing anime from list)
+app.delete('/mal/*', async (req, res) => {
+  try {
+    const malPath = req.path.replace('/mal', '')
+    const malUrl = `${MAL_BASE_URL}${malPath}`
+    
+    console.log('🎬 MAL DELETE Proxy:', { malUrl })
+    
+    // Forward authorization header if present
+    const headers = {
+      'X-MAL-CLIENT-ID': CLIENT_ID,
+    }
+    
+    // Forward Authorization header from client to MAL API
+    if (req.headers.authorization) {
+      headers.Authorization = req.headers.authorization
+    }
+    
+    const response = await axios.delete(malUrl, {
+      headers,
+    })
+    
+    res.json(response.data)
+  } catch (error) {
+    console.error('MAL DELETE Proxy Error:', error.response?.status, error.response?.statusText)
+    if (error.response?.data) {
+      console.error('MAL DELETE Error Details:', error.response.data)
+    }
+    res.status(error.response?.status || 500).json({
+      error: 'MAL API Error',
+      message: error.message,
+      status: error.response?.status,
+    })
+  }
+})
+
 // Proxy middleware for AniList GraphQL API
 app.post('/anilist/graphql', async (req, res) => {
   try {
+    console.log('🎬 AniList GraphQL Proxy Request:', {
+      query: req.body.query?.substring(0, 200) + '...',
+      variables: req.body.variables,
+      hasAuth: !!req.headers.authorization
+    })
+    
     const headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
@@ -123,6 +202,7 @@ app.post('/anilist/graphql', async (req, res) => {
       headers,
     })
     
+    console.log('🎬 AniList GraphQL Success Response:', response.status)
     res.json(response.data)
   } catch (error) {
     console.error('AniList Proxy Error:', error.response?.status, error.response?.statusText)

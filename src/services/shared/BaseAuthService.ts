@@ -1,4 +1,4 @@
-import { AuthToken, AuthConfig, AuthService } from './types'
+import { AuthToken, AuthConfig, AuthService } from './authTypes'
 
 export abstract class BaseAuthService implements AuthService {
   protected config: AuthConfig

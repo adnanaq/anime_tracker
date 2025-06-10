@@ -1,0 +1,21 @@
+Imagine a set of elegant cards laid out in a grid — each one represents a piece of content, like an anime series, with a title, image, or brief info.
+
+When you hover over a card, it gently grows in size just a bit, signaling it's interactive. It feels alive — like it wants you to explore more.
+
+Now, when you click on a card, it performs a sleek animation:
+
+The card seems to flip open vertically, as if unfolding to reveal hidden content tucked underneath.
+
+Additional information—like episode lists, synopsis, or tracking controls—expands upward from inside the card.
+
+At the same time, all the other cards shrink slightly and fade back, like they’re politely stepping aside to focus attention on the active one.
+
+This creates a beautiful, immersive interaction where:
+
+Only one card is fully open at a time.
+
+The layout doesn't shift or break — other cards remain in place, just subtly scaled down.
+
+The user feels anchored in the context, never losing sight of where they are.
+
+Clicking the card again (or clicking outside it) closes the detail view, smoothly restoring all cards to their original, evenly spaced layout.

@@ -2,7 +2,7 @@
 
 A modern, dual-source anime tracking and recommendation platform powered by **MyAnimeList** and **AniList** APIs, supporting rich interactions, offline access, and vector-based recommendation — built to scale into a streaming-first modular app.
 
-## 🎯 **CURRENT STATUS: Phase 1 MVP Complete!**
+## 🎯 **CURRENT STATUS: Phase 1.5 - Jikan Integration**
 
 ✅ **What's Been Completed:**
 - Full dual API integration (MyAnimeList + AniList)
@@ -24,6 +24,17 @@ A modern, dual-source anime tracking and recommendation platform powered by **My
 - Smart hover system with intelligent animation delays
 - Enhanced hover cards with changeable status management
 - Proper z-index management for overlay interactions
+- Hero section with trending anime carousel and auto-scrolling
+- Fixed MAL background field issue (was text, not image)
+
+🚀 **Currently Working On:**
+- **Jikan API Integration**: Adding third data source with richer metadata
+- Enhanced hero images using Jikan's pictures endpoint
+- Weekly anime schedule/calendar feature
+- Random anime discovery
+- Advanced search with genre filters and score ranges
+- Anime recommendations system
+- Reviews and community statistics
 
 🔜 **Next Phase Focus:**
 - Vector-based recommendations with FAISS

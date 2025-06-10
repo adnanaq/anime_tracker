@@ -1,5 +1,5 @@
-import { BaseAuthService } from '../BaseAuthService'
-import { AuthToken, AuthConfig } from '../types'
+import { BaseAuthService } from '../shared/BaseAuthService'
+import { AuthToken, AuthConfig } from '../shared/authTypes'
 
 const MAL_CONFIG: AuthConfig = {
   clientId: import.meta.env.VITE_MAL_CLIENT_ID,

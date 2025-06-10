@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { getAuthService } from '../services/auth'
+import { getAuthService } from '../services/shared'
 import { AnimeSource } from '../types/anime'
 
 interface AuthButtonProps {

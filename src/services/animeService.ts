@@ -1,6 +1,6 @@
 import { AnimeBase, AnimeSource } from '../types/anime'
-import { malService } from './malApi'
-import { anilistService } from './anilistApiFetch'
+import { malService } from './mal'
+import { anilistService } from './anilist'
 
 export class AnimeService {
   private currentSource: AnimeSource = 'mal'
@@ -13,11 +13,11 @@ export class AnimeService {
     return this.currentSource
   }
 
-  async getTrendingAnime(): Promise<AnimeBase[]> {
+  async getTrendingAnime(accessToken?: string): Promise<AnimeBase[]> {
     if (this.currentSource === 'mal') {
       try {
         // MAL doesn't have a direct trending endpoint, use ranking instead
-        return await malService.getRankingAnime('all')
+        return await malService.getRankingAnime('all', accessToken)
       } catch (error) {
         // Fall back to AniList data and keep AniList source for proper detail page routing
         const anilistData = await anilistService.getTrendingAnime()
@@ -28,10 +28,10 @@ export class AnimeService {
     }
   }
 
-  async getPopularAnime(): Promise<AnimeBase[]> {
+  async getPopularAnime(accessToken?: string): Promise<AnimeBase[]> {
     if (this.currentSource === 'mal') {
       try {
-        return await malService.getRankingAnime('bypopularity')
+        return await malService.getRankingAnime('bypopularity', accessToken)
       } catch (error) {
         const anilistData = await anilistService.getPopularAnime()
         return anilistData // Keep original AniList source
@@ -41,10 +41,10 @@ export class AnimeService {
     }
   }
 
-  async getTopRatedAnime(): Promise<AnimeBase[]> {
+  async getTopRatedAnime(accessToken?: string): Promise<AnimeBase[]> {
     if (this.currentSource === 'mal') {
       try {
-        return await malService.getRankingAnime('all')
+        return await malService.getRankingAnime('all', accessToken)
       } catch (error) {
         const anilistData = await anilistService.getTopRatedAnime()
         return anilistData // Keep original AniList source
@@ -54,7 +54,7 @@ export class AnimeService {
     }
   }
 
-  async getCurrentSeasonAnime(): Promise<AnimeBase[]> {
+  async getCurrentSeasonAnime(accessToken?: string): Promise<AnimeBase[]> {
     if (this.currentSource === 'mal') {
       try {
         const currentDate = new Date()
@@ -66,7 +66,7 @@ export class AnimeService {
         else if (month >= 7 && month <= 9) season = 'summer'
         else if (month >= 10 && month <= 12) season = 'fall'
         
-        return await malService.getSeasonalAnime(season, year)
+        return await malService.getSeasonalAnime(season, year, accessToken)
       } catch (error) {
         const anilistData = await anilistService.getCurrentSeasonAnime()
         return anilistData // Keep original AniList source
@@ -76,10 +76,10 @@ export class AnimeService {
     }
   }
 
-  async searchAnime(query: string): Promise<AnimeBase[]> {
+  async searchAnime(query: string, accessToken?: string): Promise<AnimeBase[]> {
     if (this.currentSource === 'mal') {
       try {
-        return await malService.searchAnime(query)
+        return await malService.searchAnime(query, accessToken)
       } catch (error) {
         const anilistData = await anilistService.searchAnime(query)
         return anilistData // Keep original AniList source

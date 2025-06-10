@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
-import { animate, createScope, createSpring } from 'animejs'
+import { useState } from 'react'
 
 interface DraggableScoreSliderProps {
   value: number
@@ -14,46 +13,8 @@ export const DraggableScoreSlider = ({
   disabled = false, 
   isUpdating = false 
 }: DraggableScoreSliderProps) => {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const sliderRef = useRef<HTMLInputElement>(null)
-  const displayRef = useRef<HTMLDivElement>(null)
-  const scope = useRef<any>(null)
   const [tempValue, setTempValue] = useState(value)
   const [isDragging, setIsDragging] = useState(false)
-
-  useEffect(() => {
-    if (!containerRef.current || !displayRef.current) return
-
-    // Create scoped animations
-    scope.current = createScope({ root: containerRef.current }).add(self => {
-      // Method to update display with smooth transitions
-      self.add('updateDisplay', (newValue: number) => {
-        // Animate the score display
-        animate(displayRef.current!, {
-          scale: [1, 1.1, 1],
-          color: getScoreColor(newValue),
-          textShadow: newValue > 0 ? '0 0 10px rgba(99, 102, 241, 0.3)' : 'none',
-          duration: 300,
-          ease: 'outElastic(1, 0.8)'
-        })
-      })
-
-      // Success feedback
-      self.add('successFeedback', () => {
-        animate(containerRef.current!, {
-          scale: [1, 1.02, 1],
-          duration: 400,
-          ease: 'outElastic(1, 0.8)'
-        })
-      })
-    })
-
-    return () => {
-      if (scope.current) {
-        scope.current.revert()
-      }
-    }
-  }, [])
 
   const getScoreColor = (score: number) => {
     if (score === 0) return '#6b7280'
@@ -77,10 +38,6 @@ export const DraggableScoreSlider = ({
     const newValue = parseInt(e.target.value)
     setTempValue(newValue)
     setIsDragging(true)
-    
-    if (scope.current?.methods.updateDisplay) {
-      scope.current.methods.updateDisplay(newValue)
-    }
   }
 
   const handleSliderMouseUp = () => {
@@ -88,33 +45,26 @@ export const DraggableScoreSlider = ({
     
     if (tempValue !== value) {
       onChange(tempValue)
-      
-      if (scope.current?.methods.successFeedback) {
-        scope.current.methods.successFeedback()
-      }
     }
   }
 
   // Update temp value when external value changes
-  useEffect(() => {
-    if (!isDragging) {
-      setTempValue(value)
-    }
-  }, [value, isDragging])
+  if (!isDragging && value !== tempValue) {
+    setTempValue(value)
+  }
 
   const currentValue = isDragging ? tempValue : value
   const scoreColor = getScoreColor(currentValue)
 
   return (
-    <div ref={containerRef} className="space-y-4">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
           My Score
         </label>
         <div 
-          ref={displayRef}
-          className="flex items-center space-x-2"
+          className="flex items-center space-x-2 transition-all duration-300 hover:scale-110"
           style={{ color: scoreColor }}
         >
           <span className="text-2xl font-bold">
@@ -127,7 +77,6 @@ export const DraggableScoreSlider = ({
       {/* Modern Slider */}
       <div className="relative">
         <input
-          ref={sliderRef}
           type="range"
           min="0"
           max="10"
@@ -143,7 +92,7 @@ export const DraggableScoreSlider = ({
         />
         
         {/* Custom slider styling */}
-        <style jsx>{`
+        <style>{`
           .slider::-webkit-slider-thumb {
             appearance: none;
             height: 20px;

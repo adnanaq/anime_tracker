@@ -5,30 +5,10 @@ import { AnimeBase } from '../types/anime'
 import { animeService } from '../services/animeService'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { AnimeCard } from '../components/AnimeCard/AnimeCard'
-import { getAuthService } from '../services/auth'
-import { malService } from '../services/malApi'
-import { anilistService } from '../services/anilistApiFetch'
-
-const MAL_STATUS_OPTIONS = [
-  { value: 'watching', label: 'Watching' },
-  { value: 'completed', label: 'Completed' },
-  { value: 'on_hold', label: 'On Hold' },
-  { value: 'dropped', label: 'Dropped' },
-  { value: 'plan_to_watch', label: 'Plan to Watch' },
-]
-
-const ANILIST_STATUS_OPTIONS = [
-  { value: 'CURRENT', label: 'Watching' },
-  { value: 'COMPLETED', label: 'Completed' },
-  { value: 'PAUSED', label: 'On Hold' },
-  { value: 'DROPPED', label: 'Dropped' },
-  { value: 'PLANNING', label: 'Plan to Watch' },
-  { value: 'REPEATING', label: 'Rewatching' },
-]
-
-const getStatusOptions = (source: 'mal' | 'anilist') => {
-  return source === 'mal' ? MAL_STATUS_OPTIONS : ANILIST_STATUS_OPTIONS
-}
+import { getAuthService } from '../services/shared'
+import { malService } from '../services/mal'
+import { anilistService } from '../services/anilist'
+import { getStatusOptions } from '../utils/animeStatus'
 
 export const AnimeDetail = () => {
   const { source, id } = useParams<{ source: string; id: string }>()
@@ -97,7 +77,6 @@ export const AnimeDetail = () => {
                     setTempEpisodes(episodes)
                   }
                 } catch (error) {
-                  console.log('User has not added this anime to their list yet')
                 }
               } else if (source === 'anilist') {
                 // For AniList, use optimized single call to get everything
@@ -122,7 +101,6 @@ export const AnimeDetail = () => {
                     animeData.relatedAnime = result.animeData.relatedAnime
                   }
                 } catch (error) {
-                  console.log('User has not added this anime to their AniList yet')
                 }
               }
             } catch (error) {
@@ -187,7 +165,6 @@ export const AnimeDetail = () => {
       }
 
       setUserStatus(newStatus)
-      console.log(`Successfully updated anime status to: ${newStatus}`)
     } catch (error) {
       console.error('Failed to update anime status:', error)
       alert('Failed to update anime status. Please try again.')
@@ -216,7 +193,6 @@ export const AnimeDetail = () => {
       }
 
       setUserScore(newScore)
-      console.log(`Successfully updated anime score to: ${newScore}`)
     } catch (error) {
       console.error('Failed to update anime score:', error)
       alert('Failed to update anime score. Please try again.')
@@ -271,10 +247,7 @@ export const AnimeDetail = () => {
       // Update status if it changed
       if (newStatus !== userStatus) {
         setUserStatus(newStatus)
-        console.log(`Auto-updated status to: ${newStatus}`)
       }
-      
-      console.log(`Successfully updated episodes watched to: ${newEpisodes}`)
     } catch (error) {
       console.error('Failed to update episodes watched:', error)
       alert('Failed to update episodes watched. Please try again.')

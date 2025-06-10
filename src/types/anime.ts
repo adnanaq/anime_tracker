@@ -25,6 +25,10 @@ export interface MALAnime {
     medium: string;
     large: string;
   };
+  pictures?: Array<{
+    large: string | null;
+    medium: string;
+  }>;
   synopsis?: string;
   mean?: number;
   num_episodes?: number;

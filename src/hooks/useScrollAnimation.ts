@@ -1,14 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import { animate } from 'animejs'
 
 interface ScrollAnimationOptions {
   threshold?: number
   rootMargin?: string
   triggerOnce?: boolean
   animation?: 'fadeIn' | 'slideUp' | 'slideLeft' | 'slideRight' | 'scaleIn' | 'flipIn'
-  duration?: number
-  delay?: number
-  stagger?: number
 }
 
 export const useScrollAnimation = (options: ScrollAnimationOptions = {}) => {
@@ -16,10 +12,7 @@ export const useScrollAnimation = (options: ScrollAnimationOptions = {}) => {
     threshold = 0.1,
     rootMargin = '0px 0px -100px 0px',
     triggerOnce = true,
-    animation = 'fadeIn',
-    duration = 800,
-    delay = 0,
-    stagger = 0
+    animation = 'fadeIn'
   } = options
 
   const elementRef = useRef<HTMLElement>(null)
@@ -29,68 +22,21 @@ export const useScrollAnimation = (options: ScrollAnimationOptions = {}) => {
     const element = elementRef.current
     if (!element) return
 
-    // Set initial state (commented out unused variable)
-    // const initialStates = {
-    //   fadeIn: { opacity: 0 },
-    //   slideUp: { opacity: 0, translateY: 50 },
-    //   slideLeft: { opacity: 0, translateX: -50 },
-    //   slideRight: { opacity: 0, translateX: 50 },
-    //   scaleIn: { opacity: 0, scale: 0.8 },
-    //   flipIn: { opacity: 0, rotateX: -90 }
-    // }
-
-    const finalStates = {
-      fadeIn: { opacity: 1 },
-      slideUp: { opacity: 1, translateY: 0 },
-      slideLeft: { opacity: 1, translateX: 0 },
-      slideRight: { opacity: 1, translateX: 0 },
-      scaleIn: { opacity: 1, scale: 1 },
-      flipIn: { opacity: 1, rotateX: 0 }
+    const animationClasses = {
+      fadeIn: 'animate-fade-in',
+      slideUp: 'animate-slide-up',
+      slideLeft: 'animate-slide-left',
+      slideRight: 'animate-slide-right',
+      scaleIn: 'animate-scale-in',
+      flipIn: 'animate-flip-in'
     }
-
-    // Apply initial state
-    Object.assign(element.style, {
-      opacity: '0',
-      transform: animation === 'slideUp' ? 'translateY(50px)' :
-                 animation === 'slideLeft' ? 'translateX(-50px)' :
-                 animation === 'slideRight' ? 'translateX(50px)' :
-                 animation === 'scaleIn' ? 'scale(0.8)' :
-                 animation === 'flipIn' ? 'rotateX(-90deg)' : 'none',
-      willChange: 'transform, opacity'
-    })
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && !isVisible) {
             setIsVisible(true)
-            
-            // Handle staggered animations for child elements
-            if (stagger > 0 && element.children.length > 0) {
-              Array.from(element.children).forEach((child, index) => {
-                const childElement = child as HTMLElement
-                // Apply same initial state to children
-                Object.assign(childElement.style, {
-                  opacity: '0',
-                  transform: element.style.transform
-                })
-                
-                animate(childElement, {
-                  ...finalStates[animation],
-                  duration,
-                  delay: delay + (index * stagger),
-                  easing: 'easeOutQuart'
-                })
-              })
-            } else {
-              // Animate the main element
-              animate(element, {
-                ...finalStates[animation],
-                duration,
-                delay,
-                easing: animation === 'flipIn' ? 'easeOutBack' : 'easeOutQuart'
-              })
-            }
+            element.classList.add(animationClasses[animation])
 
             if (triggerOnce) {
               observer.unobserve(element)
@@ -106,17 +52,13 @@ export const useScrollAnimation = (options: ScrollAnimationOptions = {}) => {
     return () => {
       observer.unobserve(element)
     }
-  }, [threshold, rootMargin, triggerOnce, animation, duration, delay, stagger, isVisible])
+  }, [threshold, rootMargin, triggerOnce, animation, isVisible])
 
   return { elementRef, isVisible }
 }
 
-// Hook for multiple elements with staggered animations
-export const useStaggeredScrollAnimation = (
-  count: number,
-  options: ScrollAnimationOptions = {}
-) => {
-  const { stagger = 100, ...restOptions } = options
+// Simplified hook for multiple elements
+export const useStaggeredScrollAnimation = (count: number) => {
   const refs = useRef<(HTMLElement | null)[]>(Array(count).fill(null))
   const [visibleItems, setVisibleItems] = useState<boolean[]>(Array(count).fill(false))
 
@@ -134,25 +76,13 @@ export const useStaggeredScrollAnimation = (
                 return newState
               })
 
-              animate(element, {
-                opacity: [0, 1],
-                translateY: [30, 0],
-                scale: [0.9, 1],
-                duration: restOptions.duration || 600,
-                delay: index * stagger,
-                easing: 'easeOutQuart'
-              })
-
-              if (restOptions.triggerOnce !== false) {
-                observer.unobserve(element)
-              }
+              element.classList.add('animate-fade-in-up')
+              element.style.animationDelay = `${index * 100}ms`
+              observer.unobserve(element)
             }
           })
         },
-        { 
-          threshold: restOptions.threshold || 0.1,
-          rootMargin: restOptions.rootMargin || '0px 0px -50px 0px'
-        }
+        { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
       )
 
       observer.observe(element)
@@ -162,7 +92,7 @@ export const useStaggeredScrollAnimation = (
     return () => {
       observers.forEach(observer => observer?.disconnect())
     }
-  }, [count, stagger, visibleItems, restOptions])
+  }, [count, visibleItems])
 
   const setRef = (index: number) => (el: HTMLElement | null) => {
     refs.current[index] = el

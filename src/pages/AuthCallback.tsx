@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { getAuthService } from '../services/auth'
+import { getAuthService } from '../services/shared'
 import { useAnimeStore } from '../store/animeStore'
 // import { AnimeSource } from '../types/anime'
 

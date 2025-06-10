@@ -1,30 +1,14 @@
 import { useState } from 'react'
-import { AnimeBase, AnimeSource } from '../../types/anime'
-import { malService } from '../../services/malApi'
-import { anilistService } from '../../services/anilistApiFetch'
-import { getAuthService } from '../../services/auth'
+import { AnimeBase } from '../../types/anime'
+import { malService } from '../../services/mal'
+import { anilistService } from '../../services/anilist'
+import { getStatusOptions, getStatusColor } from '../../utils/animeStatus'
+import { useAnimeAuth } from '../../hooks/useAuth'
 
 interface AnimeStatusProps {
   anime: AnimeBase
   onStatusUpdate?: (newStatus: string, newScore?: number) => void
 }
-
-const MAL_STATUS_OPTIONS = [
-  { value: 'watching', label: 'Watching', color: 'bg-green-500' },
-  { value: 'completed', label: 'Completed', color: 'bg-blue-500' },
-  { value: 'on_hold', label: 'On Hold', color: 'bg-yellow-500' },
-  { value: 'dropped', label: 'Dropped', color: 'bg-red-500' },
-  { value: 'plan_to_watch', label: 'Plan to Watch', color: 'bg-purple-500' },
-]
-
-const ANILIST_STATUS_OPTIONS = [
-  { value: 'CURRENT', label: 'Watching', color: 'bg-green-500' },
-  { value: 'COMPLETED', label: 'Completed', color: 'bg-blue-500' },
-  { value: 'PAUSED', label: 'On Hold', color: 'bg-yellow-500' },
-  { value: 'DROPPED', label: 'Dropped', color: 'bg-red-500' },
-  { value: 'PLANNING', label: 'Plan to Watch', color: 'bg-purple-500' },
-  { value: 'REPEATING', label: 'Rewatching', color: 'bg-indigo-500' },
-]
 
 export const AnimeStatus = ({ anime, onStatusUpdate }: AnimeStatusProps) => {
   const [isUpdating, setIsUpdating] = useState(false)
@@ -33,8 +17,7 @@ export const AnimeStatus = ({ anime, onStatusUpdate }: AnimeStatusProps) => {
   const [showScoreInput, setShowScoreInput] = useState(false)
 
   // Check if user is authenticated for this anime's source
-  const authServiceInstance = getAuthService(anime.source as AnimeSource)
-  const isAuthenticated = authServiceInstance?.isAuthenticated() ?? false
+  const { isAuthenticated, accessToken } = useAnimeAuth(anime.source)
 
   if (!isAuthenticated) {
     return (
@@ -47,27 +30,24 @@ export const AnimeStatus = ({ anime, onStatusUpdate }: AnimeStatusProps) => {
     )
   }
 
-  const statusOptions = anime.source === 'mal' ? MAL_STATUS_OPTIONS : ANILIST_STATUS_OPTIONS
+  const statusOptions = getStatusOptions(anime.source)
 
   const handleStatusUpdate = async (status: string) => {
-    if (!authServiceInstance) return
+    if (!isAuthenticated || !accessToken) return
 
     setIsUpdating(true)
     try {
-      const token = authServiceInstance.getToken()?.access_token
-      if (!token) throw new Error('No auth token')
 
       if (anime.source === 'mal') {
-        await malService.updateAnimeStatus(anime.id, token, { status: status as any })
+        await malService.updateAnimeStatus(anime.id, accessToken, { status: status as any })
       } else {
-        await anilistService.updateAnimeStatus(anime.id, token, { status: status as any })
+        await anilistService.updateAnimeStatus(anime.id, accessToken, { status: status as any })
       }
 
       setCurrentStatus(status)
       onStatusUpdate?.(status, currentScore)
       
       // Show success feedback
-      console.log(`Successfully updated anime status to: ${status}`)
     } catch (error) {
       console.error('Failed to update anime status:', error)
       alert('Failed to update anime status. Please try again.')
@@ -77,24 +57,21 @@ export const AnimeStatus = ({ anime, onStatusUpdate }: AnimeStatusProps) => {
   }
 
   const handleScoreUpdate = async (score: number) => {
-    if (!authServiceInstance) return
+    if (!isAuthenticated || !accessToken) return
 
     setIsUpdating(true)
     try {
-      const token = authServiceInstance.getToken()?.access_token
-      if (!token) throw new Error('No auth token')
 
       if (anime.source === 'mal') {
-        await malService.updateAnimeStatus(anime.id, token, { score })
+        await malService.updateAnimeStatus(anime.id, accessToken, { score })
       } else {
-        await anilistService.updateAnimeStatus(anime.id, token, { score })
+        await anilistService.updateAnimeStatus(anime.id, accessToken, { score })
       }
 
       setCurrentScore(score)
       onStatusUpdate?.(currentStatus || '', score)
       setShowScoreInput(false)
       
-      console.log(`Successfully updated anime score to: ${score}`)
     } catch (error) {
       console.error('Failed to update anime score:', error)
       alert('Failed to update anime score. Please try again.')
@@ -104,25 +81,22 @@ export const AnimeStatus = ({ anime, onStatusUpdate }: AnimeStatusProps) => {
   }
 
   const handleRemoveFromList = async () => {
-    if (!authServiceInstance) return
+    if (!isAuthenticated || !accessToken) return
     if (!confirm('Are you sure you want to remove this anime from your list?')) return
 
     setIsUpdating(true)
     try {
-      const token = authServiceInstance.getToken()?.access_token
-      if (!token) throw new Error('No auth token')
 
       if (anime.source === 'mal') {
-        await malService.deleteAnimeFromList(anime.id, token)
+        await malService.deleteAnimeFromList(anime.id, accessToken)
       } else {
-        await anilistService.deleteAnimeFromList(anime.id, token)
+        await anilistService.deleteAnimeFromList(anime.id, accessToken)
       }
 
       setCurrentStatus(null)
       setCurrentScore(0)
       onStatusUpdate?.('', 0)
       
-      console.log('Successfully removed anime from list')
     } catch (error) {
       console.error('Failed to remove anime from list:', error)
       alert('Failed to remove anime from list. Please try again.')
@@ -144,7 +118,7 @@ export const AnimeStatus = ({ anime, onStatusUpdate }: AnimeStatusProps) => {
             disabled={isUpdating}
             className={`
               px-3 py-2 rounded-lg text-white text-sm font-medium transition-all duration-200
-              ${currentStatus === option.value ? option.color : 'bg-gray-400 hover:bg-gray-500'}
+              ${currentStatus === option.value ? getStatusColor(option.value) : 'bg-gray-400 hover:bg-gray-500'}
               ${isUpdating ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 hover:shadow-md'}
             `}
           >

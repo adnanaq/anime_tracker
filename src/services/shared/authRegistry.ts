@@ -1,12 +1,12 @@
-export * from './types'
+export * from './authTypes'
 export * from './BaseAuthService'
-export * from './mal/MalAuthService'
-export * from './anilist/AniListAuthService'
+export * from '../mal/auth'
+export * from '../anilist/auth'
 
 // Centralized auth service registry
-import { malAuthService } from './mal/MalAuthService'
-import { anilistAuthService } from './anilist/AniListAuthService'
-import { AuthService } from './types'
+import { malAuthService } from '../mal/auth'
+import { anilistAuthService } from '../anilist/auth'
+import { AuthService } from './authTypes'
 
 export const authServices: Record<string, AuthService> = {
   mal: malAuthService,

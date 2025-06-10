@@ -1,6 +1,6 @@
 # 🎌 AnimeTrackr
 
-A modern, dual-source anime tracking and recommendation platform powered by **MyAnimeList** and **AniList** APIs with full OAuth authentication support.
+A modern, triple-source anime tracking and recommendation platform powered by **MyAnimeList**, **AniList**, and **Jikan** APIs with full OAuth authentication support.
 
 ## 🚀 Quick Start
 
@@ -55,7 +55,7 @@ MyAnimeList API has CORS restrictions that prevent direct browser requests. The 
 
 ### ✅ Phase 1 (Complete)
 - **🔑 OAuth Authentication**: Full login support for MyAnimeList and AniList
-- **🔄 Dual API Integration**: Seamlessly switch between data sources
+- **🔄 Triple API Integration**: MyAnimeList, AniList, and Jikan for comprehensive data
 - **📊 Browse Categories**: 
   - Trending Now
   - Most Popular  
@@ -76,6 +76,14 @@ MyAnimeList API has CORS restrictions that prevent direct browser requests. The 
   - Detailed page transitions with element choreography
 - **🏗️ Modular Architecture**: Easy to add new anime sources
 
+### 🚀 Phase 1.5 (In Progress - Jikan Integration)
+- **📸 Enhanced Images**: High-quality backgrounds from Jikan pictures endpoint
+- **📅 Anime Schedule**: Weekly calendar with airing times
+- **🎲 Random Discovery**: "Surprise me" feature for anime discovery
+- **🔍 Advanced Search**: Genre filters, score ranges, status filters
+- **💬 Recommendations**: Community-driven anime suggestions
+- **📊 Reviews & Stats**: Community reviews and viewing statistics
+
 ### 🔜 Future Phases
 - Vector-based recommendations (FAISS)
 - Social features and friend comparison
@@ -91,7 +99,7 @@ MyAnimeList API has CORS restrictions that prevent direct browser requests. The 
 - **Animations**: Anime.js v4 + Three.js
 - **State Management**: Zustand
 - **Routing**: React Router
-- **APIs**: MyAnimeList REST + AniList GraphQL
+- **APIs**: MyAnimeList REST + AniList GraphQL + Jikan REST
 - **Authentication**: OAuth 2.0 with PKCE (MAL) and standard OAuth (AniList)
 - **Proxy**: Express.js CORS proxy for MyAnimeList API
 

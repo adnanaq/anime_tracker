@@ -1,4 +1,10 @@
-import { AniListAnime, AnimeBase } from '../types/anime'
+import { AniListAnime, AnimeBase } from '../../types/anime'
+import { 
+  buildPageQuery, 
+  buildSearchQuery, 
+  buildSeasonQuery, 
+  buildAnimeDetailsQuery,
+} from '../graphql/fragments'
 
 // Use proxy in development to avoid CORS issues
 const isDevelopment = import.meta.env.DEV;
@@ -8,6 +14,12 @@ const ANILIST_BASE_URL = isDevelopment
 const ANILIST_GRAPHQL_URL = ANILIST_BASE_URL
 
 export const normalizeAniListAnime = (anime: AniListAnime, includeRelated: boolean = false): AnimeBase => {
+  // Handle user data if available (for anime from user's list)
+  const userEntry = (anime as any).mediaListEntry || (anime as any);
+  const userScore = userEntry?.score || undefined;
+  const userStatus = userEntry?.status || undefined;
+  const userProgress = userEntry?.progress || undefined;
+
   const normalized: AnimeBase = {
     id: anime.id,
     title: anime.title.romaji || anime.title.english || anime.title.native || '',
@@ -15,7 +27,9 @@ export const normalizeAniListAnime = (anime: AniListAnime, includeRelated: boole
     image: anime.coverImage?.large || anime.coverImage?.medium,
     coverImage: anime.coverImage?.large || anime.coverImage?.medium,
     score: anime.averageScore ? anime.averageScore / 10 : undefined,
-    userScore: undefined, // Will be populated by user data fetch
+    userScore: userScore,
+    userStatus: userStatus,
+    userProgress: userProgress,
     episodes: anime.episodes,
     status: anime.status,
     genres: anime.genres || [],
@@ -78,34 +92,7 @@ const makeGraphQLRequest = async (query: string, variables?: any) => {
 export const anilistService = {
   async getTrendingAnime() {
     try {
-      const query = `
-        query {
-          Page(page: 1, perPage: 6) {
-            media(type: ANIME, sort: TRENDING_DESC) {
-              id
-              title {
-                romaji
-                english
-                native
-              }
-              description(asHtml: false)
-              coverImage {
-                large
-                medium
-              }
-              averageScore
-              episodes
-              status
-              genres
-              startDate {
-                year
-              }
-              format
-            }
-          }
-        }
-      `
-      
+      const query = buildPageQuery('TRENDING_DESC')
       const data = await makeGraphQLRequest(query)
       return data.Page.media.map((anime: AniListAnime) => normalizeAniListAnime(anime))
     } catch (error) {
@@ -116,34 +103,7 @@ export const anilistService = {
 
   async getPopularAnime() {
     try {
-      const query = `
-        query {
-          Page(page: 1, perPage: 6) {
-            media(type: ANIME, sort: POPULARITY_DESC) {
-              id
-              title {
-                romaji
-                english
-                native
-              }
-              description(asHtml: false)
-              coverImage {
-                large
-                medium
-              }
-              averageScore
-              episodes
-              status
-              genres
-              startDate {
-                year
-              }
-              format
-            }
-          }
-        }
-      `
-      
+      const query = buildPageQuery('POPULARITY_DESC')
       const data = await makeGraphQLRequest(query)
       return data.Page.media.map((anime: AniListAnime) => normalizeAniListAnime(anime))
     } catch (error) {
@@ -154,34 +114,7 @@ export const anilistService = {
 
   async getTopRatedAnime() {
     try {
-      const query = `
-        query {
-          Page(page: 1, perPage: 6) {
-            media(type: ANIME, sort: SCORE_DESC) {
-              id
-              title {
-                romaji
-                english
-                native
-              }
-              description(asHtml: false)
-              coverImage {
-                large
-                medium
-              }
-              averageScore
-              episodes
-              status
-              genres
-              startDate {
-                year
-              }
-              format
-            }
-          }
-        }
-      `
-      
+      const query = buildPageQuery('SCORE_DESC')
       const data = await makeGraphQLRequest(query)
       return data.Page.media.map((anime: AniListAnime) => normalizeAniListAnime(anime))
     } catch (error) {
@@ -203,34 +136,7 @@ export const anilistService = {
       else if (currentMonth >= 7 && currentMonth <= 9) season = 'SUMMER'
       else if (currentMonth >= 10 && currentMonth <= 12) season = 'FALL'
 
-      const query = `
-        query($season: MediaSeason, $year: Int) {
-          Page(page: 1, perPage: 6) {
-            media(type: ANIME, season: $season, seasonYear: $year, sort: POPULARITY_DESC) {
-              id
-              title {
-                romaji
-                english
-                native
-              }
-              description(asHtml: false)
-              coverImage {
-                large
-                medium
-              }
-              averageScore
-              episodes
-              status
-              genres
-              startDate {
-                year
-              }
-              format
-            }
-          }
-        }
-      `
-      
+      const query = buildSeasonQuery()
       const data = await makeGraphQLRequest(query, { season, year: currentYear })
       return data.Page.media.map((anime: AniListAnime) => normalizeAniListAnime(anime))
     } catch (error) {
@@ -241,34 +147,7 @@ export const anilistService = {
 
   async searchAnime(query: string) {
     try {
-      const searchQuery = `
-        query($search: String) {
-          Page(page: 1, perPage: 6) {
-            media(type: ANIME, search: $search) {
-              id
-              title {
-                romaji
-                english
-                native
-              }
-              description(asHtml: false)
-              coverImage {
-                large
-                medium
-              }
-              averageScore
-              episodes
-              status
-              genres
-              startDate {
-                year
-              }
-              format
-            }
-          }
-        }
-      `
-      
+      const searchQuery = buildSearchQuery()
       const data = await makeGraphQLRequest(searchQuery, { search: query })
       return data.Page.media.map((anime: AniListAnime) => normalizeAniListAnime(anime))
     } catch (error) {
@@ -279,59 +158,7 @@ export const anilistService = {
 
   async getAnimeDetails(id: number) {
     try {
-      const query = `
-        query($id: Int) {
-          Media(id: $id, type: ANIME) {
-            id
-            title {
-              romaji
-              english
-              native
-            }
-            description(asHtml: false)
-            coverImage {
-              large
-              medium
-            }
-            averageScore
-            episodes
-            status
-            genres
-            startDate {
-              year
-            }
-            format
-            relations {
-              edges {
-                relationType
-                node {
-                  id
-                  title {
-                    romaji
-                    english
-                    native
-                  }
-                  description(asHtml: false)
-                  coverImage {
-                    large
-                    medium
-                  }
-                  averageScore
-                  episodes
-                  status
-                  genres
-                  startDate {
-                    year
-                  }
-                  format
-                  type
-                }
-              }
-            }
-          }
-        }
-      `
-      
+      const query = buildAnimeDetailsQuery()
       const data = await makeGraphQLRequest(query, { id })
       return normalizeAniListAnime(data.Media, true) // Include related anime for detail view
     } catch (error) {
@@ -509,8 +336,10 @@ export const anilistService = {
         data.data.MediaListCollection.lists.forEach((list: any) => {
           list.entries?.forEach((entry: any) => {
             const normalizedAnime = normalizeAniListAnime(entry.media)
-            // Add user score from the entry
+            // Add user data from the entry
             normalizedAnime.userScore = entry.score && entry.score > 0 ? entry.score : undefined
+            normalizedAnime.userStatus = entry.status || undefined
+            normalizedAnime.userProgress = entry.progress || undefined
             watchingAnime.push(normalizedAnime)
           })
         })
@@ -524,6 +353,70 @@ export const anilistService = {
     }
   },
 
+  async getUserAnimeStatusMap(token: string) {
+    try {
+      const user = await this.getCurrentUser(token);
+      const statusMap = new Map<number, string>();
+      
+      const query = `
+        query($userId: Int) {
+          MediaListCollection(userId: $userId, type: ANIME) {
+            lists {
+              entries {
+                id
+                status
+                media {
+                  id
+                }
+              }
+            }
+          }
+        }
+      `;
+      
+      const response = await fetch(ANILIST_GRAPHQL_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          query: query,
+          variables: { userId: user.id }
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`AniList API error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.errors) {
+        throw new Error(`AniList GraphQL errors: ${JSON.stringify(data.errors)}`);
+      }
+
+      // Process all lists (watching, completed, planning, etc.)
+      if (data.data.MediaListCollection?.lists) {
+        data.data.MediaListCollection.lists.forEach((list: any) => {
+          if (list.entries) {
+            list.entries.forEach((entry: any) => {
+              if (entry.status && entry.media?.id) {
+                statusMap.set(entry.media.id, entry.status);
+              }
+            });
+          }
+        });
+      }
+
+      return statusMap;
+    } catch (error) {
+      console.error('AniList getUserAnimeStatusMap error:', error);
+      throw error;
+    }
+  },
+
   async updateAnimeStatus(animeId: number, token: string, statusData: {
     status?: 'CURRENT' | 'COMPLETED' | 'PAUSED' | 'DROPPED' | 'PLANNING' | 'REPEATING';
     score?: number;
@@ -533,7 +426,6 @@ export const anilistService = {
     notes?: string;
   }) {
     try {
-      console.log('🎬 AniList updateAnimeStatus:', { animeId, statusData })
       
       const mutation = `
         mutation($mediaId: Int, $status: MediaListStatus, $score: Float, $progress: Int, $notes: String) {
@@ -557,7 +449,6 @@ export const anilistService = {
       if (statusData.progress !== undefined) variables.progress = statusData.progress
       if (statusData.notes) variables.notes = statusData.notes
 
-      console.log('🎬 Variables:', variables)
 
       const response = await fetch(ANILIST_GRAPHQL_URL, {
         method: 'POST',
@@ -573,8 +464,6 @@ export const anilistService = {
       })
 
       const responseText = await response.text()
-      console.log('🎬 Response status:', response.status)
-      console.log('🎬 Response text:', responseText)
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}, body: ${responseText}`)

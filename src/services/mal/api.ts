@@ -1,6 +1,5 @@
 import axios from "axios";
-import { MALAnime, AnimeBase } from "../types/anime";
-import { getAuthService } from "./auth";
+import { MALAnime, AnimeBase } from "../../types/anime";
 
 // Use proxy in development to avoid CORS issues
 const isDevelopment = import.meta.env.DEV;
@@ -10,7 +9,7 @@ const MAL_BASE_URL = isDevelopment
 const CLIENT_ID = import.meta.env.VITE_MAL_CLIENT_ID;
 
 // Function to get headers with optional auth
-const getHeaders = () => {
+const getHeaders = (accessToken?: string) => {
   const baseHeaders = isDevelopment
     ? {
         "Content-Type": "application/json",
@@ -20,18 +19,14 @@ const getHeaders = () => {
         "Content-Type": "application/json",
       };
 
-  // Add authorization header if user is authenticated
-  const authServiceInstance = getAuthService("mal");
-  const isAuth = authServiceInstance?.isAuthenticated();
-  const token = authServiceInstance?.getToken();
-
-  if (isAuth && token) {
-    const headers = {
+  // Add authorization header if token is provided
+  if (accessToken) {
+    return {
       ...baseHeaders,
-      Authorization: `Bearer ${token.access_token}`,
+      "Authorization": `Bearer ${accessToken}`,
     };
-    return headers;
   }
+
   return baseHeaders;
 };
 
@@ -56,6 +51,8 @@ export const normalizeMALAnime = (
   includeRelated: boolean = false
 ): AnimeBase => {
   const userScore = (anime as any).my_list_status?.score || undefined;
+  const userStatus = (anime as any).my_list_status?.status || undefined;
+  const userProgress = (anime as any).my_list_status?.num_episodes_watched || undefined;
 
   const normalized: AnimeBase = {
     id: anime.id,
@@ -65,6 +62,8 @@ export const normalizeMALAnime = (
     coverImage: anime.main_picture?.large || anime.main_picture?.medium,
     score: anime.mean,
     userScore: userScore,
+    userStatus: userStatus,
+    userProgress: userProgress,
     episodes: anime.num_episodes,
     status: anime.status,
     genres: anime.genres?.map((g) => g.name) || [],
@@ -87,18 +86,18 @@ export const normalizeMALAnime = (
 };
 
 export const malService = {
-  async getSeasonalAnime(season?: string, year?: number) {
+  async getSeasonalAnime(season?: string, year?: number, accessToken?: string) {
     try {
       if (!season || !year) {
         // Fallback to ranking if season/year not provided
-        return await this.getRankingAnime("airing");
+        return await this.getRankingAnime("airing", accessToken);
       }
 
       const response = await malApi.get(`/anime/season/${year}/${season}`, {
-        headers: getHeaders(),
+        headers: getHeaders(accessToken),
         params: {
           fields:
-            "id,title,main_picture,synopsis,mean,num_episodes,status,genres,start_date,media_type",
+            "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,my_list_status",
           limit: 6,
         },
       });
@@ -108,21 +107,22 @@ export const malService = {
     } catch (error) {
       console.error("MAL seasonal anime error:", error);
       // Fallback to ranking on error
-      return await this.getRankingAnime("airing");
+      return await this.getRankingAnime("airing", accessToken);
     }
   },
 
-  async getRankingAnime(rankingType: string = "all") {
+  async getRankingAnime(rankingType: string = "all", accessToken?: string) {
     try {
       const response = await malApi.get("/anime/ranking", {
-        headers: getHeaders(),
+        headers: getHeaders(accessToken),
         params: {
           ranking_type: rankingType,
           fields:
-            "id,title,main_picture,synopsis,mean,num_episodes,status,genres,start_date,media_type",
+            "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,my_list_status",
           limit: 6,
         },
       });
+      
       return response.data.data.map((item: { node: MALAnime }) =>
         normalizeMALAnime(item.node)
       );
@@ -132,14 +132,14 @@ export const malService = {
     }
   },
 
-  async searchAnime(query: string) {
+  async searchAnime(query: string, accessToken?: string) {
     try {
       const response = await malApi.get("/anime", {
-        headers: getHeaders(),
+        headers: getHeaders(accessToken),
         params: {
           q: query,
           fields:
-            "id,title,main_picture,synopsis,mean,num_episodes,status,genres,start_date,media_type",
+            "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,my_list_status",
           limit: 6,
         },
       });
@@ -152,15 +152,15 @@ export const malService = {
     }
   },
 
-  async getAnimeDetails(id: number) {
+  async getAnimeDetails(id: number, accessToken?: string) {
     try {
-      const headers = getHeaders();
+      const headers = getHeaders(accessToken);
 
       const response = await malApi.get(`/anime/${id}`, {
         headers,
         params: {
           fields:
-            "id,title,main_picture,synopsis,mean,num_episodes,status,genres,start_date,media_type,related_anime,my_list_status",
+            "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,related_anime,my_list_status",
         },
       });
 
@@ -177,7 +177,7 @@ export const malService = {
                   headers,
                   params: {
                     fields:
-                      "id,title,main_picture,synopsis,mean,num_episodes,status,genres,start_date,media_type",
+                      "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type",
                   },
                 }
               );
@@ -263,7 +263,7 @@ export const malService = {
         params: {
           status: "watching",
           fields:
-            "id,title,main_picture,synopsis,mean,num_episodes,status,genres,start_date,media_type,my_list_status",
+            "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,my_list_status",
           limit: 50,
         },
       });
@@ -275,15 +275,63 @@ export const malService = {
       return response.data.data.map(
         (item: { list_status: any; node: MALAnime }) => {
           const normalizedAnime = normalizeMALAnime(item.node);
-          // Add user score from list_status
-          if (item.list_status?.score && item.list_status.score > 0) {
-            normalizedAnime.userScore = item.list_status.score;
+          // Add user data from list_status
+          if (item.list_status) {
+            if (item.list_status.score && item.list_status.score > 0) {
+              normalizedAnime.userScore = item.list_status.score;
+            }
+            if (item.list_status.status) {
+              normalizedAnime.userStatus = item.list_status.status;
+            }
+            if (item.list_status.num_episodes_watched !== undefined) {
+              normalizedAnime.userProgress = item.list_status.num_episodes_watched;
+            }
           }
           return normalizedAnime;
         }
       );
     } catch (error) {
       console.error("MAL getUserWatchingAnime error:", error);
+      throw error;
+    }
+  },
+
+  async getUserAnimeStatusMap(accessToken: string) {
+    try {
+      const statusMap = new Map<number, string>();
+      const statuses = ['watching', 'completed', 'on_hold', 'dropped', 'plan_to_watch'];
+      
+      // Fetch anime for each status
+      const promises = statuses.map(async (status) => {
+        try {
+          const response = await malApi.get(`/users/@me/animelist`, {
+            headers: {
+              ...getHeaders(),
+              Authorization: `Bearer ${accessToken}`,
+            },
+            params: {
+              status: status,
+              fields: "id,my_list_status",
+              limit: 1000,
+            },
+          });
+
+          if (response.data.data) {
+            response.data.data.forEach((item: { node: { id: number }, list_status: { status: string } }) => {
+              if (item.list_status?.status) {
+                statusMap.set(item.node.id, item.list_status.status);
+              }
+            });
+          }
+        } catch (error) {
+          console.error(`Error fetching ${status} anime:`, error);
+        }
+      });
+
+      await Promise.all(promises);
+      return statusMap;
+    } catch (error) {
+      console.error("MAL getUserAnimeStatusMap error:", error);
       throw error;
     }
   },
@@ -306,11 +354,6 @@ export const malService = {
     }
   ) {
     try {
-      console.log("🎬 MAL updateAnimeStatus:", {
-        animeId,
-        statusData,
-        baseURL: MAL_BASE_URL,
-      });
 
       // Convert to form data
       const formData = new URLSearchParams();
@@ -320,9 +363,6 @@ export const malService = {
         }
       });
 
-      console.log("🎬 Form data:", formData.toString());
-      const fullUrl = `${MAL_BASE_URL}/anime/${animeId}/my_list_status`;
-      console.log("🎬 Full URL:", fullUrl);
 
       const response = await malApi.put(
         `/anime/${animeId}/my_list_status`,

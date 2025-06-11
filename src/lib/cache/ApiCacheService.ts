@@ -23,12 +23,10 @@ export abstract class BaseCacheService {
     // Try cache first
     const cached = await this.cache.get<T>(cacheKey, config)
     if (cached !== null) {
-      console.log(`💾 Cache hit for: ${cacheKey}`)
       return cached
     }
 
     // Execute request
-    console.log(`🌐 Cache miss, fetching: ${cacheKey}`)
     const data = await requestFn()
 
     // Cache the result
@@ -366,7 +364,6 @@ export const clearAllApiCaches = async (): Promise<void> => {
     jikanCache.clearServiceCache(),
     animeScheduleCache.clearServiceCache()
   ])
-  console.log('🧹 Cleared all API caches')
 }
 
 export const getCacheStats = () => {

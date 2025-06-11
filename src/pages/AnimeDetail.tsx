@@ -262,7 +262,6 @@ export const AnimeDetail = () => {
   }
 
   const debouncedScoreUpdate = (newScore: number) => {
-(newScore)
     
     // Clear existing timeout
     if (scoreTimeoutRef.current) {

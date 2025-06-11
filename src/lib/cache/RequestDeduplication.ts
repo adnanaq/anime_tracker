@@ -30,19 +30,16 @@ export class RequestDeduplicator {
     if (useCompletedCache) {
       const completed = this.completedRequests.get(key)
       if (completed && (Date.now() - completed.timestamp) < completedCacheTTL) {
-        console.log(`⚡ Dedup: Using recent result for ${key}`)
         return completed.result
       }
     }
 
     // Check if request is already pending
     if (this.pending.has(key)) {
-      console.log(`⏳ Dedup: Waiting for pending request ${key}`)
       return this.pending.get(key)!
     }
 
     // Create new request
-    console.log(`🚀 Dedup: Starting new request ${key}`)
     const promise = requestFn()
     this.pending.set(key, promise)
 
@@ -79,7 +76,6 @@ export class RequestDeduplicator {
    */
   cancelAll(): void {
     this.pending.clear()
-    console.log('🚫 Cancelled all pending requests')
   }
 
   /**
@@ -156,7 +152,6 @@ export class RateLimitedRequestor {
           
           if (timeSinceLastRequest < this.minDelay) {
             const delayNeeded = this.minDelay - timeSinceLastRequest
-            console.log(`⏱️ Rate limiting: waiting ${delayNeeded}ms`)
             await new Promise(resolve => setTimeout(resolve, delayNeeded))
           }
 

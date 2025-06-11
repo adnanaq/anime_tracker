@@ -1,0 +1,1 @@
+export { SeasonalAnime } from './SeasonalAnime'

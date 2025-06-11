@@ -64,7 +64,6 @@ export class CacheManager {
       
       // Check if stale but still valid
       if (this.isStaleEntry(memoryEntry)) {
-        console.log(`🟡 Cache stale for key: ${key}`)
       }
       
       return memoryEntry.data as T
@@ -110,7 +109,6 @@ export class CacheManager {
 
     this.updateCacheSize()
     
-    console.log(`✅ Cached data for key: ${key} (TTL: ${config.ttl}ms, Persistent: ${config.persistent})`)
   }
 
   /**
@@ -131,7 +129,6 @@ export class CacheManager {
         this.persistentKeys.delete(pattern)
       }
       
-      console.log(`🗑️ Invalidated exact key: ${pattern}`)
       return invalidatedCount
     }
 
@@ -163,7 +160,6 @@ export class CacheManager {
     }
 
     this.updateCacheSize()
-    console.log(`🗑️ Invalidated ${invalidatedCount} entries matching pattern: ${pattern}`)
     return invalidatedCount
   }
 
@@ -210,7 +206,6 @@ export class CacheManager {
     }
 
     this.updateCacheSize()
-    console.log(`🧹 Cleared ${clearedCount} expired cache entries`)
     return clearedCount
   }
 
@@ -233,7 +228,6 @@ export class CacheManager {
 
     this.stats.lastClearTime = Date.now()
     this.updateCacheSize()
-    console.log('🧹 Cleared all cache data')
   }
 
   /**
@@ -288,15 +282,12 @@ export class CacheManager {
       request.onsuccess = (event) => {
         this.db = (event.target as IDBOpenDBRequest).result
         this.dbInitialized = true
-        console.log('📦 IndexedDB initialized for persistent caching')
       }
 
       request.onerror = (event) => {
-        console.error('❌ IndexedDB initialization failed:', event)
         this.dbInitialized = false
       }
     } catch (error) {
-      console.error('❌ IndexedDB not supported:', error)
       this.dbInitialized = false
     }
   }
@@ -314,7 +305,6 @@ export class CacheManager {
       }
 
       request.onerror = () => {
-        console.error('❌ Error reading from IndexedDB:', request.error)
         resolve(null)
       }
     })

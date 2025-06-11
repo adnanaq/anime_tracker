@@ -46,7 +46,6 @@ export const ApolloTest: React.FC = () => {
     }
   )
 
-  console.log('Apollo Test - Loading:', loading, 'Error:', error, 'Data:', data)
 
   if (loading) {
     return (

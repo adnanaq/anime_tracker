@@ -37,12 +37,10 @@ export {
  * Call this during app startup
  */
 export const initializeCacheSystem = async (): Promise<void> => {
-  console.log('🚀 Initializing AnimeTracker cache system...')
   
   // The cache manager initializes itself, but we can add any
   // additional setup here if needed in the future
   
-  console.log('✅ Cache system initialized')
 }
 
 /**
@@ -68,7 +66,6 @@ export const getComprehensiveCacheStats = () => {
       }
     }
   } catch (error) {
-    console.warn('Cache stats temporarily unavailable:', error)
     return {
       cache: { hitCount: 0, missCount: 0, totalRequests: 0, cacheSize: 0, hitRate: 0, efficiency: 0 },
       requestManagers: { mal: {}, jikan: {}, animeSchedule: {} }
@@ -80,7 +77,6 @@ export const getComprehensiveCacheStats = () => {
  * Emergency cache clear - clears everything (simplified for now)
  */
 export const emergencyCacheClear = async (): Promise<void> => {
-  console.log('🆘 Emergency cache clear initiated...')
   
   try {
     await Promise.all([
@@ -93,9 +89,7 @@ export const emergencyCacheClear = async (): Promise<void> => {
     jikanRequestManager.cancelAll()
     animeScheduleRequestManager.cancelAll()
     
-    console.log('🧹 Emergency cache clear completed')
   } catch (error) {
-    console.warn('Cache clear temporarily unavailable:', error)
   }
 }
 
@@ -115,7 +109,6 @@ export const cacheHealthCheck = () => {
       recommendations: []
     }
   } catch (error) {
-    console.warn('Cache health check temporarily unavailable:', error)
     return {
       isHealthy: false,
       hitRate: 0,

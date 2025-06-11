@@ -1,0 +1,1 @@
+export { AnimeSchedule } from './AnimeSchedule'

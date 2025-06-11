@@ -1,0 +1,17 @@
+🌐 Cache miss, fetching: mal:seasonal:2025:spring:public
+CacheManager.ts:113 ✅ Cached data for key: mal:seasonal:2025:spring:public (TTL: 3600000ms, Persistent: true)
+RequestDeduplication.ts:45 🚀 Dedup: Starting new request mal:ranking:airing:true
+RequestDeduplication.ts:159 ⏱️ Rate limiting: waiting 365ms
+RequestDeduplication.ts:45 🚀 Dedup: Starting new request mal:ranking:bypopularity:true
+RequestDeduplication.ts:45 🚀 Dedup: Starting new request mal:ranking:all:true
+RequestDeduplication.ts:45 🚀 Dedup: Starting new request mal:seasonal:2025:spring:true
+ApiCacheService.ts:31 🌐 Cache miss, fetching: mal:ranking:airing:auth
+CacheManager.ts:113 ✅ Cached data for key: mal:ranking:airing:auth (TTL: 900000ms, Persistent: false)
+2RequestDeduplication.ts:159 ⏱️ Rate limiting: waiting 550ms
+ApiCacheService.ts:31 🌐 Cache miss, fetching: mal:ranking:bypopularity:auth
+ApiCacheService.ts:31 🌐 Cache miss, fetching: mal:ranking:all:auth
+CacheManager.ts:113 ✅ Cached data for key: mal:ranking:all:auth (TTL: 900000ms, Persistent: false)
+CacheManager.ts:113 ✅ Cached data for key: mal:ranking:bypopularity:auth (TTL: 900000ms, Persistent: false)
+RequestDeduplication.ts:159 ⏱️ Rate limiting: waiting 643ms
+ApiCacheService.ts:31 🌐 Cache miss, fetching: mal:seasonal:2025:spring:auth
+CacheManager.ts:113 ✅ Cached data for key: mal:seasonal:2025:spring:auth (TTL: 3600000ms, Persistent: true)

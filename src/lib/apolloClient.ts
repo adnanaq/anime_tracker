@@ -22,7 +22,6 @@ const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) 
     
     // Retry on network errors
     if (networkError.statusCode === 429) {
-      console.log('Rate limited, retrying in 1 second...')
       return new Promise((resolve) => {
         setTimeout(() => resolve(forward(operation)), 1000)
       })

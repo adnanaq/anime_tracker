@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { animeScheduleService } from '../../services/animeSchedule'
 import { jikanService } from '../../services/jikan'
 import { AnimeBase } from '../../types/anime'
@@ -144,7 +144,6 @@ export const AnimeSchedule = () => {
         navigate(`/anime/mal/${foundAnime.id}`)
       } else {
         // If no anime found, show a message or fallback
-        console.log(`Could not find anime details for: ${anime.title}`)
       }
     } catch (error) {
       console.error('Error searching for anime:', error)

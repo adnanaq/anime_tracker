@@ -10,7 +10,6 @@ import { AnimeSchedule } from '../AnimeSchedule'
 import { AdvancedSearch } from '../AdvancedSearch'
 import { RandomAnime } from '../RandomAnime'
 import { SeasonalAnime } from '../SeasonalAnime'
-import { ApolloTest } from '../ApolloTest'
 import { CacheStats } from '../CacheManager/CacheStats'
 import { CacheTest } from '../CacheTest'
 
@@ -189,24 +188,18 @@ const Dashboard = () => {
               LoadingGrid={LoadingGrid}
             />
 
-            {/* Apollo Client Test - Temporary */}
-            <section className="mb-12">
-              <ApolloTest />
-            </section>
-
-            {/* Cache Statistics - Temporary */}
-            <section className="mb-12">
-              <CacheStats />
-            </section>
-
-            {/* Cache Performance Tests - Temporary */}
-            <section className="mb-12">
-              <CacheTest />
-            </section>
 
             {/* MAL-specific enhanced features */}
             {currentSource === 'mal' && (
               <>
+                <section className="mb-12">
+                  <CacheStats />
+                </section>
+                
+                <section className="mb-12">
+                  <CacheTest />
+                </section>
+                
                 <section className="mb-12">
                   <AdvancedSearch />
                 </section>

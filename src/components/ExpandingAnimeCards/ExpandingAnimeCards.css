@@ -1,0 +1,528 @@
+/* ========================================
+   EXPANDING ANIME CARDS STYLES
+   ======================================== */
+
+.expanding-cards-container {
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ========================================
+   HORIZONTAL PANELS (Design Three/Four)
+   ======================================== */
+
+.horizontal-panels {
+  display: flex;
+  width: 100%;
+  height: 70vh;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.panel {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 25px;
+  color: white;
+  cursor: pointer;
+  flex: 0.5;
+  position: relative;
+  transition: 
+    flex 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+    border-radius 0.8s ease,
+    transform 0.3s ease;
+  overflow: hidden;
+}
+
+.panel:hover {
+  transform: translateY(-2px);
+}
+
+.panel.active {
+  flex: 4;
+  border-radius: 15px;
+}
+
+.panel-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(0, 0, 0, 0.1) 50%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+  display: flex;
+  align-items: flex-end;
+  padding: 20px;
+  transition: background 0.3s ease;
+}
+
+.panel:hover .panel-overlay {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0.05) 50%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+}
+
+.panel-content {
+  width: 100%;
+}
+
+.panel-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0 0 10px 0;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: 
+    opacity 0.4s ease,
+    transform 0.4s ease;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.panel.active .panel-title {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.3s;
+}
+
+.panel-info {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: 
+    opacity 0.4s ease,
+    transform 0.4s ease;
+}
+
+.panel.active .panel-info {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.4s;
+}
+
+.score-badge,
+.year-badge {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.panel-actions {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: 
+    opacity 0.4s ease,
+    transform 0.4s ease;
+}
+
+.panel.active .panel-actions {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.5s;
+}
+
+.view-details-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.view-details-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Navigation dots */
+.panel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dot.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  transform: scale(1.2);
+}
+
+.dot:hover {
+  background: rgba(255, 255, 255, 0.6);
+  transform: scale(1.1);
+}
+
+/* ========================================
+   VERTICAL CARDS (Design Two)
+   ======================================== */
+
+.vertical-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.vertical-card {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 120px;
+  border-radius: 20px;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  transition: 
+    height 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.3s ease,
+    transform 0.3s ease;
+  filter: grayscale(70%);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.vertical-card:hover {
+  filter: grayscale(30%);
+  transform: translateX(5px);
+}
+
+.vertical-card.selected {
+  height: 350px;
+  filter: grayscale(0%);
+  transform: translateX(0);
+}
+
+.vertical-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.7) 0%,
+    rgba(0, 0, 0, 0.3) 50%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+  display: flex;
+  align-items: center;
+  padding: 20px;
+}
+
+.vertical-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  writing-mode: horizontal-tb;
+  transition: transform 0.5s ease;
+}
+
+.vertical-title-bottom {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  transform: translateY(100%);
+  transition: transform 0.5s ease;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  padding: 15px 0 0 0;
+  width: calc(100% - 40px);
+}
+
+.vertical-card.selected .vertical-title {
+  transform: translateX(-100%);
+  transition-delay: 0s;
+}
+
+.vertical-card.selected .vertical-title-bottom {
+  transform: translateY(0);
+  transition-delay: 0.3s;
+}
+
+.vertical-details {
+  position: absolute;
+  bottom: 80px;
+  left: 20px;
+  right: 20px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: 
+    opacity 0.4s ease,
+    transform 0.4s ease;
+}
+
+.vertical-card.selected .vertical-details {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.5s;
+}
+
+.vertical-synopsis {
+  color: white;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 15px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.vertical-stats {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.stat-item {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 6px 12px;
+  border-radius: 15px;
+  font-size: 0.9rem;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.vertical-action-btn {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.vertical-action-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* ========================================
+   GRID CARDS (Design One)
+   ======================================== */
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  transition: all 0.3s ease;
+}
+
+.grid-card {
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.grid-card:hover {
+  transform: scale(1.02);
+}
+
+.grid-card.expanded {
+  transform: scale(1.05);
+  z-index: 10;
+}
+
+.grid-image-container {
+  position: relative;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  border-radius: 15px;
+}
+
+.grid-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.grid-card.expanded .grid-image {
+  transform: scale(1.1);
+}
+
+.grid-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.8) 0%,
+    rgba(0, 0, 0, 0.2) 50%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  display: flex;
+  align-items: flex-end;
+  padding: 20px;
+  transition: background 0.3s ease;
+}
+
+.grid-card.expanded .grid-overlay {
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0, 0, 0, 0.4) 60%,
+    rgba(0, 0, 0, 0.2) 100%
+  );
+}
+
+.grid-content {
+  width: 100%;
+}
+
+.grid-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: white;
+  margin: 0 0 10px 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  transition: all 0.3s ease;
+}
+
+.grid-expanded-content {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: 
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.grid-card.expanded .grid-expanded-content {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.grid-synopsis {
+  color: white;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-bottom: 10px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.grid-stats {
+  display: flex;
+  gap: 10px;
+}
+
+.grid-stat {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 768px) {
+  .horizontal-panels {
+    height: 60vh;
+    gap: 5px;
+  }
+  
+  .panel {
+    border-radius: 15px;
+  }
+  
+  .panel.active {
+    border-radius: 10px;
+  }
+  
+  .panel:nth-child(n+5) {
+    display: none;
+  }
+  
+  .panel-title {
+    font-size: 1.4rem;
+  }
+  
+  .vertical-cards {
+    gap: 10px;
+  }
+  
+  .vertical-card {
+    height: 100px;
+  }
+  
+  .vertical-card.selected {
+    height: 280px;
+  }
+  
+  .grid-container {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .horizontal-panels {
+    height: 50vh;
+  }
+  
+  .panel:nth-child(n+4) {
+    display: none;
+  }
+  
+  .panel-title {
+    font-size: 1.2rem;
+  }
+  
+  .view-details-btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+  
+  .grid-container {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+  }
+}
+
+/* ========================================
+   DARK MODE SUPPORT
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+  .score-badge,
+  .year-badge,
+  .stat-item,
+  .grid-stat {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+}

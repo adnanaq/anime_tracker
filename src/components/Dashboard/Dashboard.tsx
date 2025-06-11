@@ -12,6 +12,7 @@ import { RandomAnime } from '../RandomAnime'
 import { SeasonalAnime } from '../SeasonalAnime'
 import { CacheStats } from '../CacheManager/CacheStats'
 import { CacheTest } from '../CacheTest'
+import { ExpandingAnimeCards } from '../ExpandingAnimeCards'
 
 const AnimeSection = memo(({
   title,
@@ -151,13 +152,36 @@ const Dashboard = () => {
 
         {searchResults.length === 0 && (
           <>
+            {/* Featured Expanding Cards Section */}
+            {trendingAnime.length > 0 && (
+              <section className="mb-12">
+                <ExpandingAnimeCards
+                  anime={trendingAnime}
+                  title="✨ Featured Trending Anime"
+                  variant="horizontal"
+                  maxCards={6}
+                />
+              </section>
+            )}
+
             {currentlyWatching.length > 0 && (
-              <AnimeSection
-                title="Currently Watching"
-                anime={currentlyWatching}
-                isLoading={false}
-                LoadingGrid={LoadingGrid}
-              />
+              <>
+                <section className="mb-12">
+                  <ExpandingAnimeCards
+                    anime={currentlyWatching}
+                    title="📺 Continue Watching"
+                    variant="vertical"
+                    maxCards={5}
+                  />
+                </section>
+                
+                <AnimeSection
+                  title="Currently Watching (Grid View)"
+                  anime={currentlyWatching}
+                  isLoading={false}
+                  LoadingGrid={LoadingGrid}
+                />
+              </>
             )}
 
             <AnimeSection
@@ -173,6 +197,15 @@ const Dashboard = () => {
               isLoading={loading.popular}
               LoadingGrid={LoadingGrid}
             />
+
+            <section className="mb-12">
+              <ExpandingAnimeCards
+                anime={topRatedAnime}
+                title="🏆 Top Rated - Interactive Grid"
+                variant="grid"
+                maxCards={8}
+              />
+            </section>
 
             <AnimeSection
               title="Top Rated"

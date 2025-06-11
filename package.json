@@ -12,12 +12,14 @@
     "dev:full": "concurrently \"npm run proxy\" \"npm run dev\""
   },
   "dependencies": {
+    "@apollo/client": "^3.13.8",
     "@types/three": "^0.177.0",
     "animejs": "^4.0.2",
     "axios": "^1.6.2",
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "framer-motion": "^10.16.16",
+    "graphql": "^16.11.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.1",

@@ -1,16 +1,20 @@
 // import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
+import { ApolloProvider } from '@apollo/client'
 import { Toaster } from 'react-hot-toast'
 import { ThemeProvider } from './context/ThemeContext'
+import { apolloClient } from './lib/apolloClient'
 import App from './App.tsx'
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
-    <ThemeProvider>
-      <App />
-      <Toaster position="top-right" />
-    </ThemeProvider>
+    <ApolloProvider client={apolloClient}>
+      <ThemeProvider>
+        <App />
+        <Toaster position="top-right" />
+      </ThemeProvider>
+    </ApolloProvider>
   </BrowserRouter>
 )

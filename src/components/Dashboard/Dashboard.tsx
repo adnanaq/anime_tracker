@@ -6,6 +6,11 @@ import { ThemeToggle } from '../ThemeToggle'
 import { SearchBar } from '../SearchBar'
 import { AuthButton } from '../AuthButton'
 import { Hero, HeroSkeleton } from '../Hero'
+import { AnimeSchedule } from '../AnimeSchedule'
+import { AdvancedSearch } from '../AdvancedSearch'
+import { RandomAnime } from '../RandomAnime'
+import { SeasonalAnime } from '../SeasonalAnime'
+import { ApolloTest } from '../ApolloTest'
 
 const AnimeSection = memo(({
   title,
@@ -181,6 +186,32 @@ const Dashboard = () => {
               isLoading={loading.currentSeason}
               LoadingGrid={LoadingGrid}
             />
+
+            {/* Apollo Client Test - Temporary */}
+            <section className="mb-12">
+              <ApolloTest />
+            </section>
+
+            {/* MAL-specific enhanced features */}
+            {currentSource === 'mal' && (
+              <>
+                <section className="mb-12">
+                  <AdvancedSearch />
+                </section>
+                
+                <section className="mb-12">
+                  <SeasonalAnime />
+                </section>
+                
+                <section className="mb-12">
+                  <AnimeSchedule />
+                </section>
+                
+                <section className="mb-12">
+                  <RandomAnime />
+                </section>
+              </>
+            )}
           </>
         )}
 

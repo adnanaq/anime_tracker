@@ -179,19 +179,20 @@ export const CACHE_STRATEGIES = {
   }
 } as const
 
-export default {
+// Default export for convenience
+const cacheSystem = {
   // Core
-  cacheManager,
+  get cacheManager() { return cacheManager },
   
   // Services
-  malCache,
-  jikanCache,
-  animeScheduleCache,
+  get malCache() { return malCache },
+  get jikanCache() { return jikanCache },
+  get animeScheduleCache() { return animeScheduleCache },
   
   // Request management
-  malRequestManager,
-  jikanRequestManager,
-  animeScheduleRequestManager,
+  get malRequestManager() { return malRequestManager },
+  get jikanRequestManager() { return jikanRequestManager },
+  get animeScheduleRequestManager() { return animeScheduleRequestManager },
   
   // Utilities
   initializeCacheSystem,
@@ -202,3 +203,5 @@ export default {
   // Constants
   CACHE_STRATEGIES
 }
+
+export default cacheSystem

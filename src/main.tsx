@@ -5,8 +5,12 @@ import { ApolloProvider } from '@apollo/client'
 import { Toaster } from 'react-hot-toast'
 import { ThemeProvider } from './context/ThemeContext'
 import { apolloClient } from './lib/apolloClient'
+import { initializeCacheSystem } from './lib/cache'
 import App from './App.tsx'
 import './index.css'
+
+// Initialize cache system
+initializeCacheSystem()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <BrowserRouter>

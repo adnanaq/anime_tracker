@@ -1,0 +1,204 @@
+// Cache System Exports
+// Centralized exports for the caching system
+
+// Core cache manager
+export { CacheManager, cacheManager } from './CacheManager'
+export type { CacheConfig, CacheEntry, CacheStats } from './CacheManager'
+
+// API-specific cache services
+export { 
+  BaseCacheService,
+  MALCacheService,
+  JikanCacheService,
+  AnimeScheduleCacheService,
+  malCache,
+  jikanCache,
+  animeScheduleCache,
+  clearAllApiCaches,
+  getCacheStats,
+  getHitRate
+} from './ApiCacheService'
+
+// Request deduplication and rate limiting
+export {
+  RequestDeduplicator,
+  RateLimitedRequestor,
+  EnhancedRequestManager,
+  malRequestManager,
+  jikanRequestManager,
+  animeScheduleRequestManager,
+  requestDeduplicator
+} from './RequestDeduplication'
+
+// === CONVENIENCE FUNCTIONS ===
+
+/**
+ * Initialize the cache system
+ * Call this during app startup
+ */
+export const initializeCacheSystem = async (): Promise<void> => {
+  console.log('🚀 Initializing AnimeTracker cache system...')
+  
+  // The cache manager initializes itself, but we can add any
+  // additional setup here if needed in the future
+  
+  console.log('✅ Cache system initialized')
+}
+
+/**
+ * Get comprehensive cache statistics
+ */
+export const getComprehensiveCacheStats = () => {
+  const cacheStats = getCacheStats()
+  const hitRate = getHitRate()
+  
+  return {
+    cache: {
+      ...cacheStats,
+      hitRate,
+      efficiency: cacheStats.totalRequests > 0 
+        ? (cacheStats.hitCount / cacheStats.totalRequests) * 100 
+        : 0
+    },
+    requestManagers: {
+      mal: malRequestManager.getStats(),
+      jikan: jikanRequestManager.getStats(),
+      animeSchedule: animeScheduleRequestManager.getStats()
+    }
+  }
+}
+
+/**
+ * Emergency cache clear - clears everything
+ */
+export const emergencyCacheClear = async (): Promise<void> => {
+  console.log('🆘 Emergency cache clear initiated...')
+  
+  await Promise.all([
+    clearAllApiCaches(),
+    cacheManager.clearAll()
+  ])
+  
+  // Cancel any pending requests
+  malRequestManager.cancelAll()
+  jikanRequestManager.cancelAll()
+  animeScheduleRequestManager.cancelAll()
+  
+  console.log('🧹 Emergency cache clear completed')
+}
+
+/**
+ * Health check for cache system
+ */
+export const cacheHealthCheck = () => {
+  const stats = getComprehensiveCacheStats()
+  
+  return {
+    isHealthy: true,
+    hitRate: stats.cache.hitRate,
+    totalRequests: stats.cache.totalRequests,
+    cacheSize: stats.cache.cacheSize,
+    pendingRequests: Object.values(stats.requestManagers).reduce(
+      (total, manager) => total + manager.deduplication.pendingCount, 
+      0
+    ),
+    recommendations: generateCacheRecommendations(stats)
+  }
+}
+
+/**
+ * Generate cache optimization recommendations
+ */
+const generateCacheRecommendations = (stats: ReturnType<typeof getComprehensiveCacheStats>) => {
+  const recommendations: string[] = []
+  const { hitRate, totalRequests } = stats.cache
+  
+  if (hitRate < 30 && totalRequests > 50) {
+    recommendations.push('Cache hit rate is low. Consider reviewing cache TTL settings.')
+  }
+  
+  if (hitRate > 95 && totalRequests > 100) {
+    recommendations.push('Excellent cache performance! Consider extending TTL for some data types.')
+  }
+  
+  const totalPending = Object.values(stats.requestManagers).reduce(
+    (total, manager) => total + manager.deduplication.pendingCount, 
+    0
+  )
+  
+  if (totalPending > 10) {
+    recommendations.push('High number of pending requests. Check for request bottlenecks.')
+  }
+  
+  return recommendations
+}
+
+// === CACHE STRATEGIES ===
+
+export const CACHE_STRATEGIES = {
+  // Static data that rarely changes
+  STATIC: {
+    ttl: 24 * 60 * 60 * 1000, // 24 hours
+    persistent: true,
+    staleTime: 12 * 60 * 60 * 1000 // 12 hours
+  },
+  
+  // Semi-static data (anime details, genres)
+  SEMI_STATIC: {
+    ttl: 2 * 60 * 60 * 1000, // 2 hours
+    persistent: true,
+    staleTime: 1 * 60 * 60 * 1000 // 1 hour
+  },
+  
+  // Dynamic data (trending, popular)
+  DYNAMIC: {
+    ttl: 15 * 60 * 1000, // 15 minutes
+    persistent: false,
+    staleTime: 5 * 60 * 1000 // 5 minutes
+  },
+  
+  // User data (personal lists, status)
+  USER_DATA: {
+    ttl: 5 * 60 * 1000, // 5 minutes
+    persistent: false,
+    staleTime: 2 * 60 * 1000 // 2 minutes
+  },
+  
+  // Search results
+  SEARCH: {
+    ttl: 30 * 60 * 1000, // 30 minutes
+    persistent: false,
+    staleTime: 15 * 60 * 1000 // 15 minutes
+  },
+  
+  // Real-time data (schedule, currently airing)
+  REAL_TIME: {
+    ttl: 2 * 60 * 1000, // 2 minutes
+    persistent: false,
+    staleTime: 1 * 60 * 1000 // 1 minute
+  }
+} as const
+
+export default {
+  // Core
+  cacheManager,
+  
+  // Services
+  malCache,
+  jikanCache,
+  animeScheduleCache,
+  
+  // Request management
+  malRequestManager,
+  jikanRequestManager,
+  animeScheduleRequestManager,
+  
+  // Utilities
+  initializeCacheSystem,
+  getComprehensiveCacheStats,
+  emergencyCacheClear,
+  cacheHealthCheck,
+  
+  // Constants
+  CACHE_STRATEGIES
+}

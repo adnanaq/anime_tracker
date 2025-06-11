@@ -12,6 +12,7 @@ import { RandomAnime } from '../RandomAnime'
 import { SeasonalAnime } from '../SeasonalAnime'
 import { ApolloTest } from '../ApolloTest'
 import { CacheStats } from '../CacheManager/CacheStats'
+import { CacheTest } from '../CacheTest'
 
 const AnimeSection = memo(({
   title,
@@ -196,6 +197,11 @@ const Dashboard = () => {
             {/* Cache Statistics - Temporary */}
             <section className="mb-12">
               <CacheStats />
+            </section>
+
+            {/* Cache Performance Tests - Temporary */}
+            <section className="mb-12">
+              <CacheTest />
             </section>
 
             {/* MAL-specific enhanced features */}

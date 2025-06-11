@@ -45,12 +45,15 @@ export const AnimeDetail = () => {
         setError(null)
         
         // Set the service source to match the requested anime
-        animeService.setSource(source as 'mal' | 'anilist')
+        // jikan source maps to mal since they use the same IDs
+        animeService.setSource(source as 'mal' | 'anilist' | 'jikan')
         
         const animeData = await animeService.getAnimeDetails(parseInt(id))
         
         // Fetch user score and status if authenticated
-        const authServiceInstance = getAuthService(source as 'mal' | 'anilist')
+        // For jikan source, use MAL auth since jikan uses MAL IDs
+        const authSource = source === 'jikan' ? 'mal' : source
+        const authServiceInstance = getAuthService(authSource as 'mal' | 'anilist')
         const isAuth = authServiceInstance?.isAuthenticated()
         
         if (isAuth && authServiceInstance) {
@@ -59,7 +62,7 @@ export const AnimeDetail = () => {
           if (tokenObj) {
             try {
               const token = tokenObj.access_token
-              if (source === 'mal') {
+              if (source === 'mal' || source === 'jikan') {
                 // For MAL, fetch detailed anime info which includes my_list_status
                 const detailResponse: any = await malService.getAnimeDetails(parseInt(id))
                 if (detailResponse.userScore) {

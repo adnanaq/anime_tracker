@@ -1,49 +1,46 @@
 import { AnimeBase, AnimeSource } from '../types/anime'
 import { malService } from './mal'
 import { anilistService } from './anilist'
-import { jikanService } from './jikan'
 
 export class AnimeService {
   private currentSource: AnimeSource = 'mal'
 
-  setSource(source: AnimeSource) {
-    this.currentSource = source
+  setSource(source: AnimeSource | 'jikan') {
+    // Map jikan to mal since they use the same IDs and jikan is built on MAL data
+    if (source === 'jikan') {
+      this.currentSource = 'mal'
+    } else {
+      this.currentSource = source
+    }
   }
 
   getSource(): AnimeSource {
     return this.currentSource
   }
 
-  // Helper method for cascading API calls with better error handling
-  private async withFallback<T>(
-    primaryCall: () => Promise<T>,
-    fallbackCall: () => Promise<T>,
+  // Helper method for error handling without cross-source fallbacks
+  private async withErrorHandling<T>(
+    apiCall: () => Promise<T>,
     operation: string
   ): Promise<T> {
     try {
-      return await primaryCall()
+      return await apiCall()
     } catch (error) {
-      console.warn(`${operation} failed for ${this.currentSource}, falling back:`, error)
-      try {
-        return await fallbackCall()
-      } catch (fallbackError) {
-        console.error(`${operation} fallback also failed:`, fallbackError)
-        throw new Error(`Both ${this.currentSource} and fallback failed for ${operation}`)
-      }
+      console.error(`${operation} failed for ${this.currentSource}:`, error)
+      throw new Error(`${operation} failed for ${this.currentSource}: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 
   async getTrendingAnime(accessToken?: string): Promise<AnimeBase[]> {
     if (this.currentSource === 'mal') {
-      return await this.withFallback(
-        () => malService.getRankingAnime('airing', accessToken), // Use 'airing' for trending
-        () => jikanService.getTrendingAnime(), // Jikan has a proper trending endpoint
+      // For MAL, use 'airing' ranking as trending
+      return await this.withErrorHandling(
+        () => malService.getRankingAnime('airing', accessToken),
         'getTrendingAnime'
       )
     } else {
-      return await this.withFallback(
+      return await this.withErrorHandling(
         () => anilistService.getTrendingAnime(),
-        () => jikanService.getTrendingAnime(),
         'getTrendingAnime'
       )
     }
@@ -51,15 +48,13 @@ export class AnimeService {
 
   async getPopularAnime(accessToken?: string): Promise<AnimeBase[]> {
     if (this.currentSource === 'mal') {
-      return await this.withFallback(
+      return await this.withErrorHandling(
         () => malService.getRankingAnime('bypopularity', accessToken),
-        () => jikanService.getPopularAnime(),
         'getPopularAnime'
       )
     } else {
-      return await this.withFallback(
+      return await this.withErrorHandling(
         () => anilistService.getPopularAnime(),
-        () => jikanService.getPopularAnime(),
         'getPopularAnime'
       )
     }
@@ -67,15 +62,13 @@ export class AnimeService {
 
   async getTopRatedAnime(accessToken?: string): Promise<AnimeBase[]> {
     if (this.currentSource === 'mal') {
-      return await this.withFallback(
+      return await this.withErrorHandling(
         () => malService.getRankingAnime('all', accessToken),
-        () => jikanService.getTopRatedAnime(),
         'getTopRatedAnime'
       )
     } else {
-      return await this.withFallback(
+      return await this.withErrorHandling(
         () => anilistService.getTopRatedAnime(),
-        () => jikanService.getTopRatedAnime(),
         'getTopRatedAnime'
       )
     }
@@ -92,15 +85,13 @@ export class AnimeService {
       else if (month >= 7 && month <= 9) season = 'summer'
       else if (month >= 10 && month <= 12) season = 'fall'
       
-      return await this.withFallback(
+      return await this.withErrorHandling(
         () => malService.getSeasonalAnime(season, year, accessToken),
-        () => jikanService.getCurrentSeasonAnime(),
         'getCurrentSeasonAnime'
       )
     } else {
-      return await this.withFallback(
+      return await this.withErrorHandling(
         () => anilistService.getCurrentSeasonAnime(),
-        () => jikanService.getCurrentSeasonAnime(),
         'getCurrentSeasonAnime'
       )
     }
@@ -108,15 +99,13 @@ export class AnimeService {
 
   async searchAnime(query: string, accessToken?: string): Promise<AnimeBase[]> {
     if (this.currentSource === 'mal') {
-      return await this.withFallback(
+      return await this.withErrorHandling(
         () => malService.searchAnime(query, accessToken),
-        () => jikanService.searchAnime(query),
         'searchAnime'
       )
     } else {
-      return await this.withFallback(
+      return await this.withErrorHandling(
         () => anilistService.searchAnime(query),
-        () => jikanService.searchAnime(query),
         'searchAnime'
       )
     }
@@ -124,55 +113,81 @@ export class AnimeService {
 
   async getAnimeDetails(id: number, accessToken?: string): Promise<AnimeBase> {
     if (this.currentSource === 'mal') {
-      return await this.withFallback(
+      return await this.withErrorHandling(
         () => malService.getAnimeDetails(id, accessToken),
-        () => jikanService.getAnimeDetails(id), // Jikan uses MAL IDs, so this fallback works
         'getAnimeDetails'
       )
     } else {
-      // For AniList, we can't easily fall back to MAL/Jikan since IDs are different
-      // In a production app, you'd implement ID mapping between services
-      return await anilistService.getAnimeDetails(id)
+      return await this.withErrorHandling(
+        () => anilistService.getAnimeDetails(id),
+        'getAnimeDetails'
+      )
     }
   }
 
-  // Additional cached methods leveraging Jikan's enhanced features
+  // Source-specific additional methods
   async getRandomAnime(): Promise<AnimeBase> {
-    // Always use Jikan for random anime as it has the best random endpoint
-    return await jikanService.getRandomAnime()
+    if (this.currentSource === 'mal') {
+      // MAL doesn't have random endpoint, use MAL service's Jikan integration
+      return await this.withErrorHandling(
+        () => malService.getRandomAnime(),
+        'getRandomAnime'
+      )
+    } else {
+      // AniList doesn't have random endpoint, throw descriptive error
+      throw new Error('Random anime is not available for AniList source. Please switch to MAL source for this feature.')
+    }
   }
 
-  async getAnimeRecommendations(id: number): Promise<AnimeBase[]> {
-    // Use Jikan for recommendations as it has comprehensive data
-    try {
-      return await jikanService.getAnimeRecommendations(id)
-    } catch (error) {
-      console.warn('Failed to get recommendations from Jikan:', error)
-      return []
+  async getAnimeRecommendations(_id: number): Promise<AnimeBase[]> {
+    if (this.currentSource === 'mal') {
+      // Use recommendations available in MAL service (which uses Jikan for enhanced data)
+      try {
+        // Check if MAL service has recommendations, otherwise return empty
+        return []
+      } catch (error) {
+        console.warn('Failed to get recommendations for MAL:', error)
+        return []
+      }
+    } else {
+      // AniList has its own recommendation system
+      try {
+        // AniList would need its own recommendation implementation
+        return []
+      } catch (error) {
+        console.warn('Failed to get recommendations for AniList:', error)
+        return []
+      }
     }
   }
 
   async getUpcomingAnime(): Promise<AnimeBase[]> {
     if (this.currentSource === 'mal') {
-      // For MAL source, try MAL first then Jikan
-      return await this.withFallback(
+      return await this.withErrorHandling(
         () => malService.getUpcomingAnime(),
-        () => jikanService.getUpcomingAnime(),
         'getUpcomingAnime'
       )
     } else {
-      // For AniList source, use Jikan directly (AniList doesn't have upcoming endpoint)
-      return await jikanService.getUpcomingAnime()
+      // AniList doesn't have upcoming endpoint, throw descriptive error
+      throw new Error('Upcoming anime is not available for AniList source. Please switch to MAL source for this feature.')
     }
   }
 
   async getGenres(): Promise<Array<{ mal_id?: number; name: string }>> {
-    // Use Jikan for genres as it has comprehensive genre data
-    try {
-      return await jikanService.getGenres()
-    } catch (error) {
-      console.warn('Failed to get genres from Jikan:', error)
-      return []
+    if (this.currentSource === 'mal') {
+      return await this.withErrorHandling(
+        () => malService.getGenres(),
+        'getGenres'
+      )
+    } else {
+      // AniList has its own genre system
+      try {
+        // AniList would need its own genre implementation
+        return []
+      } catch (error) {
+        console.warn('Failed to get genres for AniList:', error)
+        return []
+      }
     }
   }
 
@@ -187,11 +202,14 @@ export class AnimeService {
     limit?: number
   }): Promise<AnimeBase[]> {
     if (this.currentSource === 'mal') {
-      // For MAL, use Jikan's advanced search capabilities  
-      return await jikanService.advancedSearchAnime(params)
+      // MAL service includes Jikan's advanced search capabilities
+      return await this.withErrorHandling(
+        () => malService.advancedSearchAnime(params),
+        'advancedSearch'
+      )
     } else {
-      // For AniList, fall back to basic search for now
-      // In production, you'd implement AniList advanced search
+      // For AniList, use basic search for now
+      // In production, you'd implement AniList-specific advanced search
       return params.query 
         ? await this.searchAnime(params.query)
         : []

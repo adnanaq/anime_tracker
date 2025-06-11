@@ -1,5 +1,53 @@
 import axios from "axios";
 import { MALAnime, AnimeBase } from "../../types/anime";
+import { malCache, malRequestManager } from "../../lib/cache";
+
+// Jikan API for enhanced features (built on MAL data)
+const JIKAN_BASE_URL = 'https://api.jikan.moe/v4'
+
+// Rate limiting for Jikan: 30 requests per minute, 2 requests per second
+const RATE_LIMIT_DELAY = 500 // 500ms between requests
+let lastJikanRequestTime = 0
+
+const rateLimitedJikanFetch = async (url: string): Promise<Response> => {
+  const now = Date.now()
+  const timeSinceLastRequest = now - lastJikanRequestTime
+  
+  if (timeSinceLastRequest < RATE_LIMIT_DELAY) {
+    await new Promise(resolve => setTimeout(resolve, RATE_LIMIT_DELAY - timeSinceLastRequest))
+  }
+  
+  lastJikanRequestTime = Date.now()
+  return fetch(url)
+}
+
+// Enhanced types for Jikan integration
+export interface JikanScheduleEntry {
+  mal_id: number
+  title: string
+  images: {
+    jpg: {
+      image_url: string
+      small_image_url: string
+      large_image_url: string
+    }
+    webp: {
+      image_url: string
+      small_image_url: string
+      large_image_url: string
+    }
+  }
+  synopsis?: string
+  score?: number
+  episodes?: number
+  broadcast: {
+    day?: string
+    time?: string
+    timezone?: string
+    string?: string
+  }
+  genres?: Array<{ mal_id: number; name: string }>
+}
 
 // Use proxy in development to avoid CORS issues
 const isDevelopment = import.meta.env.DEV;
@@ -87,115 +135,152 @@ export const normalizeMALAnime = (
 
 export const malService = {
   async getSeasonalAnime(season?: string, year?: number, accessToken?: string) {
-    try {
-      if (!season || !year) {
-        // Fallback to ranking if season/year not provided
-        return await this.getRankingAnime("airing", accessToken);
-      }
+    if (!season || !year) {
+      // Fallback to ranking if season/year not provided
+      return await this.getRankingAnime("airing", accessToken);
+    }
 
-      const response = await malApi.get(`/anime/season/${year}/${season}`, {
-        headers: getHeaders(accessToken),
-        params: {
-          fields:
-            "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,my_list_status",
-          limit: 6,
-        },
-      });
-      return response.data.data.map((item: { node: MALAnime }) =>
-        normalizeMALAnime(item.node)
-      );
-    } catch (error) {
+    const requestKey = `mal:seasonal:${year}:${season}:${!!accessToken}`
+    
+    return await malRequestManager.enhancedRequest(
+      requestKey,
+      async () => {
+        return await malCache.getSeasonalAnime(
+          season,
+          year,
+          async () => {
+            const response = await malApi.get(`/anime/season/${year}/${season}`, {
+              headers: getHeaders(accessToken),
+              params: {
+                fields:
+                  "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,my_list_status",
+                limit: 6,
+              },
+            });
+            return response.data.data.map((item: { node: MALAnime }) =>
+              normalizeMALAnime(item.node)
+            );
+          },
+          !!accessToken
+        )
+      }
+    ).catch(async (error) => {
       console.error("MAL seasonal anime error:", error);
       // Fallback to ranking on error
       return await this.getRankingAnime("airing", accessToken);
-    }
+    })
   },
 
   async getRankingAnime(rankingType: string = "all", accessToken?: string) {
-    try {
-      const response = await malApi.get("/anime/ranking", {
-        headers: getHeaders(accessToken),
-        params: {
-          ranking_type: rankingType,
-          fields:
-            "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,my_list_status",
-          limit: 6,
-        },
-      });
-      
-      return response.data.data.map((item: { node: MALAnime }) =>
-        normalizeMALAnime(item.node)
-      );
-    } catch (error) {
-      console.error("MAL ranking anime error:", error);
-      throw error;
-    }
+    const requestKey = `mal:ranking:${rankingType}:${!!accessToken}`
+    
+    return await malRequestManager.enhancedRequest(
+      requestKey,
+      async () => {
+        return await malCache.getRankingAnime(
+          rankingType,
+          async () => {
+            const response = await malApi.get("/anime/ranking", {
+              headers: getHeaders(accessToken),
+              params: {
+                ranking_type: rankingType,
+                fields:
+                  "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,my_list_status",
+                limit: 6,
+              },
+            });
+            
+            return response.data.data.map((item: { node: MALAnime }) =>
+              normalizeMALAnime(item.node)
+            );
+          },
+          !!accessToken
+        )
+      }
+    )
   },
 
   async searchAnime(query: string, accessToken?: string) {
-    try {
-      const response = await malApi.get("/anime", {
-        headers: getHeaders(accessToken),
-        params: {
-          q: query,
-          fields:
-            "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,my_list_status",
-          limit: 6,
-        },
-      });
-      return response.data.data.map((item: { node: MALAnime }) =>
-        normalizeMALAnime(item.node)
-      );
-    } catch (error) {
-      console.error("MAL search error:", error);
-      throw error;
-    }
+    const requestKey = `mal:search:${query}:${!!accessToken}`
+    
+    return await malRequestManager.enhancedRequest(
+      requestKey,
+      async () => {
+        return await malCache.searchAnime(
+          query,
+          async () => {
+            const response = await malApi.get("/anime", {
+              headers: getHeaders(accessToken),
+              params: {
+                q: query,
+                fields:
+                  "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,my_list_status",
+                limit: 6,
+              },
+            });
+            return response.data.data.map((item: { node: MALAnime }) =>
+              normalizeMALAnime(item.node)
+            );
+          }
+        )
+      }
+    )
   },
 
   async getAnimeDetails(id: number, accessToken?: string) {
-    try {
-      const headers = getHeaders(accessToken);
+    const requestKey = `mal:details:${id}:${!!accessToken}`
+    
+    return await malRequestManager.enhancedRequest(
+      requestKey,
+      async () => {
+        return await malCache.getAnimeDetails(
+          id,
+          async () => {
+            const headers = getHeaders(accessToken);
 
-      const response = await malApi.get(`/anime/${id}`, {
-        headers,
-        params: {
-          fields:
-            "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,related_anime,my_list_status",
-        },
-      });
+            const response = await malApi.get(`/anime/${id}`, {
+              headers,
+              params: {
+                fields:
+                  "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,related_anime,my_list_status",
+              },
+            });
 
-      const animeData = normalizeMALAnime(response.data, true);
+            const animeData = normalizeMALAnime(response.data, true);
 
-      // Fetch detailed information for related anime
-      if (animeData.relatedAnime && animeData.relatedAnime.length > 0) {
-        const detailedRelatedAnime = await Promise.all(
-          animeData.relatedAnime.slice(0, 5).map(async (relatedAnime) => {
-            try {
-              const detailedResponse = await malApi.get(
-                `/anime/${relatedAnime.id}`,
-                {
-                  headers,
-                  params: {
-                    fields:
-                      "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type",
-                  },
-                }
+            // Fetch detailed information for related anime
+            if (animeData.relatedAnime && animeData.relatedAnime.length > 0) {
+              const detailedRelatedAnime = await Promise.all(
+                animeData.relatedAnime.slice(0, 5).map(async (relatedAnime) => {
+                  // Cache related anime details too
+                  return await malCache.getAnimeDetails(
+                    relatedAnime.id,
+                    async () => {
+                      const detailedResponse = await malApi.get(
+                        `/anime/${relatedAnime.id}`,
+                        {
+                          headers,
+                          params: {
+                            fields:
+                              "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type",
+                          },
+                        }
+                      );
+                      return normalizeMALAnime(detailedResponse.data, false);
+                    },
+                    !!accessToken
+                  ).catch(() => relatedAnime) // If cache fails, return basic info
+                })
               );
-              return normalizeMALAnime(detailedResponse.data, false);
-            } catch (error) {
-              // If we can't fetch details, return the basic info
-              return relatedAnime;
+              animeData.relatedAnime = detailedRelatedAnime;
             }
-          })
-        );
-        animeData.relatedAnime = detailedRelatedAnime;
-      }
 
-      return animeData;
-    } catch (error) {
-      console.error("MAL anime details error:", error);
-      throw error;
-    }
+            return animeData;
+          },
+          !!accessToken
+        )
+      }
+    )
   },
 
   async getCurrentUser(accessToken: string) {
@@ -422,6 +507,221 @@ export const malService = {
     } catch (error) {
       console.error("MAL getUserAnimeDetails error:", error);
       throw error;
+    }
+  },
+
+  // Enhanced features using Jikan API (built on MAL data)
+  
+  async getWeeklySchedule(): Promise<{ [day: string]: AnimeBase[] }> {
+    try {
+      const response = await rateLimitedJikanFetch(`${JIKAN_BASE_URL}/schedules`)
+      
+      if (!response.ok) {
+        throw new Error(`Jikan API error: ${response.status} ${response.statusText}`)
+      }
+      
+      const data = await response.json()
+      const animeList = data.data || []
+      
+      // Group anime by broadcast day
+      const weeklySchedule: { [day: string]: AnimeBase[] } = {
+        monday: [],
+        tuesday: [],
+        wednesday: [],
+        thursday: [],
+        friday: [],
+        saturday: [],
+        sunday: []
+      }
+      
+      animeList.forEach((anime: JikanScheduleEntry) => {
+        if (anime.broadcast?.day) {
+          const broadcastDay = anime.broadcast.day.toLowerCase()
+          // Handle plural forms (e.g., "mondays" -> "monday")
+          const dayKey = broadcastDay.endsWith('s') ? broadcastDay.slice(0, -1) : broadcastDay
+          
+          if (weeklySchedule[dayKey]) {
+            // Normalize Jikan data to AnimeBase format
+            const normalizedAnime: AnimeBase = {
+              id: anime.mal_id,
+              title: anime.title,
+              synopsis: anime.synopsis,
+              image: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
+              coverImage: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
+              score: anime.score,
+              episodes: anime.episodes,
+              genres: anime.genres?.map(g => g.name) || [],
+              source: 'mal' as const
+            }
+            
+            weeklySchedule[dayKey].push(normalizedAnime)
+          }
+        }
+      })
+      
+      return weeklySchedule
+    } catch (error) {
+      console.error('MAL getWeeklySchedule error:', error)
+      return {}
+    }
+  },
+
+  async getDaySchedule(day: string): Promise<AnimeBase[]> {
+    try {
+      const response = await rateLimitedJikanFetch(`${JIKAN_BASE_URL}/schedules?filter=${day.toLowerCase()}`)
+      
+      if (!response.ok) {
+        throw new Error(`Jikan API error: ${response.status} ${response.statusText}`)
+      }
+      
+      const data = await response.json()
+      const animeList = data.data || []
+      
+      return animeList.map((anime: JikanScheduleEntry) => ({
+        id: anime.mal_id,
+        title: anime.title,
+        synopsis: anime.synopsis,
+        image: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
+        coverImage: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
+        score: anime.score,
+        episodes: anime.episodes,
+        genres: anime.genres?.map(g => g.name) || [],
+        source: 'mal' as const
+      }))
+    } catch (error) {
+      console.error(`MAL get${day} schedule error:`, error)
+      return []
+    }
+  },
+
+  async advancedSearchAnime(params: {
+    query?: string
+    type?: 'tv' | 'movie' | 'ova' | 'special' | 'ona' | 'music'
+    status?: 'airing' | 'complete' | 'upcoming'
+    rating?: 'g' | 'pg' | 'pg13' | 'r17' | 'r' | 'rx'
+    genre?: string
+    min_score?: number
+    max_score?: number
+    limit?: number
+  }): Promise<AnimeBase[]> {
+    try {
+      const searchParams = new URLSearchParams()
+      
+      if (params.query) searchParams.append('q', params.query)
+      if (params.type) searchParams.append('type', params.type)
+      if (params.status) searchParams.append('status', params.status)
+      if (params.rating) searchParams.append('rating', params.rating)
+      if (params.genre) searchParams.append('genres', params.genre)
+      if (params.min_score) searchParams.append('min_score', params.min_score.toString())
+      if (params.max_score) searchParams.append('max_score', params.max_score.toString())
+      searchParams.append('limit', (params.limit || 12).toString())
+      
+      const response = await rateLimitedJikanFetch(`${JIKAN_BASE_URL}/anime?${searchParams}`)
+      
+      if (!response.ok) {
+        throw new Error(`Jikan API error: ${response.status} ${response.statusText}`)
+      }
+      
+      const data = await response.json()
+      const animeList = data.data || []
+      
+      return animeList.map((anime: any) => ({
+        id: anime.mal_id,
+        title: anime.title,
+        synopsis: anime.synopsis,
+        image: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
+        coverImage: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
+        score: anime.score,
+        episodes: anime.episodes,
+        status: anime.status,
+        genres: anime.genres?.map((g: any) => g.name) || [],
+        year: anime.year || (anime.aired?.from ? new Date(anime.aired.from).getFullYear() : undefined),
+        format: anime.type,
+        source: 'mal' as const
+      }))
+    } catch (error) {
+      console.error('MAL advanced search error:', error)
+      return []
+    }
+  },
+
+  async getGenres(): Promise<Array<{ mal_id: number; name: string }>> {
+    try {
+      const response = await rateLimitedJikanFetch(`${JIKAN_BASE_URL}/genres/anime`)
+      
+      if (!response.ok) {
+        throw new Error(`Jikan API error: ${response.status} ${response.statusText}`)
+      }
+      
+      const data = await response.json()
+      return data.data || []
+    } catch (error) {
+      console.error('MAL get genres error:', error)
+      return []
+    }
+  },
+
+  async getRandomAnime(): Promise<AnimeBase> {
+    try {
+      const response = await rateLimitedJikanFetch(`${JIKAN_BASE_URL}/random/anime`)
+      
+      if (!response.ok) {
+        throw new Error(`Jikan API error: ${response.status} ${response.statusText}`)
+      }
+      
+      const data = await response.json()
+      const anime = data.data
+      
+      return {
+        id: anime.mal_id,
+        title: anime.title,
+        synopsis: anime.synopsis,
+        image: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
+        coverImage: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
+        score: anime.score,
+        episodes: anime.episodes,
+        status: anime.status,
+        genres: anime.genres?.map((g: any) => g.name) || [],
+        year: anime.year || (anime.aired?.from ? new Date(anime.aired.from).getFullYear() : undefined),
+        format: anime.type,
+        source: 'mal' as const
+      }
+    } catch (error) {
+      console.error('MAL get random anime error:', error)
+      throw error
+    }
+  },
+
+
+  async getUpcomingAnime(): Promise<AnimeBase[]> {
+    try {
+      const response = await rateLimitedJikanFetch(`${JIKAN_BASE_URL}/seasons/upcoming?limit=12`)
+      
+      if (!response.ok) {
+        throw new Error(`Jikan API error: ${response.status} ${response.statusText}`)
+      }
+      
+      const data = await response.json()
+      const animeList = data.data || []
+      
+      return animeList.map((anime: any) => ({
+        id: anime.mal_id,
+        title: anime.title,
+        synopsis: anime.synopsis,
+        image: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
+        coverImage: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
+        score: anime.score,
+        episodes: anime.episodes,
+        status: anime.status,
+        genres: anime.genres?.map((g: any) => g.name) || [],
+        year: anime.year || (anime.aired?.from ? new Date(anime.aired.from).getFullYear() : undefined),
+        season: anime.season,
+        format: anime.type,
+        source: 'mal' as const
+      }))
+    } catch (error) {
+      console.error('MAL get upcoming anime error:', error)
+      return []
     }
   },
 };

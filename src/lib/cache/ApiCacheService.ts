@@ -114,6 +114,37 @@ export class MALCacheService extends BaseCacheService {
     })
   }
 
+  // Ranking/trending anime caching
+  async getRankingAnime<T>(
+    rankingType: string,
+    requestFn: () => Promise<T>,
+    hasAuth: boolean = false
+  ): Promise<T> {
+    const cacheKey = this.createCacheKey(`ranking:${rankingType}`, null, hasAuth)
+    
+    return this.cachedRequest(cacheKey, requestFn, {
+      ttl: 15 * 60 * 1000, // 15 minutes - ranking changes relatively often
+      persistent: false,
+      version: '1.0.0'
+    })
+  }
+
+  // Seasonal anime caching
+  async getSeasonalAnime<T>(
+    season: string,
+    year: number,
+    requestFn: () => Promise<T>,
+    hasAuth: boolean = false
+  ): Promise<T> {
+    const cacheKey = this.createCacheKey(`seasonal:${year}:${season}`, null, hasAuth)
+    
+    return this.cachedRequest(cacheKey, requestFn, {
+      ttl: 60 * 60 * 1000, // 1 hour - seasonal data doesn't change much
+      persistent: true,
+      version: '1.0.0'
+    })
+  }
+
   // Invalidate user-specific data when status changes
   async invalidateUserData(animeId?: number): Promise<void> {
     if (animeId) {

@@ -241,6 +241,24 @@ export class JikanCacheService extends BaseCacheService {
       version: '1.0.0'
     })
   }
+
+  // Generic caching helper for Jikan-specific data
+  async cacheJikanData<T>(
+    endpoint: string,
+    requestFn: () => Promise<T>,
+    config: {
+      ttl: number
+      persistent: boolean
+    }
+  ): Promise<T> {
+    const cacheKey = this.createCacheKey(endpoint)
+    
+    return this.cachedRequest(cacheKey, requestFn, {
+      ttl: config.ttl,
+      persistent: config.persistent,
+      version: '1.0.0'
+    })
+  }
 }
 
 // === ANIME SCHEDULE CACHE SERVICE ===

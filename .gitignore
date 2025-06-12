@@ -96,3 +96,9 @@ dist-ssr
 # Temporary folders
 tmp/
 temp/issue.txt
+
+proxy.log
+issue.txt
+d.txt
+sec.txt
+*.txt

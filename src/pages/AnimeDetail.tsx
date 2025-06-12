@@ -4,7 +4,7 @@ import { animate, stagger } from 'animejs'
 import { AnimeBase } from '../types/anime'
 import { animeService } from '../services/animeService'
 import { LoadingSpinner } from '../components/LoadingSpinner'
-import { AnimeCard } from '../components/AnimeCard/AnimeCard'
+import { ExpandableGrid } from '../components/ExpandableGrid'
 import { getAuthService } from '../services/shared'
 import { malService } from '../services/mal'
 import { anilistService } from '../services/anilist'
@@ -682,15 +682,12 @@ export const AnimeDetail = () => {
 
         {/* Related anime section */}
         {animeData.relatedAnime && animeData.relatedAnime.length > 0 && (
-          <div className="mt-8 bg-white/90 backdrop-blur-md rounded-lg shadow-lg p-6">
-            <h2 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
-              Related Anime
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              {animeData.relatedAnime.map((relatedItem) => (
-                <AnimeCard key={`${relatedItem.source}-${relatedItem.id}`} anime={relatedItem} />
-              ))}
-            </div>
+          <div className="mt-8">
+            <ExpandableGrid 
+              anime={animeData.relatedAnime} 
+              title="Related Anime" 
+              maxCards={10} 
+            />
           </div>
         )}
       </main>

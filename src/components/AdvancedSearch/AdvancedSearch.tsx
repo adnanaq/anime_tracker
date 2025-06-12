@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react'
 import { malService } from '../../services/mal'
 import { AnimeBase } from '../../types/anime'
-import { AnimeCard } from '../AnimeCard/AnimeCard'
-import { AnimatedButton } from '../AnimatedButton/AnimatedButton'
-import { Typography } from '../ui'
+import { ExpandableGrid } from '../ExpandableGrid'
+import { Typography, Button, AnimeGridSkeleton, Spinner } from '../ui'
 
 const ANIME_TYPES = [
   { value: '', label: 'All Types' },
@@ -112,29 +111,17 @@ export const AdvancedSearch = () => {
     setError(null)
   }
 
-  const LoadingSkeleton = () => (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-      {Array.from({ length: 12 }).map((_, index) => (
-        <div key={index} className="animate-pulse">
-          <div className="bg-gray-300 dark:bg-gray-600 rounded-xl h-64 mb-2"></div>
-          <div className="space-y-2">
-            <div className="bg-gray-300 dark:bg-gray-600 rounded h-4 w-3/4"></div>
-            <div className="bg-gray-300 dark:bg-gray-600 rounded h-3 w-1/2"></div>
-          </div>
-        </div>
-      ))}
-    </div>
-  )
+  const LoadingSkeleton = () => <AnimeGridSkeleton count={12} showDetails />
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg transition-theme">
+    <div className="at-bg-surface rounded-xl at-shadow-lg at-transition">
       {/* Header */}
-      <div className="p-6 at-border-secondary border-b">
+      <div className="p-6 at-border-b">
         <div className="flex items-center justify-between mb-4">
           <Typography variant="h3" className="font-bold">
             🔍 Advanced Search
           </Typography>
-          <Typography variant="bodySmall" color="secondary" className="flex items-center space-x-2">
+          <Typography variant="bodySmall" color="muted" className="flex items-center space-x-2">
             <span>🌐</span>
             <span>Powered by MyAnimeList</span>
           </Typography>
@@ -144,15 +131,15 @@ export const AdvancedSearch = () => {
         <div className="space-y-4">
           {/* Query Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <Typography variant="label" className="block mb-2">
               Search Query
-            </label>
+            </Typography>
             <input
               type="text"
               value={searchParams.query}
               onChange={(e) => setSearchParams(prev => ({ ...prev, query: e.target.value }))}
               placeholder="Enter anime title, character, or keyword..."
-              className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full at-bg-surface at-border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:at-border-focus at-transition-colors at-text-primary"
             />
           </div>
 
@@ -160,13 +147,13 @@ export const AdvancedSearch = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Type Filter */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <Typography variant="label" className="block mb-2">
                 Type
-              </label>
+              </Typography>
               <select
                 value={searchParams.type}
                 onChange={(e) => setSearchParams(prev => ({ ...prev, type: e.target.value }))}
-                className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full at-bg-surface at-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:at-border-focus at-transition-colors at-text-primary"
               >
                 {ANIME_TYPES.map(type => (
                   <option key={type.value} value={type.value}>{type.label}</option>
@@ -176,13 +163,13 @@ export const AdvancedSearch = () => {
 
             {/* Status Filter */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <Typography variant="label" className="block mb-2">
                 Status
-              </label>
+              </Typography>
               <select
                 value={searchParams.status}
                 onChange={(e) => setSearchParams(prev => ({ ...prev, status: e.target.value }))}
-                className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full at-bg-surface at-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:at-border-focus at-transition-colors at-text-primary"
               >
                 {ANIME_STATUS.map(status => (
                   <option key={status.value} value={status.value}>{status.label}</option>
@@ -192,13 +179,13 @@ export const AdvancedSearch = () => {
 
             {/* Rating Filter */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <Typography variant="label" className="block mb-2">
                 Rating
-              </label>
+              </Typography>
               <select
                 value={searchParams.rating}
                 onChange={(e) => setSearchParams(prev => ({ ...prev, rating: e.target.value }))}
-                className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full at-bg-surface at-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:at-border-focus at-transition-colors at-text-primary"
               >
                 {ANIME_RATINGS.map(rating => (
                   <option key={rating.value} value={rating.value}>{rating.label}</option>
@@ -208,13 +195,13 @@ export const AdvancedSearch = () => {
 
             {/* Genre Filter */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <Typography variant="label" className="block mb-2">
                 Genre
-              </label>
+              </Typography>
               <select
                 value={searchParams.genre}
                 onChange={(e) => setSearchParams(prev => ({ ...prev, genre: e.target.value }))}
-                className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full at-bg-surface at-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:at-border-focus at-transition-colors at-text-primary"
               >
                 <option value="">All Genres</option>
                 {genres.map(genre => (
@@ -225,9 +212,9 @@ export const AdvancedSearch = () => {
 
             {/* Score Range */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <Typography variant="label" className="block mb-2">
                 Min Score: {searchParams.minScore}
-              </label>
+              </Typography>
               <input
                 type="range"
                 min="0"
@@ -240,9 +227,9 @@ export const AdvancedSearch = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <Typography variant="label" className="block mb-2">
                 Max Score: {searchParams.maxScore}
-              </label>
+              </Typography>
               <input
                 type="range"
                 min="0"
@@ -257,7 +244,7 @@ export const AdvancedSearch = () => {
 
           {/* Action Buttons */}
           <div className="flex space-x-4">
-            <AnimatedButton
+            <Button
               onClick={handleSearch}
               disabled={loading}
               variant="primary"
@@ -266,7 +253,7 @@ export const AdvancedSearch = () => {
             >
               {loading ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
+                  <Spinner variant="default" size="xs" className="mr-2" />
                   Searching...
                 </>
               ) : (
@@ -275,16 +262,16 @@ export const AdvancedSearch = () => {
                   Search Anime
                 </>
               )}
-            </AnimatedButton>
+            </Button>
 
-            <AnimatedButton
+            <Button
               onClick={handleReset}
               variant="ghost"
               size="md"
             >
               <span className="mr-2">🔄</span>
               Reset Filters
-            </AnimatedButton>
+            </Button>
           </div>
         </div>
       </div>
@@ -292,10 +279,10 @@ export const AdvancedSearch = () => {
       {/* Results */}
       <div className="p-6">
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
+          <div className="at-bg-danger/10 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
             <div className="flex items-center">
               <span className="text-red-500 mr-2">⚠️</span>
-              <span className="text-red-700 dark:text-red-300">{error}</span>
+              <Typography variant="body" className="text-red-700 dark:text-red-300">{error}</Typography>
             </div>
           </div>
         )}
@@ -305,49 +292,44 @@ export const AdvancedSearch = () => {
         ) : hasSearched ? (
           results.length > 0 ? (
             <>
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                  Search Results ({results.length})
-                </h3>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-                {results.map((anime) => (
-                  <AnimeCard key={`search-${anime.id}`} anime={anime} />
-                ))}
-              </div>
+              <ExpandableGrid 
+                anime={results} 
+                title={`Search Results (${results.length})`} 
+                maxCards={20} 
+              />
             </>
           ) : (
             <div className="text-center py-12">
               <div className="text-6xl mb-4">🤷‍♂️</div>
-              <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              <Typography variant="h3" weight="semibold" className="mb-2">
                 No Results Found
-              </h3>
-              <p className="text-gray-500 dark:text-gray-400">
+              </Typography>
+              <Typography variant="body" color="muted">
                 Try adjusting your search criteria or removing some filters.
-              </p>
+              </Typography>
             </div>
           )
         ) : (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🎯</div>
-            <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <Typography variant="h3" weight="semibold" className="mb-2">
               Advanced Anime Search
-            </h3>
-            <p className="text-gray-500 dark:text-gray-400 mb-6">
+            </Typography>
+            <Typography variant="body" color="muted" className="mb-6">
               Use the filters above to find exactly what you're looking for.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 dark:text-gray-400 max-w-md mx-auto">
+            </Typography>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-md mx-auto">
               <div className="flex items-center justify-center space-x-2">
                 <span>📺</span>
-                <span>Type & Status filters</span>
+                <Typography variant="bodySmall" color="muted">Type & Status filters</Typography>
               </div>
               <div className="flex items-center justify-center space-x-2">
                 <span>🏷️</span>
-                <span>Genre selection</span>
+                <Typography variant="bodySmall" color="muted">Genre selection</Typography>
               </div>
               <div className="flex items-center justify-center space-x-2">
                 <span>⭐</span>
-                <span>Score range filtering</span>
+                <Typography variant="bodySmall" color="muted">Score range filtering</Typography>
               </div>
             </div>
           </div>

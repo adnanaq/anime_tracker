@@ -1,0 +1,682 @@
+/* REFERENCE FILE: Complete ExpandableGrid CSS Design Implementation
+   This preserves all the current styling, hover states, animations, and visual effects */
+
+/* Grid Container with CSS Grid and Custom Properties */
+.expandable-grid-container {
+  display: grid;
+  grid-template-columns:
+    var(--col-1, 1fr)
+    var(--col-2, 1fr)
+    var(--col-3, 1fr)
+    var(--col-4, 1fr)
+    var(--col-5, 1fr)
+    var(--col-6, 1fr)
+    var(--col-7, 1fr)
+    var(--col-8, 1fr)
+    var(--col-9, 1fr)
+    var(--col-10, 1fr);
+  grid-template-rows: 370px;
+  transition: grid-template-columns 2s
+    linear(
+      0,
+      0.01,
+      0.04 1.6%,
+      0.161 3.3%,
+      0.816 9.4%,
+      1.046,
+      1.189 14.4%,
+      1.231,
+      1.254 17%,
+      1.259,
+      1.257 18.6%,
+      1.236,
+      1.194 22.3%,
+      1.057 27%,
+      0.999 29.4%,
+      0.955 32.1%,
+      0.942,
+      0.935 34.9%,
+      0.933,
+      0.939 38.4%,
+      1 47.3%,
+      1.011,
+      1.017 52.6%,
+      1.016 56.4%,
+      1 65.2%,
+      0.996 70.2%,
+      1.001 87.2%,
+      1
+    );
+  gap: 16px;
+}
+
+/* Card Base Styling */
+.expandable-grid-card {
+  position: relative;
+}
+
+.expandable-grid-card .card-radio {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  inset: 0;
+  z-index: 5;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Radio button interaction states */
+.expandable-grid-card:has(.card-radio:checked) .card-radio {
+  pointer-events: none;
+}
+
+.expandable-grid-card:has(.card-radio:checked) .card-expanded-overlay {
+  pointer-events: auto;
+}
+
+/* Image container */
+.expandable-grid-card .card-image-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.expandable-grid-card .card-image-container img {
+  object-position: top center;
+}
+
+/* Hover overlay effects */
+.expandable-grid-card .card-overlay-hover {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.expandable-grid-card:hover .card-overlay-hover {
+  opacity: 1;
+}
+
+/* Expanded overlay effects */
+.expandable-grid-card .card-expanded-overlay {
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 15;
+  pointer-events: none;
+}
+
+/* Hide hover overlay when expanded or being hovered */
+.expandable-grid-container:has(.expandable-grid-card .card-radio:checked) .expandable-grid-card .card-overlay-hover,
+.expandable-grid-card:hover .card-overlay-hover {
+  opacity: 0 !important;
+}
+
+/* Score badge animations */
+.card-score-badge {
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.expandable-grid-card:has(.card-radio:checked) .card-score-badge,
+.expandable-grid-card:hover .card-score-badge {
+  opacity: 0;
+}
+
+/* Show expanded content on checked or hover */
+.expandable-grid-card:has(.card-radio:checked) .card-expanded-overlay,
+.expandable-grid-card:hover .card-expanded-overlay {
+  opacity: 1;
+}
+
+/* Expanded content layout */
+.expanded-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.expanded-content-inner {
+  width: 100%;
+  max-width: 500px;
+  padding-right: 20px;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Badge hover effects */
+.expanded-content-inner span[class*="bg-"] {
+  transition: all 0.3s ease-in-out;
+  transform: scale(1);
+}
+
+.expanded-content-inner span[class*="bg-"]:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+/* Badge hierarchy styling */
+.expanded-content-inner .episode-status-row {
+  min-height: 20px;
+}
+
+.expanded-content-inner span[class*="rounded-full"] {
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.expanded-content-inner span[class*="rounded-md"] {
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.episode-status-row span {
+  /* Future episode status badges styling */
+}
+
+/* Hide scrollbars */
+.card-expanded-overlay > div {
+  overflow: hidden !important;
+}
+
+/* Scrolling synopsis animation */
+.scrolling-synopsis {
+  overflow: hidden;
+  height: 120px;
+  position: relative;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+.scrolling-synopsis p {
+  display: block;
+  white-space: normal;
+  word-wrap: break-word;
+  line-height: 1.7;
+  font-size: 13px;
+  text-align: justify;
+  hyphens: auto;
+  margin: 0;
+  padding: 0;
+}
+
+.scrolling-synopsis.long-text {
+  mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+}
+
+.scrolling-synopsis.long-text p {
+  animation: scroll-text-vertical 30s linear infinite;
+  animation-delay: 3s;
+  transform: translateY(0);
+}
+
+@keyframes scroll-text-vertical {
+  0% {
+    transform: translateY(0);
+  }
+  10% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+.scrolling-synopsis.short-text {
+  height: auto;
+  max-height: 120px;
+}
+
+.scrolling-synopsis.short-text p {
+  animation: none;
+  transform: none;
+}
+
+/* Reset animation when card is not expanded */
+.expandable-grid-card:not(:has(.card-radio:checked)):not(:hover) .scrolling-synopsis.long-text p {
+  animation: none;
+  transform: translateY(0);
+}
+
+/* Start animation when expanded or hovered */
+.expandable-grid-card:has(.card-radio:checked) .scrolling-synopsis.long-text p,
+.expandable-grid-card:hover .scrolling-synopsis.long-text p {
+  animation: scroll-text-vertical 25s linear infinite;
+  animation-delay: 2s;
+}
+
+/* Grid expansion states for all card positions (1-10) */
+.expandable-grid-container:has(.expandable-grid-card:nth-child(1) > .card-radio:checked) {
+  --col-1: 4fr;
+  --col-2: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(1):hover) {
+  --col-1: 4fr;
+  --col-2: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(2) > .card-radio:checked) {
+  --col-1: 1.5fr;
+  --col-2: 4fr;
+  --col-3: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(2):hover) {
+  --col-1: 1.5fr;
+  --col-2: 4fr;
+  --col-3: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(3) > .card-radio:checked) {
+  --col-2: 1.5fr;
+  --col-3: 4fr;
+  --col-4: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(3):hover) {
+  --col-2: 1.5fr;
+  --col-3: 4fr;
+  --col-4: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(4) > .card-radio:checked) {
+  --col-3: 1.5fr;
+  --col-4: 4fr;
+  --col-5: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(4):hover) {
+  --col-3: 1.5fr;
+  --col-4: 4fr;
+  --col-5: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(5) > .card-radio:checked) {
+  --col-4: 1.5fr;
+  --col-5: 4fr;
+  --col-6: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(5):hover) {
+  --col-4: 1.5fr;
+  --col-5: 4fr;
+  --col-6: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(6) > .card-radio:checked) {
+  --col-5: 1.5fr;
+  --col-6: 4fr;
+  --col-7: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(7) > .card-radio:checked) {
+  --col-6: 1.5fr;
+  --col-7: 4fr;
+  --col-8: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(8) > .card-radio:checked) {
+  --col-7: 1.5fr;
+  --col-8: 4fr;
+  --col-9: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(9) > .card-radio:checked) {
+  --col-8: 1.5fr;
+  --col-9: 4fr;
+  --col-10: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(10) > .card-radio:checked) {
+  --col-9: 1.5fr;
+  --col-10: 4fr;
+}
+
+/* Status Dropdown Animations - Ripple Effect */
+.status-options-container {
+  position: relative;
+}
+
+.status-dropdown-overlay {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  width: calc(50% - 4px);
+  margin-bottom: 12px;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.status-options-list {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 4px;
+}
+
+.status-option-item {
+  opacity: 0;
+  pointer-events: none;
+  position: relative;
+}
+
+/* Initial positions for ripple effect */
+.status-option-item:nth-child(1) {
+  transform: translateY(120px) scale(0.3);
+}
+
+.status-option-item:nth-child(2) {
+  transform: translateY(110px) scale(0.3);
+}
+
+.status-option-item:nth-child(3) {
+  transform: translateY(100px) scale(0.3);
+}
+
+.status-option-item:nth-child(4) {
+  transform: translateY(90px) scale(0.3);
+}
+
+.status-option-item:nth-child(5) {
+  transform: translateY(80px) scale(0.3);
+}
+
+.status-option-item:nth-child(6) {
+  transform: translateY(70px) scale(0.3);
+}
+
+.status-option-item:nth-child(7) {
+  transform: translateY(60px) scale(0.3);
+}
+
+.status-option-item:nth-child(8) {
+  transform: translateY(50px) scale(0.3);
+}
+
+.status-option-item button {
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Opening animation keyframes */
+@keyframes jumpToPosition1 {
+  0% { transform: translateY(120px) scale(0.3); opacity: 0; }
+  70% { transform: translateY(-5px) scale(1.05); opacity: 0.9; }
+  100% { transform: translateY(0px) scale(1); opacity: 1; }
+}
+
+@keyframes jumpToPosition2 {
+  0% { transform: translateY(110px) scale(0.3); opacity: 0; }
+  70% { transform: translateY(-5px) scale(1.05); opacity: 0.9; }
+  100% { transform: translateY(0px) scale(1); opacity: 1; }
+}
+
+@keyframes jumpToPosition3 {
+  0% { transform: translateY(100px) scale(0.3); opacity: 0; }
+  70% { transform: translateY(-5px) scale(1.05); opacity: 0.9; }
+  100% { transform: translateY(0px) scale(1); opacity: 1; }
+}
+
+@keyframes jumpToPosition4 {
+  0% { transform: translateY(90px) scale(0.3); opacity: 0; }
+  70% { transform: translateY(-5px) scale(1.05); opacity: 0.9; }
+  100% { transform: translateY(0px) scale(1); opacity: 1; }
+}
+
+@keyframes jumpToPosition5 {
+  0% { transform: translateY(80px) scale(0.3); opacity: 0; }
+  70% { transform: translateY(-5px) scale(1.05); opacity: 0.9; }
+  100% { transform: translateY(0px) scale(1); opacity: 1; }
+}
+
+@keyframes jumpToPosition6 {
+  0% { transform: translateY(70px) scale(0.3); opacity: 0; }
+  70% { transform: translateY(-5px) scale(1.05); opacity: 0.9; }
+  100% { transform: translateY(0px) scale(1); opacity: 1; }
+}
+
+@keyframes jumpToPosition7 {
+  0% { transform: translateY(60px) scale(0.3); opacity: 0; }
+  70% { transform: translateY(-5px) scale(1.05); opacity: 0.9; }
+  100% { transform: translateY(0px) scale(1); opacity: 1; }
+}
+
+@keyframes jumpToPosition8 {
+  0% { transform: translateY(50px) scale(0.3); opacity: 0; }
+  70% { transform: translateY(-5px) scale(1.05); opacity: 0.9; }
+  100% { transform: translateY(0px) scale(1); opacity: 1; }
+}
+
+/* Closing animation keyframes */
+@keyframes closeToButton1 {
+  0% { transform: translateY(0px) scale(1); opacity: 1; }
+  100% { transform: translateY(50px) scale(0.3); opacity: 0; }
+}
+
+@keyframes closeToButton2 {
+  0% { transform: translateY(0px) scale(1); opacity: 1; }
+  100% { transform: translateY(50px) scale(0.3); opacity: 0; }
+}
+
+@keyframes closeToButton3 {
+  0% { transform: translateY(0px) scale(1); opacity: 1; }
+  100% { transform: translateY(50px) scale(0.3); opacity: 0; }
+}
+
+@keyframes closeToButton4 {
+  0% { transform: translateY(0px) scale(1); opacity: 1; }
+  100% { transform: translateY(50px) scale(0.3); opacity: 0; }
+}
+
+@keyframes closeToButton5 {
+  0% { transform: translateY(0px) scale(1); opacity: 1; }
+  100% { transform: translateY(50px) scale(0.3); opacity: 0; }
+}
+
+@keyframes closeToButton6 {
+  0% { transform: translateY(0px) scale(1); opacity: 1; }
+  100% { transform: translateY(50px) scale(0.3); opacity: 0; }
+}
+
+@keyframes closeToButton7 {
+  0% { transform: translateY(0px) scale(1); opacity: 1; }
+  100% { transform: translateY(50px) scale(0.3); opacity: 0; }
+}
+
+@keyframes closeToButton8 {
+  0% { transform: translateY(0px) scale(1); opacity: 1; }
+  100% { transform: translateY(50px) scale(0.3); opacity: 0; }
+}
+
+/* Special selected status takeover animation */
+@keyframes selectedTakeover {
+  0% { 
+    transform: translateY(0px) scale(1); 
+    opacity: 1; 
+    width: calc(50% - 4px);
+  }
+  100% { 
+    transform: translateY(50px) scale(1.8); 
+    opacity: 1; 
+    width: calc(100% - 8px);
+  }
+}
+
+/* Apply opening animations with staggered delays */
+.status-options-animate .status-option-item:nth-child(1) {
+  animation: jumpToPosition1 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation-fill-mode: forwards;
+  animation-delay: 0.05s;
+  pointer-events: auto;
+}
+
+.status-options-animate .status-option-item:nth-child(2) {
+  animation: jumpToPosition2 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation-fill-mode: forwards;
+  animation-delay: 0.1s;
+  pointer-events: auto;
+}
+
+.status-options-animate .status-option-item:nth-child(3) {
+  animation: jumpToPosition3 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation-fill-mode: forwards;
+  animation-delay: 0.15s;
+  pointer-events: auto;
+}
+
+.status-options-animate .status-option-item:nth-child(4) {
+  animation: jumpToPosition4 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation-fill-mode: forwards;
+  animation-delay: 0.2s;
+  pointer-events: auto;
+}
+
+.status-options-animate .status-option-item:nth-child(5) {
+  animation: jumpToPosition5 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation-fill-mode: forwards;
+  animation-delay: 0.25s;
+  pointer-events: auto;
+}
+
+.status-options-animate .status-option-item:nth-child(6) {
+  animation: jumpToPosition6 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation-fill-mode: forwards;
+  animation-delay: 0.3s;
+  pointer-events: auto;
+}
+
+.status-options-animate .status-option-item:nth-child(7) {
+  animation: jumpToPosition7 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation-fill-mode: forwards;
+  animation-delay: 0.35s;
+  pointer-events: auto;
+}
+
+.status-options-animate .status-option-item:nth-child(8) {
+  animation: jumpToPosition8 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation-fill-mode: forwards;
+  animation-delay: 0.4s;
+  pointer-events: auto;
+}
+
+/* Apply closing animations */
+.status-options-closing .status-option-item:nth-child(1) {
+  animation: closeToButton1 0.3s ease-in;
+  animation-fill-mode: forwards;
+  animation-delay: 0.0s;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.status-options-closing .status-option-item:nth-child(2) {
+  animation: closeToButton2 0.3s ease-in;
+  animation-fill-mode: forwards;
+  animation-delay: 0.05s;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.status-options-closing .status-option-item:nth-child(3) {
+  animation: closeToButton3 0.3s ease-in;
+  animation-fill-mode: forwards;
+  animation-delay: 0.1s;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.status-options-closing .status-option-item:nth-child(4) {
+  animation: closeToButton4 0.3s ease-in;
+  animation-fill-mode: forwards;
+  animation-delay: 0.15s;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.status-options-closing .status-option-item:nth-child(5) {
+  animation: closeToButton5 0.3s ease-in;
+  animation-fill-mode: forwards;
+  animation-delay: 0.2s;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.status-options-closing .status-option-item:nth-child(6) {
+  animation: closeToButton6 0.3s ease-in;
+  animation-fill-mode: forwards;
+  animation-delay: 0.25s;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.status-options-closing .status-option-item:nth-child(7) {
+  animation: closeToButton7 0.3s ease-in;
+  animation-fill-mode: forwards;
+  animation-delay: 0.3s;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.status-options-closing .status-option-item:nth-child(8) {
+  animation: closeToButton8 0.3s ease-in;
+  animation-fill-mode: forwards;
+  animation-delay: 0.35s;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Selected option special styling */
+.status-option-item.selected-option {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: translateY(0px) scale(1) !important;
+  z-index: 100 !important;
+  pointer-events: none;
+  position: relative;
+}
+
+.status-option-item.selected-option.takeover-ready {
+  animation: selectedTakeover 0.6s ease-out !important;
+  animation-fill-mode: forwards !important;
+  animation-delay: 0s !important;
+  z-index: 100 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .expandable-grid-container {
+    grid-template-columns: var(--col-1, 1fr) var(--col-2, 1fr);
+  }
+  
+  .expandable-grid-container:has(.expandable-grid-card:nth-child(1) > .card-radio:checked) {
+    --col-1: 2fr;
+    --col-2: 1fr;
+  }
+  
+  .expandable-grid-container:has(.expandable-grid-card:nth-child(2) > .card-radio:checked) {
+    --col-1: 1fr;
+    --col-2: 2fr;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  .expandable-grid-container {
+    grid-template-columns: var(--col-1, 1fr) var(--col-2, 1fr) var(--col-3, 1fr);
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .expandable-grid-container {
+    grid-template-columns: var(--col-1, 1fr) var(--col-2, 1fr) var(--col-3, 1fr) var(--col-4, 1fr);
+  }
+}
+
+@media (min-width: 1025px) {
+  .expandable-grid-container {
+    grid-template-columns:
+      var(--col-1, 1fr)
+      var(--col-2, 1fr)
+      var(--col-3, 1fr)
+      var(--col-4, 1fr)
+      var(--col-5, 1fr);
+  }
+}

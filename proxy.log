@@ -5437,3 +5437,951 @@ AniList Error Details: {
   params: { timezone: 'UTC', limit: '200' }
 }
 📅 AnimeSchedule Success: 200 (244 items)
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '        query {\n' +
+    '          Viewer {\n' +
+    '            id\n' +
+    '            name\n' +
+    '          }\n' +
+    '        }\n' +
+    '      ...',
+  variables: undefined,
+  hasAuth: true
+}
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '        query {\n' +
+    '          Viewer {\n' +
+    '            id\n' +
+    '            name\n' +
+    '          }\n' +
+    '        }\n' +
+    '      ...',
+  variables: undefined,
+  hasAuth: true
+}
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '        query {\n' +
+    '          Viewer {\n' +
+    '            id\n' +
+    '            name\n' +
+    '          }\n' +
+    '        }\n' +
+    '      ...',
+  variables: undefined,
+  hasAuth: true
+}
+AniList Proxy Error: 429 Too Many Requests
+AniList Error Details: {
+  data: null,
+  errors: [ { message: 'Too Many Requests.', status: 429 } ]
+}
+AniList Proxy Error: 429 Too Many Requests
+AniList Error Details: {
+  data: null,
+  errors: [ { message: 'Too Many Requests.', status: 429 } ]
+}
+AniList Proxy Error: 429 Too Many Requests
+AniList Error Details: {
+  data: null,
+  errors: [ { message: 'Too Many Requests.', status: 429 } ]
+}
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '  query {\n' +
+    '    Page(page: 1, perPage: 6) {\n' +
+    '      media(type: ANIME, sort: TRENDING_DESC) {\n' +
+    '        ...AnimeFields\n' +
+    '      }\n' +
+    '    }\n' +
+    '  }\n' +
+    '  \n' +
+    '  fragment AnimeFields on Media {\n' +
+    '    id\n' +
+    '    title {\n' +
+    '      romaji...',
+  variables: undefined,
+  hasAuth: false
+}
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '  query {\n' +
+    '    Page(page: 1, perPage: 6) {\n' +
+    '      media(type: ANIME, sort: POPULARITY_DESC) {\n' +
+    '        ...AnimeFields\n' +
+    '      }\n' +
+    '    }\n' +
+    '  }\n' +
+    '  \n' +
+    '  fragment AnimeFields on Media {\n' +
+    '    id\n' +
+    '    title {\n' +
+    '      roma...',
+  variables: undefined,
+  hasAuth: false
+}
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '  query {\n' +
+    '    Page(page: 1, perPage: 6) {\n' +
+    '      media(type: ANIME, sort: SCORE_DESC) {\n' +
+    '        ...AnimeFields\n' +
+    '      }\n' +
+    '    }\n' +
+    '  }\n' +
+    '  \n' +
+    '  fragment AnimeFields on Media {\n' +
+    '    id\n' +
+    '    title {\n' +
+    '      romaji\n' +
+    '  ...',
+  variables: undefined,
+  hasAuth: false
+}
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '  query($season: MediaSeason, $year: Int) {\n' +
+    '    Page(page: 1, perPage: 6) {\n' +
+    '      media(type: ANIME, season: $season, seasonYear: $year, sort: POPULARITY_DESC) {\n' +
+    '        ...AnimeFields\n' +
+    '      }\n' +
+    '    }\n' +
+    '...',
+  variables: { season: 'SPRING', year: 2025 },
+  hasAuth: false
+}
+AniList Proxy Error: 429 Too Many Requests
+AniList Error Details: {
+  data: null,
+  errors: [ { message: 'Too Many Requests.', status: 429 } ]
+}
+AniList Proxy Error: 429 Too Many Requests
+AniList Error Details: {
+  data: null,
+  errors: [ { message: 'Too Many Requests.', status: 429 } ]
+}
+AniList Proxy Error: 429 Too Many Requests
+AniList Error Details: {
+  data: null,
+  errors: [ { message: 'Too Many Requests.', status: 429 } ]
+}
+AniList Proxy Error: 429 Too Many Requests
+AniList Error Details: {
+  data: null,
+  errors: [ { message: 'Too Many Requests.', status: 429 } ]
+}
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '  query {\n' +
+    '    Page(page: 1, perPage: 6) {\n' +
+    '      media(type: ANIME, sort: TRENDING_DESC) {\n' +
+    '        ...AnimeFields\n' +
+    '      }\n' +
+    '    }\n' +
+    '  }\n' +
+    '  \n' +
+    '  fragment AnimeFields on Media {\n' +
+    '    id\n' +
+    '    title {\n' +
+    '      romaji...',
+  variables: undefined,
+  hasAuth: false
+}
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '  query($season: MediaSeason, $year: Int) {\n' +
+    '    Page(page: 1, perPage: 6) {\n' +
+    '      media(type: ANIME, season: $season, seasonYear: $year, sort: POPULARITY_DESC) {\n' +
+    '        ...AnimeFields\n' +
+    '      }\n' +
+    '    }\n' +
+    '...',
+  variables: { season: 'SPRING', year: 2025 },
+  hasAuth: false
+}
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '  query {\n' +
+    '    Page(page: 1, perPage: 6) {\n' +
+    '      media(type: ANIME, sort: POPULARITY_DESC) {\n' +
+    '        ...AnimeFields\n' +
+    '      }\n' +
+    '    }\n' +
+    '  }\n' +
+    '  \n' +
+    '  fragment AnimeFields on Media {\n' +
+    '    id\n' +
+    '    title {\n' +
+    '      roma...',
+  variables: undefined,
+  hasAuth: false
+}
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '  query {\n' +
+    '    Page(page: 1, perPage: 6) {\n' +
+    '      media(type: ANIME, sort: SCORE_DESC) {\n' +
+    '        ...AnimeFields\n' +
+    '      }\n' +
+    '    }\n' +
+    '  }\n' +
+    '  \n' +
+    '  fragment AnimeFields on Media {\n' +
+    '    id\n' +
+    '    title {\n' +
+    '      romaji\n' +
+    '  ...',
+  variables: undefined,
+  hasAuth: false
+}
+🎬 AniList GraphQL Success Response: 200
+🎬 AniList GraphQL Success Response: 200
+🎬 AniList GraphQL Success Response: 200
+🎬 AniList GraphQL Success Response: 200
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '        query {\n' +
+    '          Viewer {\n' +
+    '            id\n' +
+    '            name\n' +
+    '          }\n' +
+    '        }\n' +
+    '      ...',
+  variables: undefined,
+  hasAuth: true
+}
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '        query {\n' +
+    '          Viewer {\n' +
+    '            id\n' +
+    '            name\n' +
+    '          }\n' +
+    '        }\n' +
+    '      ...',
+  variables: undefined,
+  hasAuth: true
+}
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '        query {\n' +
+    '          Viewer {\n' +
+    '            id\n' +
+    '            name\n' +
+    '          }\n' +
+    '        }\n' +
+    '      ...',
+  variables: undefined,
+  hasAuth: true
+}
+AniList Proxy Error: 429 Too Many Requests
+AniList Error Details: {
+  data: null,
+  errors: [ { message: 'Too Many Requests.', status: 429 } ]
+}
+AniList Proxy Error: 429 Too Many Requests
+AniList Error Details: {
+  data: null,
+  errors: [ { message: 'Too Many Requests.', status: 429 } ]
+}
+AniList Proxy Error: 429 Too Many Requests
+AniList Error Details: {
+  data: null,
+  errors: [ { message: 'Too Many Requests.', status: 429 } ]
+}
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '  query {\n' +
+    '    Page(page: 1, perPage: 6) {\n' +
+    '      media(type: ANIME, sort: TRENDING_DESC) {\n' +
+    '        ...AnimeFields\n' +
+    '      }\n' +
+    '    }\n' +
+    '  }\n' +
+    '  \n' +
+    '  fragment AnimeFields on Media {\n' +
+    '    id\n' +
+    '    title {\n' +
+    '      romaji...',
+  variables: undefined,
+  hasAuth: false
+}
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '  query {\n' +
+    '    Page(page: 1, perPage: 6) {\n' +
+    '      media(type: ANIME, sort: POPULARITY_DESC) {\n' +
+    '        ...AnimeFields\n' +
+    '      }\n' +
+    '    }\n' +
+    '  }\n' +
+    '  \n' +
+    '  fragment AnimeFields on Media {\n' +
+    '    id\n' +
+    '    title {\n' +
+    '      roma...',
+  variables: undefined,
+  hasAuth: false
+}
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '  query {\n' +
+    '    Page(page: 1, perPage: 6) {\n' +
+    '      media(type: ANIME, sort: SCORE_DESC) {\n' +
+    '        ...AnimeFields\n' +
+    '      }\n' +
+    '    }\n' +
+    '  }\n' +
+    '  \n' +
+    '  fragment AnimeFields on Media {\n' +
+    '    id\n' +
+    '    title {\n' +
+    '      romaji\n' +
+    '  ...',
+  variables: undefined,
+  hasAuth: false
+}
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '  query($season: MediaSeason, $year: Int) {\n' +
+    '    Page(page: 1, perPage: 6) {\n' +
+    '      media(type: ANIME, season: $season, seasonYear: $year, sort: POPULARITY_DESC) {\n' +
+    '        ...AnimeFields\n' +
+    '      }\n' +
+    '    }\n' +
+    '...',
+  variables: { season: 'SPRING', year: 2025 },
+  hasAuth: false
+}
+AniList Proxy Error: 429 Too Many Requests
+AniList Error Details: {
+  data: null,
+  errors: [ { message: 'Too Many Requests.', status: 429 } ]
+}
+AniList Proxy Error: 429 Too Many Requests
+AniList Error Details: {
+  data: null,
+  errors: [ { message: 'Too Many Requests.', status: 429 } ]
+}
+AniList Proxy Error: 429 Too Many Requests
+AniList Error Details: {
+  data: null,
+  errors: [ { message: 'Too Many Requests.', status: 429 } ]
+}
+AniList Proxy Error: 429 Too Many Requests
+AniList Error Details: {
+  data: null,
+  errors: [ { message: 'Too Many Requests.', status: 429 } ]
+}
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (244 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (246 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '        query {\n' +
+    '          Viewer {\n' +
+    '            id\n' +
+    '            name\n' +
+    '          }\n' +
+    '        }\n' +
+    '      ...',
+  variables: undefined,
+  hasAuth: true
+}
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '        query {\n' +
+    '          Viewer {\n' +
+    '            id\n' +
+    '            name\n' +
+    '          }\n' +
+    '        }\n' +
+    '      ...',
+  variables: undefined,
+  hasAuth: true
+}
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '        query {\n' +
+    '          Viewer {\n' +
+    '            id\n' +
+    '            name\n' +
+    '          }\n' +
+    '        }\n' +
+    '      ...',
+  variables: undefined,
+  hasAuth: true
+}
+🎬 AniList GraphQL Success Response: 200
+🎬 AniList GraphQL Success Response: 200
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '        query($userId: Int) {\n' +
+    '          MediaListCollection(userId: $userId, type: ANIME) {\n' +
+    '            lists {\n' +
+    '              entries {\n' +
+    '                id\n' +
+    '                status\n' +
+    '                media...',
+  variables: { userId: 108432 },
+  hasAuth: true
+}
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '        query($userId: Int) {\n' +
+    '          MediaListCollection(userId: $userId, type: ANIME, status: CURRENT) {\n' +
+    '            lists {\n' +
+    '              entries {\n' +
+    '                id\n' +
+    '                score\n' +
+    '     ...',
+  variables: { userId: 108432 },
+  hasAuth: true
+}
+🎬 AniList GraphQL Success Response: 200
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '        query($userId: Int) {\n' +
+    '          MediaListCollection(userId: $userId, type: ANIME) {\n' +
+    '            lists {\n' +
+    '              entries {\n' +
+    '                id\n' +
+    '                score\n' +
+    '                status...',
+  variables: { userId: 108432 },
+  hasAuth: false
+}
+🎬 AniList GraphQL Success Response: 200
+🎬 AniList GraphQL Success Response: 200
+🎬 AniList GraphQL Success Response: 200
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '  query {\n' +
+    '    Page(page: 1, perPage: 6) {\n' +
+    '      media(type: ANIME, sort: TRENDING_DESC) {\n' +
+    '        ...AnimeFields\n' +
+    '      }\n' +
+    '    }\n' +
+    '  }\n' +
+    '  \n' +
+    '  fragment AnimeFields on Media {\n' +
+    '    id\n' +
+    '    title {\n' +
+    '      romaji...',
+  variables: undefined,
+  hasAuth: false
+}
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '  query {\n' +
+    '    Page(page: 1, perPage: 6) {\n' +
+    '      media(type: ANIME, sort: POPULARITY_DESC) {\n' +
+    '        ...AnimeFields\n' +
+    '      }\n' +
+    '    }\n' +
+    '  }\n' +
+    '  \n' +
+    '  fragment AnimeFields on Media {\n' +
+    '    id\n' +
+    '    title {\n' +
+    '      roma...',
+  variables: undefined,
+  hasAuth: false
+}
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '  query {\n' +
+    '    Page(page: 1, perPage: 6) {\n' +
+    '      media(type: ANIME, sort: SCORE_DESC) {\n' +
+    '        ...AnimeFields\n' +
+    '      }\n' +
+    '    }\n' +
+    '  }\n' +
+    '  \n' +
+    '  fragment AnimeFields on Media {\n' +
+    '    id\n' +
+    '    title {\n' +
+    '      romaji\n' +
+    '  ...',
+  variables: undefined,
+  hasAuth: false
+}
+🎬 AniList GraphQL Proxy Request: {
+  query: '\n' +
+    '  query($season: MediaSeason, $year: Int) {\n' +
+    '    Page(page: 1, perPage: 6) {\n' +
+    '      media(type: ANIME, season: $season, seasonYear: $year, sort: POPULARITY_DESC) {\n' +
+    '        ...AnimeFields\n' +
+    '      }\n' +
+    '    }\n' +
+    '...',
+  variables: { season: 'SPRING', year: 2025 },
+  hasAuth: false
+}
+🎬 AniList GraphQL Success Response: 200
+🎬 AniList GraphQL Success Response: 200
+🎬 AniList GraphQL Success Response: 200
+🎬 AniList GraphQL Success Response: 200
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+AnimeSchedule Proxy Error: 503 Service Unavailable
+AnimeSchedule Error Details: <!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+
+        <link rel="dns-prefetch" href="https://code.jquery.com" crossorigin="anonymous">
+        <link rel="dns-prefetch" href="https://cdn.statically.io">
+        <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+
+        <title>Maintenance</title>
+        <meta name="description" content="Anime release times, with subs and without. Show delays and descriptions. Streams available and related anime websites. Keep track of anime easily.">
+        <meta name="keywords" content="anime, air time, animeschedule, release date, timetable">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#624CB2">
+
+        <link rel="canonical">
+        <link rel="manifest" href="/site.webmanifest">
+        <link rel="apple-touch-icon" href="https://cdn.animeschedule.net/production/assets/public/img/logos/as-logo-855bacd96c.png">
+        <link rel="icon" type="image/ico" href="https://cdn.animeschedule.net/production/assets/public/img/other/favicon-70c9aa180e.ico">
+        <link rel="stylesheet" type="text/css" href="https://cdn.animeschedule.net/production/assets/public/css/maintenancePage-e99ac016e6.min.css">
+
+        <meta property="og:title" content="AnimeSchedule.net"/>
+        <meta property="og:url" content="https://animeschedule.net"/>
+        <meta property="og:site_name" content="AnimeSchedule"/>
+        <meta property="og:description" content="AnimeSchedule.net is currently under maintenance! Please try again later!"/>
+        <meta property="og:type" content="website"/>
+        <meta property="og:image" content="https://cdn.animeschedule.net/production/assets/public/img/logos/as-logo-200px-03e3a4beb7.png"/>
+        <meta property="og:locale" content="en_US"/>
+
+        <meta name="twitter:site" content="@AnimeSchedule">
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:description" content="AnimeSchedule.net is currently under maintenance! Please try again later!">
+
+        
+        
+
+        
+        <script type="application/javascript" async src="https://www.googletagmanager.com/gtag/js?id=UA-28547085-2"></script>
+        <script type="application/javascript">
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+
+            
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied'
+                });
+                gtag('set', 'ads_data_redaction', true);
+            
+
+            gtag('js', new Date());
+            gtag('config', 'UA-28547085-2');
+        </script>
+
+        
+        <script type="application/javascript" defer src="https://cdn.animeschedule.net/production/assets/public/js/index.min.js"></script>
+    </head>
+    <body>
+        <div id="main-wrapper">
+    <img decoding="async" src="https://cdn.animeschedule.net/production/assets/public/img/other/as-maintenance-ninja-bf95723a98.png" alt="AnimeSchedule.net chibi ninja holding a bug spray can" class="error-image">
+    <h1 class="header-text">UNDER MAINTENANCE</h1>
+    <h2 class="header-text">We apologize for the inconvenience. We'll be back online soon.</h2>
+    <h3 class="header-text">Please try again in a few minutes.</h3>
+    <span class="header-text">Follow us on Twitter <a href="https://twitter.com/AnimeSchedule">@AnimeSchedule</a> for updates or shoot us an email at <a href="/cdn-cgi/l/email-protection#ed8e8283998c8e99ad8c838480889e8e858889988188c3838899"><span class="__cf_email__" data-cfemail="ea8985849e8b899eaa8b8483878f9989828f8e9f868fc4848f9e">[email&#160;protected]</span></a></span>
+</div>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+</html>
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)
+📅 AnimeSchedule Proxy: {
+  animescheduleUrl: 'https://animeschedule.net/api/v3/timetables',
+  params: { timezone: 'UTC', limit: '200' }
+}
+📅 AnimeSchedule Success: 200 (248 items)

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { animeScheduleService } from '../../services/animeSchedule'
 import { jikanService } from '../../services/jikan'
 import { AnimeBase } from '../../types/anime'
+import { Typography, Button, AnimeGridSkeleton } from '../ui'
 
 // Common timezones for the dropdown
 const COMMON_TIMEZONES = [
@@ -267,36 +268,24 @@ export const AnimeSchedule = () => {
     return Array.from(platforms).sort()
   }, [rawSelectedDayData])
 
-  const LoadingSkeleton = () => (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {Array.from({ length: 8 }).map((_, index) => (
-        <div key={index} className="animate-pulse">
-          <div className="bg-gray-300 dark:bg-gray-600 rounded-xl h-80 mb-4"></div>
-          <div className="space-y-2">
-            <div className="bg-gray-300 dark:bg-gray-600 rounded h-4 w-3/4"></div>
-            <div className="bg-gray-300 dark:bg-gray-600 rounded h-3 w-1/2"></div>
-          </div>
-        </div>
-      ))}
-    </div>
-  )
+  const LoadingSkeleton = () => <AnimeGridSkeleton count={8} />
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg transition-theme">
+    <div className="at-bg-surface rounded-xl at-shadow-lg at-transition">
       {/* Header */}
-      <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+      <div className="p-6 at-border-b">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
+          <Typography variant="h2">
             📅 Weekly Anime Schedule
-          </h2>
+          </Typography>
           <div className="flex items-center space-x-4">
             {/* Timezone Selector */}
             <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400">🕐</span>
+              <span className="text-sm at-text-muted">🕐</span>
               <select
                 value={selectedTimezone}
                 onChange={(e) => setSelectedTimezone(e.target.value)}
-                className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                className="at-bg-surface at-border rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:at-border-focus at-transition-colors at-text-primary"
               >
                 {COMMON_TIMEZONES.map(tz => (
                   <option key={tz.value} value={tz.value}>
@@ -308,32 +297,30 @@ export const AnimeSchedule = () => {
             
             <div className="flex items-center space-x-4">
               {/* Notifications Toggle */}
-              <button
+              <Button
                 onClick={requestNotificationPermission}
-                className={`flex items-center space-x-2 px-3 py-1 rounded-lg text-xs font-medium transition-all duration-200 ${
-                  notificationsEnabled
-                    ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
-                }`}
+                variant={notificationsEnabled ? "success" : "ghost"}
+                size="xs"
                 title={notificationsEnabled ? 'Notifications enabled' : 'Enable notifications for favorite shows'}
               >
                 <span>{notificationsEnabled ? '🔔' : '🔕'}</span>
                 <span>{notificationsEnabled ? 'Notifications On' : 'Enable Notifications'}</span>
-              </button>
+              </Button>
 
               {/* Calendar Export */}
-              <button
+              <Button
                 onClick={exportToCalendar}
-                className="flex items-center space-x-2 px-3 py-1 rounded-lg text-xs font-medium bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-800 transition-all duration-200"
+                variant="secondary"
+                size="xs"
                 title="Export favorite shows to calendar"
               >
                 <span>📅</span>
                 <span>Export Calendar</span>
-              </button>
+              </Button>
               
-              <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+              <div className="flex items-center space-x-2">
                 <span>🌐</span>
-                <span>Powered by AnimeSchedule.net</span>
+                <Typography variant="bodySmall" color="muted">Powered by AnimeSchedule.net</Typography>
               </div>
             </div>
           </div>
@@ -350,19 +337,17 @@ export const AnimeSchedule = () => {
             })()
             
             return (
-              <button
+              <Button
                 key={day.key}
                 onClick={() => setSelectedDay(day.key)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  isSelected
-                    ? 'bg-orange-500 text-white shadow-md'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                } ${isToday ? 'ring-2 ring-blue-400 ring-opacity-50' : ''}`}
+                variant={isSelected ? "warning" : "ghost"}
+                size="sm"
+                className={isToday ? 'ring-2 ring-blue-400 ring-opacity-50' : ''}
               >
                 <span className="mr-2">{day.emoji}</span>
                 {day.label}
                 {isToday && <span className="ml-2 text-xs">📍</span>}
-              </button>
+              </Button>
             )
           })}
         </div>
@@ -371,23 +356,23 @@ export const AnimeSchedule = () => {
         <div className="flex flex-wrap gap-4 items-center">
           {/* Search Filter */}
           <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-600 dark:text-gray-400">🔍</span>
+            <span className="text-sm at-text-muted">🔍</span>
             <input
               type="text"
               placeholder="Search anime..."
               value={filters.search}
               onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-              className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors w-40"
+              className="at-bg-surface at-border rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:at-border-focus at-transition-colors w-40 at-text-primary"
             />
           </div>
 
           {/* Air Type Filter */}
           <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-600 dark:text-gray-400">📺</span>
+            <span className="text-sm at-text-muted">📺</span>
             <select
               value={filters.airType}
               onChange={(e) => setFilters(prev => ({ ...prev, airType: e.target.value }))}
-              className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              className="at-bg-surface at-border rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:at-border-focus at-transition-colors at-text-primary"
             >
               <option value="all">All Types</option>
               <option value="raw">🔴 RAW</option>
@@ -398,11 +383,11 @@ export const AnimeSchedule = () => {
 
           {/* Platform Filter */}
           <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-600 dark:text-gray-400">📱</span>
+            <span className="text-sm at-text-muted">📱</span>
             <select
               value={filters.platform}
               onChange={(e) => setFilters(prev => ({ ...prev, platform: e.target.value }))}
-              className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              className="at-bg-surface at-border rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:at-border-focus at-transition-colors at-text-primary"
             >
               <option value="all">All Platforms</option>
               {availablePlatforms.map(platform => (
@@ -420,17 +405,17 @@ export const AnimeSchedule = () => {
                 type="checkbox"
                 checked={filters.favoritesOnly}
                 onChange={(e) => setFilters(prev => ({ ...prev, favoritesOnly: e.target.checked }))}
-                className="rounded border-gray-300 dark:border-gray-600 text-red-500 focus:ring-red-500"
+                className="rounded at-border text-red-500 focus:ring-red-500"
               />
-              <span className="text-sm text-gray-600 dark:text-gray-400">❤️ Favorites only</span>
+              <Typography variant="bodySmall" color="muted">❤️ Favorites only</Typography>
             </label>
           </div>
 
           {/* Filter Results Count */}
           {(filters.search || filters.airType !== 'all' || filters.platform !== 'all' || filters.favoritesOnly) && (
-            <div className="text-sm text-gray-500 dark:text-gray-400">
+            <Typography variant="bodySmall" color="muted">
               {selectedDayData.length} of {rawSelectedDayData.length} episodes
-            </div>
+            </Typography>
           )}
         </div>
       </div>
@@ -438,10 +423,10 @@ export const AnimeSchedule = () => {
       {/* Content */}
       <div className="p-6">
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
+          <div className="at-bg-danger/10 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
             <div className="flex items-center">
               <span className="text-red-500 mr-2">⚠️</span>
-              <span className="text-red-700 dark:text-red-300">{error}</span>
+              <Typography variant="body" className="text-red-700 dark:text-red-300">{error}</Typography>
             </div>
           </div>
         )}
@@ -451,15 +436,15 @@ export const AnimeSchedule = () => {
         ) : selectedDayData.length > 0 ? (
           <>
             <div className="mb-6">
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">
+              <Typography variant="h3" className="mb-2">
                 {selectedDayInfo.emoji} Airing on {selectedDayInfo.label}
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
+              </Typography>
+              <Typography variant="body" color="muted">
                 {selectedDayData.length} episode{selectedDayData.length !== 1 ? 's' : ''} 
                 {(filters.search || filters.airType !== 'all' || filters.platform !== 'all' || filters.favoritesOnly) && 
                   ` (${rawSelectedDayData.length} total)`
                 }
-              </p>
+              </Typography>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -478,19 +463,19 @@ export const AnimeSchedule = () => {
                 }
 
                 return (
-                  <div key={`${anime.id}-${anime.episodeNumber}`} className="bg-gray-50 dark:bg-gray-700 rounded-lg overflow-hidden transition-theme group hover:shadow-lg cursor-pointer">
+                  <div key={`${anime.id}-${anime.episodeNumber}`} className="at-bg-surface/80 rounded-lg overflow-hidden at-transition group hover:at-shadow-lg cursor-pointer">
                     <div className="flex items-start space-x-4 p-4">
                       {/* Content Area - Clickable only if has valid ID */}
                       <ContentArea>
                         <div className="relative">
-                          <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2 line-clamp-2 transition-colors group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                          <Typography variant="h4" weight="semibold" className="mb-2 line-clamp-2 at-transition-colors group-hover:text-blue-600 dark:group-hover:text-blue-400">
                             {anime.title}
                             {!hasValidId && (
                               <span className="ml-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900 px-2 py-1 rounded">
                                 Search Fallback
                               </span>
                             )}
-                          </h4>
+                          </Typography>
                           
                           <div className="space-y-2 text-sm">
                             {anime.episodeNumber && (
@@ -499,22 +484,22 @@ export const AnimeSchedule = () => {
                                   Episode {anime.episodeNumber}
                                 </span>
                                 {anime.lengthMin && (
-                                  <span className="text-gray-600 dark:text-gray-400">
+                                  <Typography variant="bodySmall" color="muted">
                                     {anime.lengthMin}min
-                                  </span>
+                                  </Typography>
                                 )}
                               </div>
                             )}
                             
                             {anime.episodeDate && (
-                              <div className="text-gray-600 dark:text-gray-400">
+                              <Typography variant="bodySmall" color="muted">
                                 🕒 {new Date(anime.episodeDate).toLocaleTimeString([], { 
                                   hour: '2-digit', 
                                   minute: '2-digit',
                                   timeZone: selectedTimezone,
                                   timeZoneName: 'short'
                                 })}
-                              </div>
+                              </Typography>
                             )}
                             
                             {anime.airType && (
@@ -527,9 +512,9 @@ export const AnimeSchedule = () => {
                                   {anime.airType.toUpperCase()}
                                 </span>
                                 {anime.episodeDelay && (
-                                  <span className="text-orange-600 dark:text-orange-400 text-xs">
+                                  <Typography variant="bodySmall" className="text-orange-600 dark:text-orange-400">
                                     Delayed {anime.episodeDelay}min
-                                  </span>
+                                  </Typography>
                                 )}
                               </div>
                             )}
@@ -578,9 +563,9 @@ export const AnimeSchedule = () => {
                       }`} title={anime.airingStatus} />
                       
                       {/* Click hint */}
-                      <div className="text-xs text-gray-400 dark:text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Typography variant="bodySmall" className="at-text-muted opacity-0 group-hover:opacity-100 at-transition-opacity">
                         {hasValidId ? 'Click to view' : 'Click to search'}
-                      </div>
+                      </Typography>
                     </div>
                   </div>
                 </div>
@@ -590,21 +575,21 @@ export const AnimeSchedule = () => {
 
             {selectedDayData.length > 12 && (
               <div className="text-center mt-6">
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <Typography variant="bodySmall" color="muted">
                   Showing 12 of {selectedDayData.length} episodes. More available on AnimeSchedule.net.
-                </p>
+                </Typography>
               </div>
             )}
           </>
         ) : (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">{selectedDayInfo.emoji}</div>
-            <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <Typography variant="h3" weight="semibold" className="mb-2">
               No Anime Scheduled
-            </h3>
-            <p className="text-gray-500 dark:text-gray-400">
+            </Typography>
+            <Typography variant="body" color="muted">
               No anime episodes are scheduled to air on {selectedDayInfo.label}.
-            </p>
+            </Typography>
           </div>
         )}
       </div>

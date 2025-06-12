@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { AnimeBase } from '../../types/anime'
 import { malService } from '../../services/mal'
-import { AnimeCard } from '../AnimeCard/AnimeCard'
-import { AnimatedButton } from '../AnimatedButton/AnimatedButton'
+import { ExpandableGrid } from '../ExpandableGrid'
+import { Typography, Button, Spinner } from '../ui'
 
 export const RandomAnime = () => {
-  const [randomAnime, setRandomAnime] = useState<AnimeBase | null>(null)
+  const [randomAnime, setRandomAnime] = useState<AnimeBase[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -14,8 +14,10 @@ export const RandomAnime = () => {
     setError(null)
     
     try {
-      const anime = await malService.getRandomAnime()
-      setRandomAnime(anime)
+      // Fetch multiple random anime for better discovery
+      const animePromises = Array.from({ length: 6 }, () => malService.getRandomAnime())
+      const animeResults = await Promise.all(animePromises)
+      setRandomAnime(animeResults.filter(anime => anime !== null))
     } catch (err) {
       setError('Failed to fetch random anime. Please try again.')
       console.error('Random anime fetch error:', err)
@@ -25,12 +27,12 @@ export const RandomAnime = () => {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 transition-theme">
+    <div className="at-bg-surface rounded-xl at-shadow-lg p-6 at-transition">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
+        <Typography variant="h2">
           🎲 Surprise Me!
-        </h2>
-        <AnimatedButton
+        </Typography>
+        <Button
           onClick={fetchRandomAnime}
           disabled={loading}
           variant="primary"
@@ -39,7 +41,7 @@ export const RandomAnime = () => {
         >
           {loading ? (
             <>
-              <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
+              <Spinner variant="default" size="xs" className="mr-2" />
               Finding...
             </>
           ) : (
@@ -48,64 +50,57 @@ export const RandomAnime = () => {
               Get Random Anime
             </>
           )}
-        </AnimatedButton>
+        </Button>
       </div>
 
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
+        <div className="at-bg-danger/10 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
           <div className="flex items-center">
             <span className="text-red-500 mr-2">⚠️</span>
-            <span className="text-red-700 dark:text-red-300">{error}</span>
+            <Typography variant="body" className="text-red-700 dark:text-red-300">{error}</Typography>
           </div>
         </div>
       )}
 
-      {!randomAnime && !loading && !error && (
+      {randomAnime.length === 0 && !loading && !error && (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">🎯</div>
-          <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          <Typography variant="h3" weight="semibold" className="mb-2">
             Discover Something New
-          </h3>
-          <p className="text-gray-500 dark:text-gray-400 mb-6">
+          </Typography>
+          <Typography variant="body" color="muted" className="mb-6">
             Click the button above to discover a random anime recommendation from Jikan's vast database.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 dark:text-gray-400">
+          </Typography>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="flex items-center justify-center space-x-2">
               <span>🎪</span>
-              <span>All genres included</span>
+              <Typography variant="bodySmall" color="muted">All genres included</Typography>
             </div>
             <div className="flex items-center justify-center space-x-2">
               <span>📚</span>
-              <span>Classic & modern anime</span>
+              <Typography variant="bodySmall" color="muted">Classic & modern anime</Typography>
             </div>
             <div className="flex items-center justify-center space-x-2">
               <span>⭐</span>
-              <span>Quality recommendations</span>
+              <Typography variant="bodySmall" color="muted">Quality recommendations</Typography>
             </div>
           </div>
         </div>
       )}
 
-      {randomAnime && (
+      {randomAnime.length > 0 && (
         <div className="space-y-4">
-          <div className="text-center mb-4">
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200">
-              <span className="mr-1">🎲</span>
-              Random Discovery
-            </span>
-          </div>
-          
-          <div className="flex justify-center">
-            <div className="w-full max-w-sm">
-              <AnimeCard anime={randomAnime} />
-            </div>
-          </div>
+          <ExpandableGrid 
+            anime={randomAnime} 
+            title="🎲 Random Discoveries" 
+            maxCards={6} 
+          />
 
           <div className="text-center pt-4">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            <Typography variant="bodySmall" color="muted" className="mb-4">
               Not your style? Try another random pick!
-            </p>
-            <AnimatedButton
+            </Typography>
+            <Button
               onClick={fetchRandomAnime}
               variant="ghost"
               size="sm"
@@ -113,7 +108,7 @@ export const RandomAnime = () => {
             >
               <span className="mr-2">🔄</span>
               Try Another
-            </AnimatedButton>
+            </Button>
           </div>
         </div>
       )}

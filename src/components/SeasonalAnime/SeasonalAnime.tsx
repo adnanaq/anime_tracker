@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { malService } from '../../services/mal'
 import { AnimeBase } from '../../types/anime'
-import { AnimeCard } from '../AnimeCard/AnimeCard'
+import { ExpandableGrid } from '../ExpandableGrid'
+import { Typography, Button, AnimeGridSkeleton } from '../ui'
 
 const SEASONS = [
   { key: 'winter', label: 'Winter', emoji: '❄️' },
@@ -98,82 +99,61 @@ export const SeasonalAnime = () => {
     }
   }, [activeTab, selectedYear, selectedSeason])
 
-  const LoadingSkeleton = () => (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-      {Array.from({ length: 10 }).map((_, index) => (
-        <div key={index} className="animate-pulse">
-          <div className="bg-gray-300 dark:bg-gray-600 rounded-xl h-80 mb-4"></div>
-          <div className="space-y-2">
-            <div className="bg-gray-300 dark:bg-gray-600 rounded h-4 w-3/4"></div>
-            <div className="bg-gray-300 dark:bg-gray-600 rounded h-3 w-1/2"></div>
-          </div>
-        </div>
-      ))}
-    </div>
-  )
+  const LoadingSkeleton = () => <AnimeGridSkeleton count={10} showDetails />
 
   const currentSeasonInfo = SEASONS.find(s => s.key === currentSeason)
   const selectedSeasonInfo = SEASONS.find(s => s.key === selectedSeason)
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg transition-theme">
+    <div className="at-bg-surface rounded-xl at-shadow-lg at-transition">
       {/* Header */}
-      <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+      <div className="p-6 at-border-b">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
+          <Typography variant="h2">
             🗓️ Seasonal Anime
-          </h2>
-          <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+          </Typography>
+          <div className="flex items-center space-x-2">
             <span>🌐</span>
-            <span>Powered by Jikan</span>
+            <Typography variant="bodySmall" color="muted">Powered by Jikan</Typography>
           </div>
         </div>
 
         {/* Tab Navigation */}
         <div className="flex space-x-4 mb-4">
-          <button
+          <Button
             onClick={() => setActiveTab('current')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-              activeTab === 'current'
-                ? 'bg-blue-500 text-white shadow-md'
-                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-            }`}
+            variant={activeTab === 'current' ? 'primary' : 'ghost'}
+            size="sm"
           >
             {currentSeasonInfo?.emoji} Current Season
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setActiveTab('seasonal')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-              activeTab === 'seasonal'
-                ? 'bg-orange-500 text-white shadow-md'
-                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-            }`}
+            variant={activeTab === 'seasonal' ? 'warning' : 'ghost'}
+            size="sm"
           >
             📅 Browse Seasons
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setActiveTab('upcoming')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-              activeTab === 'upcoming'
-                ? 'bg-purple-500 text-white shadow-md'
-                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-            }`}
+            variant={activeTab === 'upcoming' ? 'secondary' : 'ghost'}
+            size="sm"
           >
             🚀 Upcoming
-          </button>
+          </Button>
         </div>
 
         {/* Season/Year Selectors for Browse tab */}
         {activeTab === 'seasonal' && (
           <div className="flex flex-wrap gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <Typography variant="bodySmall" weight="medium" className="block mb-2">
                 Year
-              </label>
+              </Typography>
               <select
                 value={selectedYear}
                 onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-                className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="at-bg-surface at-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 at-text-primary"
               >
                 {availableYears.map(year => (
                   <option key={year} value={year}>{year}</option>
@@ -181,13 +161,13 @@ export const SeasonalAnime = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <Typography variant="bodySmall" weight="medium" className="block mb-2">
                 Season
-              </label>
+              </Typography>
               <select
                 value={selectedSeason}
                 onChange={(e) => setSelectedSeason(e.target.value)}
-                className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="at-bg-surface at-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 at-text-primary"
               >
                 {SEASONS.map(season => (
                   <option key={season.key} value={season.key}>
@@ -203,10 +183,10 @@ export const SeasonalAnime = () => {
       {/* Content */}
       <div className="p-6">
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
+          <div className="at-bg-danger/10 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
             <div className="flex items-center">
               <span className="text-red-500 mr-2">⚠️</span>
-              <span className="text-red-700 dark:text-red-300">{error}</span>
+              <Typography variant="bodyMedium" className="text-red-700 dark:text-red-300">{error}</Typography>
             </div>
           </div>
         )}
@@ -214,23 +194,14 @@ export const SeasonalAnime = () => {
         {/* Current Season */}
         {activeTab === 'current' && (
           <>
-            <div className="mb-6">
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">
-                {currentSeasonInfo?.emoji} {currentSeasonInfo?.label} {currentYear}
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Currently airing anime this season
-              </p>
-            </div>
-
             {loading.current ? (
               <LoadingSkeleton />
             ) : seasonalAnime.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                {seasonalAnime.map((anime) => (
-                  <AnimeCard key={`current-${anime.id}`} anime={anime} />
-                ))}
-              </div>
+              <ExpandableGrid 
+                anime={seasonalAnime} 
+                title={`${currentSeasonInfo?.emoji} ${currentSeasonInfo?.label} ${currentYear} - Currently Airing`}
+                maxCards={15} 
+              />
             ) : (
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">{currentSeasonInfo?.emoji}</div>
@@ -248,23 +219,14 @@ export const SeasonalAnime = () => {
         {/* Seasonal Browse */}
         {activeTab === 'seasonal' && (
           <>
-            <div className="mb-6">
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">
-                {selectedSeasonInfo?.emoji} {selectedSeasonInfo?.label} {selectedYear}
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Anime from {selectedSeasonInfo?.label.toLowerCase()} {selectedYear}
-              </p>
-            </div>
-
             {loading.seasonal ? (
               <LoadingSkeleton />
             ) : seasonalAnime.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                {seasonalAnime.map((anime) => (
-                  <AnimeCard key={`seasonal-${anime.id}`} anime={anime} />
-                ))}
-              </div>
+              <ExpandableGrid 
+                anime={seasonalAnime} 
+                title={`${selectedSeasonInfo?.emoji} ${selectedSeasonInfo?.label} ${selectedYear}`}
+                maxCards={15} 
+              />
             ) : (
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">{selectedSeasonInfo?.emoji}</div>
@@ -282,23 +244,14 @@ export const SeasonalAnime = () => {
         {/* Upcoming */}
         {activeTab === 'upcoming' && (
           <>
-            <div className="mb-6">
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">
-                🚀 Upcoming Anime
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Anime scheduled to air in future seasons
-              </p>
-            </div>
-
             {loading.upcoming ? (
               <LoadingSkeleton />
             ) : upcomingAnime.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                {upcomingAnime.map((anime) => (
-                  <AnimeCard key={`upcoming-${anime.id}`} anime={anime} />
-                ))}
-              </div>
+              <ExpandableGrid 
+                anime={upcomingAnime} 
+                title="🚀 Upcoming Anime"
+                maxCards={15} 
+              />
             ) : (
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">🚀</div>

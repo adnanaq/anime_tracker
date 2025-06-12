@@ -644,6 +644,66 @@
   z-index: 100 !important;
 }
 
+/* Click Mode - Individual Card Layout (Keep Original Dimensions) */
+.expandable-grid-container.click-mode {
+  display: flex;
+  width: 100%;
+  height: 370px;
+  gap: 16px;
+  transition: none;
+}
+
+.expandable-grid-container.click-mode .expandable-grid-card {
+  /* Collapsed state - fixed width matching original grid cards */
+  flex: 0 0 auto;
+  width: 200px; /* Fixed width matching original card dimensions */
+  transition: width 0.7s ease-in;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.expandable-grid-container.click-mode .expandable-grid-card.active {
+  /* Expanded state - fixed width matching original expanded dimensions */
+  width: 480px; /* Fixed expanded width matching original 4fr expansion */
+}
+
+/* Disable hover effects in click mode */
+.expandable-grid-container.click-mode .expandable-grid-card:hover .card-overlay-hover {
+  opacity: 0 !important;
+}
+
+.expandable-grid-container.click-mode .expandable-grid-card:hover .card-score-badge {
+  opacity: 1 !important;
+}
+
+.expandable-grid-container.click-mode .expandable-grid-card:hover .card-expanded-overlay {
+  opacity: 0 !important;
+}
+
+/* Show expanded content only when active in click mode */
+.expandable-grid-container.click-mode .expandable-grid-card.active .card-expanded-overlay {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.expandable-grid-container.click-mode .expandable-grid-card.active .card-score-badge {
+  opacity: 0 !important;
+}
+
+/* Hide expanded content for non-active cards in click mode */
+.expandable-grid-container.click-mode .expandable-grid-card:not(.active) .card-expanded-overlay {
+  opacity: 0 !important;
+}
+
+.expandable-grid-container.click-mode .expandable-grid-card:not(.active) .card-score-badge {
+  opacity: 1 !important;
+}
+
+/* Hide radio buttons in click mode */
+.expandable-grid-container.click-mode .card-radio {
+  display: none;
+}
+
 /* Responsive breakpoints to match existing grid layouts */
 @media (max-width: 640px) {
   .expandable-grid-container {
@@ -683,3 +743,7 @@
       var(--col-5, 1fr);
   }
 }
+
+
+
+

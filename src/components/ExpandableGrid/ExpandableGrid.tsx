@@ -12,6 +12,7 @@ interface ExpandableGridProps {
   anime: AnimeBase[]
   title?: string
   maxCards?: number
+  useClickMode?: boolean
 }
 
 const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase, onStatusReset?: () => void }) => {
@@ -183,6 +184,9 @@ const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase
               <div className="flex items-center space-x-2">
                 <span className="font-medium">Score:</span>
                 <span className="text-yellow-400 font-semibold">⭐ {animeItem.score.toFixed(1)}</span>
+                {animeItem.userScore && (
+                  <span className="text-blue-400 font-semibold ml-2">👤 {animeItem.userScore}/10</span>
+                )}
               </div>
             )}
             
@@ -446,39 +450,51 @@ const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase
             </div>
           )}
 
-          {animeItem.userScore && (
-            <div className="mt-3 flex justify-end">
-              <Badge 
-                variant="secondary" 
-                size="md" 
-                icon="⭐"
-                className="backdrop-blur-sm"
-              >
-                Your Score: {animeItem.userScore}/10
-              </Badge>
-            </div>
-          )}
         </div>
       </div>
     </div>
   )
 }
 
-export const ExpandableGrid = ({ anime, title, maxCards = 10 }: ExpandableGridProps) => {
+export const ExpandableGrid = ({ anime, title, maxCards = 10, useClickMode = false }: ExpandableGridProps) => {
   const navigate = useNavigate()
   const displayAnime = anime.slice(0, maxCards)
   const containerRef = useRef<HTMLDivElement>(null)
   const [statusResetTrigger, setStatusResetTrigger] = useState(0)
+  const [activeCardIndex, setActiveCardIndex] = useState(0) // First card active by default for click mode
+  const [isPaused, setIsPaused] = useState(false)
+  const timerRef = useRef<NodeJS.Timeout | null>(null)
 
-  const handleCardClick = (animeItem: AnimeBase, event: React.MouseEvent) => {
+  const handleCardClick = (animeItem: AnimeBase, event: React.MouseEvent, cardIndex?: number) => {
     // Don't navigate if clicking on expanded content
     if ((event.target as HTMLElement).closest('.expanded-content')) {
       return
     }
+    
+    if (useClickMode && cardIndex !== undefined) {
+      // In click mode, expand the clicked card and pause auto-cycling
+      setActiveCardIndex(cardIndex)
+      setStatusResetTrigger(prev => prev + 1)
+      setIsPaused(true)
+      
+      // Resume auto-cycling after 10 seconds of user interaction
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+      }
+      timerRef.current = setTimeout(() => {
+        setIsPaused(false)
+      }, 10000)
+      
+      return
+    }
+    
     navigate(`/anime/${animeItem.source}/${animeItem.id}`)
   }
 
   const handleCardHover = (cardIndex: number) => {
+    // Skip hover logic in click mode
+    if (useClickMode) return
+    
     if (containerRef.current) {
       // Check if any card is currently expanded (clicked)
       const expandedRadio = containerRef.current.querySelector('.card-radio:checked') as HTMLInputElement
@@ -496,6 +512,8 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10 }: ExpandableGridPr
   // Close expanded cards and reset status options when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      if (useClickMode) return // Skip outside click logic in click mode
+      
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         // Reset status options first
         setStatusResetTrigger(prev => prev + 1)
@@ -512,6 +530,30 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10 }: ExpandableGridPr
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
+  }, [useClickMode])
+
+  // Auto-cycling effect for click mode
+  useEffect(() => {
+    if (!useClickMode || isPaused) return
+
+    const interval = setInterval(() => {
+      setActiveCardIndex(prevIndex => {
+        const nextIndex = (prevIndex + 1) % displayAnime.length
+        setStatusResetTrigger(prev => prev + 1) // Reset status options when auto-cycling
+        return nextIndex
+      })
+    }, 4000) // Change card every 4 seconds
+
+    return () => clearInterval(interval)
+  }, [useClickMode, isPaused, displayAnime.length])
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+      }
+    }
   }, [])
 
   // Also reset status options when switching between cards
@@ -526,16 +568,16 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10 }: ExpandableGridPr
           {title}
         </Typography>
       )}
-      <div className="expandable-grid-container" ref={containerRef}>
+      <div className={`expandable-grid-container ${useClickMode ? 'click-mode' : ''}`} ref={containerRef}>
         {displayAnime.map((animeItem, index) => (
           <div 
             key={`${animeItem.source}-${animeItem.id}`} 
-            className="expandable-grid-card"
+            className={`expandable-grid-card ${useClickMode && activeCardIndex === index ? 'active' : ''}`}
             onMouseEnter={() => handleCardHover(index)}
           >
             <div 
               className="card-image-container w-full h-full relative cursor-pointer"
-              onClick={(e) => handleCardClick(animeItem, e)}
+              onClick={(e) => handleCardClick(animeItem, e, index)}
             >
               {animeItem.image ? (
                 <img

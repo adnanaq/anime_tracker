@@ -74,7 +74,11 @@ MyAnimeList API has CORS restrictions that prevent direct browser requests. The 
   - Three.js particle background with floating geometric shapes
   - Custom loading spinners with rotating elements
   - Detailed page transitions with element choreography
-  - **🔥 NEW: Expandable Grid System** - Interactive anime cards that expand horizontally with full status management
+  - **🔥 NEW: Enhanced Expandable Grid System** - Interactive anime cards with two interaction modes:
+    - **Click Mode**: Auto-cycling cards with smooth flex transitions (4s intervals)
+    - **Hover Mode**: Traditional hover-based expansion for detailed browsing
+    - **Smart Pause**: Auto-cycling pauses for 10s on user interaction
+    - **Status Management**: Full anime status tracking with animated dropdowns
 - **🏗️ Modular Architecture**: Easy to add new anime sources
 
 ### ✅ Phase 1.5 (Complete - Enhanced Features)
@@ -161,41 +165,74 @@ VITE_ANILIST_CLIENT_SECRET=your_anilist_client_secret
 7. **👆 View Details**: Click anime cards for comprehensive information
 8. **🎴 Quick Preview**: Hover over cards for instant details with synopsis, genres, and stats
 9. **🔗 Explore Related**: Discover prequels, sequels, and adaptations with full hover details
+10. **🔄 Auto-Cycling Cards**: Watch cards automatically cycle every 4 seconds in most sections
+11. **⏸️ Smart Interaction**: Click any card to pause auto-cycling and interact with content
 
 ## 🎨 Design System
 
-AnimeTrackr features a comprehensive design system for consistent styling and improved maintainability:
+AnimeTrackr features a comprehensive design system built on CSS custom properties and standardized React components for consistent styling and user experience across all components.
 
-### ✅ Component Library
+### ✅ Component Library (100% Implemented)
 - **Button**: Multiple variants (primary, secondary, success, warning, danger, ghost, outline, link)
-- **Typography**: Standardized text styles with semantic variants
-- **Badge**: Labels and status indicators
+- **Typography**: Standardized text styles with semantic variants (h1-h6, body, caption, label)
+- **Badge**: Labels and status indicators with theme-aware styling
+- **Skeleton/Spinner**: Comprehensive loading state patterns for different content types
+- **AnimeGridSkeleton**: Specialized loading component for anime card grids
 - **Form Components**: Consistent input styling and validation
 
 ### 🎨 Design Tokens
-- **Colors**: Semantic color system with light/dark theme support
-- **Typography**: Font families, sizes, weights, and line heights
-- **Spacing**: Consistent spacing scale
-- **Borders**: Standardized border radius and styles
-- **Shadows**: Elevation system for depth
-- **Transitions**: Smooth animation timings
+- **Colors**: Semantic color system with light/dark theme support (`at-bg-*`, `at-text-*`)
+- **Typography**: Font families, sizes, weights, and line heights with semantic variants
+- **Spacing**: Consistent spacing scale integrated with Tailwind
+- **Borders**: Standardized border radius and styles (`at-border`, `at-border-focus`)
+- **Shadows**: Elevation system for depth (`at-shadow-sm`, `at-shadow-md`, `at-shadow-lg`, `at-shadow-text`)
+- **Transitions**: Smooth animation timings (`at-transition`, `at-transition-duration-*`)
 
-### 🔧 Implementation
-- **CSS Custom Properties**: Theme-aware design tokens
-- **Class Variance Authority**: Type-safe component variants
-- **Tailwind Integration**: Design tokens work seamlessly with Tailwind
-- **cn() Utility**: Conditional class name merging for components
+### 🔧 Implementation Status
+✅ **Completed Components**:
+- AnimeCard - Updated with design tokens (100% compliance)
+- SearchBar - Form patterns standardized
+- SeasonalAnime - Major refactor with design system
+- AnimeSchedule - Complete design token integration
+- AdvancedSearch - Form standardization with loading states
+- RandomAnime - Design system compliance
+- ExpandingAnimeCards - 515 lines of CSS refactored to design tokens
 
-### 📚 Usage
+### 🚀 Benefits Achieved
+- **Consistency**: All components use the same design language
+- **Maintainability**: Changes to design tokens update globally  
+- **Performance**: Reduced CSS bundle size through token reuse
+- **Developer Experience**: Type-safe component APIs with clear prop definitions
+- **Accessibility**: Built-in focus states and semantic HTML
+- **Theming**: Seamless light/dark mode transitions
+
+### 📚 Usage Examples
 ```tsx
-// Using design system components
-<Button variant="primary" size="lg">Primary Action</Button>
-<Typography variant="h2" color="primary">Heading</Typography>
-<Badge variant="success">Completed</Badge>
+// Typography with variants
+<Typography variant="h2" weight="semibold" color="primary">
+  Section Title
+</Typography>
 
-// Using design tokens
-<div className="at-bg-surface at-text-primary at-border at-shadow-md">
-  Content with design tokens
+// Buttons with loading states
+<Button variant="primary" size="md" disabled={loading}>
+  {loading ? (
+    <>
+      <Spinner variant="default" size="xs" className="mr-2" />
+      Loading...
+    </>
+  ) : (
+    'Submit'
+  )}
+</Button>
+
+// Standardized loading states
+<AnimeGridSkeleton count={10} showDetails />
+
+// Design token usage in custom components
+<div className="at-bg-surface at-shadow-lg at-transition">
+  <Typography variant="body" color="muted">
+    Content with design system styling
+  </Typography>
 </div>
 ```
 

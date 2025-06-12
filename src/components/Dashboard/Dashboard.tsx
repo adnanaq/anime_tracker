@@ -1,6 +1,5 @@
 import { useEffect, useCallback, memo } from 'react'
 import { useAnimeStore } from '../../store/animeStore'
-import { AnimeCard } from '../AnimeCard/AnimeCard'
 import { SourceToggle } from '../SourceToggle'
 import { ThemeToggle } from '../ThemeToggle'
 import { SearchBar } from '../SearchBar'
@@ -29,17 +28,15 @@ const AnimeSection = memo(({
 }) => {
   return (
     <section className="mb-12">
-      <Typography variant="h2" className="mb-6 tracking-tight">
-        {title}
-      </Typography>
       {isLoading ? (
-        <LoadingGrid />
+        <>
+          <Typography variant="h2" className="mb-6 tracking-tight">
+            {title}
+          </Typography>
+          <LoadingGrid />
+        </>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-          {anime.map((item) => (
-            <AnimeCard key={`${item.source}-${item.id}`} anime={item} />
-          ))}
-        </div>
+        <ExpandableGrid anime={anime} title={title} maxCards={10} />
       )}
     </section>
   )
@@ -98,7 +95,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gray-50/80 dark:bg-gray-900/80 backdrop-blur-sm transition-theme">
       {/* Header */}
       <header className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md shadow-sm border-b border-gray-200 dark:border-gray-700 transition-theme animate-fade-in">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1600px] mx-auto px-2 sm:px-3 lg:px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center flex-shrink-0">
               <Typography variant="h3" className="at-typography-gradient font-bold">
@@ -135,7 +132,7 @@ const Dashboard = () => {
         ) : null
       )}
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-slide-up">
+      <main className="max-w-[1600px] mx-auto px-2 sm:px-3 lg:px-4 py-8 animate-slide-up">
         {searchResults.length > 0 && (
           <AnimeSection
             title="Search Results"
@@ -170,28 +167,52 @@ const Dashboard = () => {
                   />
                 </section>
                 
-                <AnimeSection
-                  title="Currently Watching (Grid View)"
-                  anime={currentlyWatching}
-                  isLoading={false}
-                  LoadingGrid={LoadingGrid}
-                />
+                <section className="mb-12">
+                  <ExpandableGrid
+                    anime={currentlyWatching}
+                    title="Currently Watching (Grid View)"
+                    maxCards={5}
+                    useClickMode={true}
+                  />
+                </section>
               </>
             )}
 
-            <AnimeSection
-              title="Trending Now"
-              anime={trendingAnime}
-              isLoading={loading.trending}
-              LoadingGrid={LoadingGrid}
-            />
+            <section className="mb-12">
+              {loading.trending ? (
+                <>
+                  <Typography variant="h2" className="mb-6 tracking-tight">
+                    Trending Now
+                  </Typography>
+                  <AnimeGridSkeleton count={10} />
+                </>
+              ) : (
+                <ExpandableGrid 
+                  anime={trendingAnime} 
+                  title="Trending Now" 
+                  maxCards={5} 
+                  useClickMode={true}
+                />
+              )}
+            </section>
 
-            <AnimeSection
-              title="Most Popular"
-              anime={popularAnime}
-              isLoading={loading.popular}
-              LoadingGrid={LoadingGrid}
-            />
+            <section className="mb-12">
+              {loading.popular ? (
+                <>
+                  <Typography variant="h2" className="mb-6 tracking-tight">
+                    Most Popular
+                  </Typography>
+                  <AnimeGridSkeleton count={10} />
+                </>
+              ) : (
+                <ExpandableGrid 
+                  anime={popularAnime} 
+                  title="Most Popular" 
+                  maxCards={5} 
+                  useClickMode={true}
+                />
+              )}
+            </section>
 
             <section className="mb-12">
               <ExpandingAnimeCards
@@ -209,23 +230,46 @@ const Dashboard = () => {
                   anime={trendingAnime}
                   title="🔥 Expandable Grid Test"
                   maxCards={5}
+                  useClickMode={true}
                 />
               </section>
             )}
 
-            <AnimeSection
-              title="Top Rated"
-              anime={topRatedAnime}
-              isLoading={loading.topRated}
-              LoadingGrid={LoadingGrid}
-            />
+            <section className="mb-12">
+              {loading.topRated ? (
+                <>
+                  <Typography variant="h2" className="mb-6 tracking-tight">
+                    Top Rated
+                  </Typography>
+                  <AnimeGridSkeleton count={10} />
+                </>
+              ) : (
+                <ExpandableGrid 
+                  anime={topRatedAnime} 
+                  title="Top Rated" 
+                  maxCards={5} 
+                  useClickMode={true}
+                />
+              )}
+            </section>
 
-            <AnimeSection
-              title="Current Season"
-              anime={currentSeasonAnime}
-              isLoading={loading.currentSeason}
-              LoadingGrid={LoadingGrid}
-            />
+            <section className="mb-12">
+              {loading.currentSeason ? (
+                <>
+                  <Typography variant="h2" className="mb-6 tracking-tight">
+                    Current Season
+                  </Typography>
+                  <AnimeGridSkeleton count={10} />
+                </>
+              ) : (
+                <ExpandableGrid 
+                  anime={currentSeasonAnime} 
+                  title="Current Season" 
+                  maxCards={5} 
+                  useClickMode={true}
+                />
+              )}
+            </section>
 
 
             {/* MAL-specific enhanced features */}

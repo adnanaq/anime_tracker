@@ -96,7 +96,8 @@ MyAnimeList API has CORS restrictions that prevent direct browser requests. The 
 ## 🛠 Tech Stack
 
 - **Frontend**: React 18 + TypeScript + Vite
-- **Styling**: Tailwind CSS
+- **Styling**: Tailwind CSS + Custom Design System
+- **Design System**: Comprehensive design tokens and component library
 - **Animations**: Anime.js v4 + Three.js
 - **State Management**: Zustand
 - **Routing**: React Router
@@ -111,6 +112,10 @@ MyAnimeList API has CORS restrictions that prevent direct browser requests. The 
 ```
 src/
 ├── components/           # Reusable UI components
+│   ├── ui/              # Core design system components
+│   │   ├── Button/      # Standardized button component
+│   │   ├── Typography/  # Typography component with variants
+│   │   └── Badge/       # Badge component for labels
 │   ├── AnimeCard/       # Anime card with hover effects
 │   ├── AuthButton/      # OAuth login buttons
 │   ├── Dashboard/       # Main dashboard layout
@@ -127,8 +132,10 @@ src/
 │   ├── api/            # API integration services
 │   └── data/           # Data normalization
 ├── store/               # Zustand state management
+├── styles/              # Design system CSS and tokens
 ├── types/               # TypeScript type definitions
-└── utils/               # Utility functions
+├── utils/               # Utility functions
+│   └── cn.ts           # Class name utility for design system
 proxy-server.js          # CORS proxy for MyAnimeList API
 ```
 
@@ -154,6 +161,43 @@ VITE_ANILIST_CLIENT_SECRET=your_anilist_client_secret
 7. **👆 View Details**: Click anime cards for comprehensive information
 8. **🎴 Quick Preview**: Hover over cards for instant details with synopsis, genres, and stats
 9. **🔗 Explore Related**: Discover prequels, sequels, and adaptations with full hover details
+
+## 🎨 Design System
+
+AnimeTrackr features a comprehensive design system for consistent styling and improved maintainability:
+
+### ✅ Component Library
+- **Button**: Multiple variants (primary, secondary, success, warning, danger, ghost, outline, link)
+- **Typography**: Standardized text styles with semantic variants
+- **Badge**: Labels and status indicators
+- **Form Components**: Consistent input styling and validation
+
+### 🎨 Design Tokens
+- **Colors**: Semantic color system with light/dark theme support
+- **Typography**: Font families, sizes, weights, and line heights
+- **Spacing**: Consistent spacing scale
+- **Borders**: Standardized border radius and styles
+- **Shadows**: Elevation system for depth
+- **Transitions**: Smooth animation timings
+
+### 🔧 Implementation
+- **CSS Custom Properties**: Theme-aware design tokens
+- **Class Variance Authority**: Type-safe component variants
+- **Tailwind Integration**: Design tokens work seamlessly with Tailwind
+- **cn() Utility**: Conditional class name merging for components
+
+### 📚 Usage
+```tsx
+// Using design system components
+<Button variant="primary" size="lg">Primary Action</Button>
+<Typography variant="h2" color="primary">Heading</Typography>
+<Badge variant="success">Completed</Badge>
+
+// Using design tokens
+<div className="at-bg-surface at-text-primary at-border at-shadow-md">
+  Content with design tokens
+</div>
+```
 
 ## ⚡ High-Performance Caching System
 

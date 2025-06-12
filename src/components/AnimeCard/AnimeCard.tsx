@@ -2,8 +2,9 @@ import { useRef, useEffect, memo } from 'react'
 import { Link } from 'react-router-dom'
 import { animate } from 'animejs'
 import { AnimeBase } from '../../types/anime'
-import { HoverCard } from '../HoverCard/HoverCard'
+// import { HoverCard } from '../HoverCard/HoverCard'
 import { useAnimeAuth } from '../../hooks/useAuth'
+import { Typography, Badge } from '../ui'
 
 interface AnimeCardProps {
   anime: AnimeBase
@@ -149,25 +150,39 @@ const AnimeCardComponent = ({ anime: animeItem }: AnimeCardProps) => {
             {animeItem.score && (
               <div 
                 ref={badgeRef}
-                className="absolute top-3 left-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-1.5 rounded-lg text-sm font-bold shadow-lg backdrop-blur-sm transform-gpu"
+                className="absolute top-3 left-3 transform-gpu"
                 style={{ 
                   transform: 'scale(1) rotateZ(0deg)',
                   transformOrigin: 'center center'
                 }}
               >
-                ⭐ {animeItem.score.toFixed(1)}
+                <Badge 
+                  variant="warning" 
+                  size="sm" 
+                  icon="⭐"
+                  className="shadow-lg backdrop-blur-sm font-bold"
+                >
+                  {animeItem.score.toFixed(1)}
+                </Badge>
               </div>
             )}
             
             {isAuthenticated && animeItem.userScore && (
               <div 
-                className="absolute top-3 right-3 bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1.5 rounded-lg text-sm font-bold shadow-lg backdrop-blur-sm transform-gpu"
+                className="absolute top-3 right-3 transform-gpu"
                 style={{ 
                   transform: 'scale(1) rotateZ(0deg)',
                   transformOrigin: 'center center'
                 }}
               >
-                💯 {animeItem.userScore}
+                <Badge 
+                  variant="success" 
+                  size="sm" 
+                  icon="💯"
+                  className="shadow-lg backdrop-blur-sm font-bold"
+                >
+                  {animeItem.userScore}
+                </Badge>
               </div>
             )}
             
@@ -180,7 +195,9 @@ const AnimeCardComponent = ({ anime: animeItem }: AnimeCardProps) => {
                 background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)'
               }}
             >
-              <h3 className="font-bold text-base mb-2 line-clamp-2 tracking-wide">{animeItem.title}</h3>
+              <Typography variant="h6" color="inverse" className="mb-2 line-clamp-2 tracking-wide">
+                {animeItem.title}
+              </Typography>
               <div className="flex items-center gap-3 text-sm opacity-90">
                 {animeItem.episodes && (
                   <span className="flex items-center gap-1">
@@ -198,9 +215,10 @@ const AnimeCardComponent = ({ anime: animeItem }: AnimeCardProps) => {
         </Link>
       </div>
 
-      <div className="absolute z-50 top-0 left-full ml-4 w-80 hover-card-container opacity-0 invisible group-hover/card:opacity-100 group-hover/card:visible transition-all duration-200 pointer-events-none group-hover/card:pointer-events-auto">
+      {/* HoverCard temporarily commented out for expandable grid implementation */}
+      {/* <div className="absolute z-50 top-0 left-full ml-4 w-80 hover-card-container opacity-0 invisible group-hover/card:opacity-100 group-hover/card:visible transition-all duration-200 pointer-events-none group-hover/card:pointer-events-auto">
         <HoverCard anime={animeItem} />
-      </div>
+      </div> */}
     </div>
   )
 }

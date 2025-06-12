@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import { useAnimeStore } from '../store/animeStore'
+import { Button } from './ui'
 
 export const SearchBar = () => {
   const [query, setQuery] = useState('')
@@ -44,7 +45,7 @@ export const SearchBar = () => {
           value={query}
           onChange={handleInputChange}
           placeholder="Search anime..."
-          className="w-64 px-4 py-2 pl-10 pr-10 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-64 px-4 py-2 pl-10 pr-10 text-sm at-border at-bg-surface rounded-lg focus:ring-2 focus:at-border-focus focus:border-transparent at-transition-colors font-primary"
           disabled={loading.search}
         />
         
@@ -70,10 +71,11 @@ export const SearchBar = () => {
           {loading.search ? (
             <div className="animate-spin h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full"></div>
           ) : query ? (
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="xs"
               onClick={handleClear}
-              className="text-gray-400 hover:text-gray-600"
+              className="!p-1 !h-auto !min-w-auto at-text-muted hover:at-text-secondary"
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -83,7 +85,7 @@ export const SearchBar = () => {
                   d="M6 18L18 6M6 6l12 12"
                 />
               </svg>
-            </button>
+            </Button>
           ) : null}
         </div>
       </div>

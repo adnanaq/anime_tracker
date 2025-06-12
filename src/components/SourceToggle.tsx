@@ -8,47 +8,29 @@ export const SourceToggle = () => {
   }
 
   return (
-    <div className="flex items-center space-x-3">
-      <span className={`text-sm font-medium transition-colors ${
-        currentSource === 'mal' ? 'text-blue-600' : 'text-gray-400'
+    <div className="flex items-center space-x-2">
+      <span className={`text-sm font-medium at-transition-colors ${
+        currentSource === 'mal' ? 'text-blue-600 dark:text-blue-400' : 'at-text-muted'
       }`}>
         MAL
       </span>
       
       <button
         onClick={handleToggle}
-        className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 hover:bg-gray-300"
         role="switch"
         aria-checked={currentSource === 'anilist'}
         aria-label="Toggle between MyAnimeList and AniList"
+        className="relative inline-flex items-center w-11 h-6 bg-gray-300 dark:bg-gray-600 rounded-full p-0.5 at-transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       >
-        <span
-          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-lg transition-transform ${
-            currentSource === 'anilist' ? 'translate-x-6' : 'translate-x-1'
+        <div
+          className={`w-5 h-5 bg-white rounded-full shadow-md at-transition ${
+            currentSource === 'anilist' ? 'translate-x-5' : 'translate-x-0'
           }`}
         />
-        <span
-          className={`absolute inset-0 flex items-center justify-center text-xs font-bold transition-opacity ${
-            currentSource === 'mal' 
-              ? 'opacity-100 text-blue-600' 
-              : 'opacity-0'
-          }`}
-          style={{ left: currentSource === 'mal' ? '2px' : '-20px' }}
-        >
-        </span>
-        <span
-          className={`absolute inset-0 flex items-center justify-center text-xs font-bold transition-opacity ${
-            currentSource === 'anilist' 
-              ? 'opacity-100 text-purple-600' 
-              : 'opacity-0'
-          }`}
-          style={{ right: currentSource === 'anilist' ? '2px' : '-20px' }}
-        >
-        </span>
       </button>
       
-      <span className={`text-sm font-medium transition-colors ${
-        currentSource === 'anilist' ? 'text-purple-600' : 'text-gray-400'
+      <span className={`text-sm font-medium at-transition-colors ${
+        currentSource === 'anilist' ? 'text-purple-600 dark:text-purple-400' : 'at-text-muted'
       }`}>
         AniList
       </span>

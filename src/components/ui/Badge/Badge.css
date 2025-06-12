@@ -1,0 +1,294 @@
+/* Badge Component Styles using Design Tokens */
+
+/* === BASE STYLES === */
+.at-badge-base {
+  font-family: var(--font-primary);
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* === SIZE VARIANTS === */
+.at-badge-xs {
+  font-size: var(--text-xs);
+  padding: var(--space-1) var(--space-2);
+  height: 20px;
+  min-width: 20px;
+}
+
+.at-badge-sm {
+  font-size: var(--text-xs);
+  padding: calc(var(--space-1) * 1.5) var(--space-2);
+  height: 24px;
+  min-width: 24px;
+}
+
+.at-badge-md {
+  font-size: var(--text-sm);
+  padding: var(--space-2) var(--space-3);
+  height: 28px;
+  min-width: 28px;
+}
+
+.at-badge-lg {
+  font-size: var(--text-sm);
+  padding: var(--space-2) var(--space-4);
+  height: 32px;
+  min-width: 32px;
+}
+
+/* === SHAPE VARIANTS === */
+.at-badge-rounded {
+  border-radius: var(--radius-md);
+}
+
+.at-badge-pill {
+  border-radius: var(--radius-full);
+}
+
+.at-badge-square {
+  border-radius: var(--radius-sm);
+}
+
+/* === COLOR VARIANTS === */
+.at-badge-primary {
+  background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-600));
+  color: var(--color-text-inverse);
+  border: 1px solid var(--color-primary-600);
+}
+
+.at-badge-secondary {
+  background: linear-gradient(135deg, var(--color-secondary-500), var(--color-secondary-600));
+  color: var(--color-text-inverse);
+  border: 1px solid var(--color-secondary-600);
+}
+
+.at-badge-success {
+  background: linear-gradient(135deg, var(--color-success-500), var(--color-success-600));
+  color: var(--color-text-inverse);
+  border: 1px solid var(--color-success-600);
+}
+
+.at-badge-warning {
+  background: linear-gradient(135deg, var(--color-warning-500), var(--color-warning-600));
+  color: var(--color-text-inverse);
+  border: 1px solid var(--color-warning-600);
+}
+
+.at-badge-danger {
+  background: linear-gradient(135deg, var(--color-danger-500), var(--color-danger-600));
+  color: var(--color-text-inverse);
+  border: 1px solid var(--color-danger-600);
+}
+
+.at-badge-info {
+  background: linear-gradient(135deg, var(--color-info-500), var(--color-info-600));
+  color: var(--color-text-inverse);
+  border: 1px solid var(--color-info-600);
+}
+
+.at-badge-neutral {
+  background: var(--color-gray-100);
+  color: var(--color-gray-800);
+  border: 1px solid var(--color-gray-200);
+}
+
+.at-badge-outline {
+  background: transparent;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+}
+
+/* === INTERACTIVE STYLES === */
+.at-badge-interactive {
+  transition: all var(--transition-base);
+}
+
+.at-badge-interactive:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.at-badge-interactive:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.at-badge-interactive.at-badge-primary:hover {
+  background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-700));
+}
+
+.at-badge-interactive.at-badge-secondary:hover {
+  background: linear-gradient(135deg, var(--color-secondary-600), var(--color-secondary-700));
+}
+
+.at-badge-interactive.at-badge-success:hover {
+  background: linear-gradient(135deg, var(--color-success-600), var(--color-success-700));
+}
+
+.at-badge-interactive.at-badge-warning:hover {
+  background: linear-gradient(135deg, var(--color-warning-600), var(--color-warning-700));
+}
+
+.at-badge-interactive.at-badge-danger:hover {
+  background: linear-gradient(135deg, var(--color-danger-600), var(--color-danger-700));
+}
+
+.at-badge-interactive.at-badge-info:hover {
+  background: linear-gradient(135deg, var(--color-info-600), var(--color-info-700));
+}
+
+.at-badge-interactive.at-badge-neutral:hover {
+  background: var(--color-gray-200);
+}
+
+.at-badge-interactive.at-badge-outline:hover {
+  background: var(--color-background-secondary);
+  border-color: var(--color-primary-500);
+}
+
+/* === ANIMATION STYLES === */
+.at-badge-animated {
+  position: relative;
+  overflow: hidden;
+}
+
+.at-badge-animated::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left var(--transition-slow);
+  pointer-events: none;
+}
+
+.at-badge-animated:hover::before {
+  left: 100%;
+}
+
+/* Pulse animation for status badges */
+.at-badge-animated.at-badge-success {
+  animation: pulse-success 2s infinite;
+}
+
+.at-badge-animated.at-badge-warning {
+  animation: pulse-warning 2s infinite;
+}
+
+.at-badge-animated.at-badge-danger {
+  animation: pulse-danger 2s infinite;
+}
+
+@keyframes pulse-success {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0);
+  }
+}
+
+@keyframes pulse-warning {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(234, 179, 8, 0);
+  }
+}
+
+@keyframes pulse-danger {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0);
+  }
+}
+
+/* === ICON STYLES === */
+.at-badge-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.at-badge-content {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Adjust spacing when icon is present */
+.at-badge-base:has(.at-badge-icon) .at-badge-content:not(:empty) {
+  margin-left: var(--space-1);
+}
+
+/* === REMOVE BUTTON STYLES === */
+.at-badge-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  margin-left: var(--space-1);
+  padding: 0;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.at-badge-remove:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.at-badge-remove:active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* === DARK MODE OVERRIDES === */
+.dark .at-badge-neutral {
+  background: var(--color-gray-800);
+  color: var(--color-gray-200);
+  border-color: var(--color-gray-700);
+}
+
+.dark .at-badge-outline {
+  color: var(--color-dark-text-primary);
+  border-color: var(--color-dark-border);
+}
+
+.dark .at-badge-interactive.at-badge-neutral:hover {
+  background: var(--color-gray-700);
+}
+
+.dark .at-badge-interactive.at-badge-outline:hover {
+  background: var(--color-dark-background-secondary);
+  border-color: var(--color-primary-400);
+}
+
+/* === RESPONSIVE STYLES === */
+@media (max-width: 640px) {
+  .at-badge-lg {
+    font-size: var(--text-xs);
+    padding: calc(var(--space-1) * 1.5) var(--space-3);
+    height: 28px;
+  }
+}

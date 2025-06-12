@@ -13,6 +13,8 @@ import { SeasonalAnime } from '../SeasonalAnime'
 import { CacheStats } from '../CacheManager/CacheStats'
 import { CacheTest } from '../CacheTest'
 import { ExpandingAnimeCards } from '../ExpandingAnimeCards'
+import { ExpandableGrid } from '../ExpandableGrid'
+import { Typography } from '../ui'
 
 const AnimeSection = memo(({
   title,
@@ -27,9 +29,9 @@ const AnimeSection = memo(({
 }) => {
   return (
     <section className="mb-12">
-      <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6 transition-theme tracking-tight">
+      <Typography variant="h2" className="mb-6 tracking-tight">
         {title}
-      </h2>
+      </Typography>
       {isLoading ? (
         <LoadingGrid />
       ) : (
@@ -119,15 +121,29 @@ const Dashboard = () => {
       <header className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md shadow-sm border-b border-gray-200 dark:border-gray-700 transition-theme animate-fade-in">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent transition-theme">
-              AnimeTrackr
-            </h1>
-            <div className="flex items-center space-x-4">
-              <SearchBar />
-              <SourceToggle />
-              <ThemeToggle />
-              <AuthButton source={currentSource} />
+            <div className="flex items-center flex-shrink-0">
+              <Typography variant="h3" className="at-typography-gradient font-bold">
+                AnimeTrackr
+              </Typography>
             </div>
+            <div className="flex items-center space-x-4 flex-shrink-0 h-full">
+              <div className="hidden md:flex items-center h-full">
+                <SearchBar />
+              </div>
+              <div className="flex items-center h-full">
+                <SourceToggle />
+              </div>
+              <div className="flex items-center h-full">
+                <AuthButton source={currentSource} />
+              </div>
+              <div className="flex items-center h-full ml-2">
+                <ThemeToggle />
+              </div>
+            </div>
+          </div>
+          {/* Mobile Search Bar */}
+          <div className="md:hidden pb-4">
+            <SearchBar />
           </div>
         </div>
       </header>
@@ -207,6 +223,17 @@ const Dashboard = () => {
               />
             </section>
 
+            {/* Expandable Grid Test Section */}
+            {trendingAnime.length > 0 && (
+              <section className="mb-12">
+                <ExpandableGrid
+                  anime={trendingAnime}
+                  title="🔥 Expandable Grid Test"
+                  maxCards={5}
+                />
+              </section>
+            )}
+
             <AnimeSection
               title="Top Rated"
               anime={topRatedAnime}
@@ -263,9 +290,9 @@ const Dashboard = () => {
           currentSeasonAnime.length === 0 &&
           currentlyWatching.length === 0 && (
             <div className="text-center py-12">
-              <div className="text-gray-400 text-lg">
+              <Typography variant="bodyLarge" color="muted">
                 No anime data available. Please try switching sources or check your connection.
-              </div>
+              </Typography>
             </div>
           )}
       </main>

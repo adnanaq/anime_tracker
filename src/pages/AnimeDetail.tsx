@@ -9,6 +9,7 @@ import { getAuthService } from '../services/shared'
 import { malService } from '../services/mal'
 import { anilistService } from '../services/anilist'
 import { getStatusOptions } from '../utils/animeStatus'
+import { Typography, Button, Badge } from '../components/ui'
 
 export const AnimeDetail = () => {
   const { source, id } = useParams<{ source: string; id: string }>()

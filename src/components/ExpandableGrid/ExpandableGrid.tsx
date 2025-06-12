@@ -5,6 +5,7 @@ import { getStatusLabel, getStatusColor, getStatusIcon } from '../../utils/anime
 import { useAnimeAuth } from '../../hooks/useAuth'
 import { useAnimeStore } from '../../store/animeStore'
 import { animeStatusService } from '../../services/shared/animeStatusService'
+import { Button, Typography, Badge } from '../ui'
 import './ExpandableGrid.css'
 
 interface ExpandableGridProps {
@@ -123,41 +124,55 @@ const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase
         {/* Top Content Area - with bottom padding for fixed buttons */}
         <div className="pb-28 overflow-hidden">
           <div className="mb-4">
-            <h3 className="text-white font-bold text-lg mb-2 line-clamp-2">{animeItem.title}</h3>
+            <Typography variant="h4" color="inverse" className="mb-2 line-clamp-2">
+              {animeItem.title}
+            </Typography>
             
             {/* Status and Format Badges */}
             <div className="flex items-center gap-2 flex-wrap mb-2">
               {animeItem.status && (
-                <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium backdrop-blur-sm ${
-                  animeItem.status.toLowerCase().includes('airing') || animeItem.status === 'RELEASING' 
-                    ? 'bg-green-600/80 text-white' 
-                    : animeItem.status.toLowerCase().includes('completed') || animeItem.status === 'FINISHED'
-                    ? 'bg-blue-600/80 text-white'
-                    : animeItem.status.toLowerCase().includes('upcoming') || animeItem.status === 'NOT_YET_RELEASED'
-                    ? 'bg-orange-600/80 text-white'
-                    : 'bg-gray-600/80 text-white'
-                }`}>
-                  {animeItem.status.toLowerCase().includes('airing') || animeItem.status === 'RELEASING' ? '🔴' :
-                   animeItem.status.toLowerCase().includes('completed') || animeItem.status === 'FINISHED' ? '✅' :
-                   animeItem.status.toLowerCase().includes('upcoming') || animeItem.status === 'NOT_YET_RELEASED' ? '⏳' : '📺'}
+                <Badge
+                  variant={
+                    animeItem.status.toLowerCase().includes('airing') || animeItem.status === 'RELEASING' 
+                      ? 'success' 
+                      : animeItem.status.toLowerCase().includes('completed') || animeItem.status === 'FINISHED'
+                      ? 'info'
+                      : animeItem.status.toLowerCase().includes('upcoming') || animeItem.status === 'NOT_YET_RELEASED'
+                      ? 'warning'
+                      : 'neutral'
+                  }
+                  shape="pill"
+                  size="sm"
+                  icon={
+                    animeItem.status.toLowerCase().includes('airing') || animeItem.status === 'RELEASING' ? '🔴' :
+                    animeItem.status.toLowerCase().includes('completed') || animeItem.status === 'FINISHED' ? '✅' :
+                    animeItem.status.toLowerCase().includes('upcoming') || animeItem.status === 'NOT_YET_RELEASED' ? '⏳' : '📺'
+                  }
+                >
                   {animeItem.status.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}
-                </span>
+                </Badge>
               )}
               
               {animeItem.format && (
-                <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium backdrop-blur-sm ${
-                  animeItem.format === 'TV' ? 'bg-purple-600/60 text-white' :
-                  animeItem.format === 'MOVIE' ? 'bg-red-600/60 text-white' :
-                  animeItem.format === 'OVA' || animeItem.format === 'ONA' ? 'bg-indigo-600/60 text-white' :
-                  animeItem.format === 'SPECIAL' ? 'bg-yellow-600/60 text-white' :
-                  'bg-gray-600/60 text-white'
-                }`}>
-                  {animeItem.format === 'TV' ? '📺' :
-                   animeItem.format === 'MOVIE' ? '🎬' :
-                   animeItem.format === 'OVA' || animeItem.format === 'ONA' ? '💿' :
-                   animeItem.format === 'SPECIAL' ? '⭐' : '📼'}
+                <Badge
+                  variant={
+                    animeItem.format === 'TV' ? 'secondary' :
+                    animeItem.format === 'MOVIE' ? 'danger' :
+                    animeItem.format === 'OVA' || animeItem.format === 'ONA' ? 'primary' :
+                    animeItem.format === 'SPECIAL' ? 'warning' :
+                    'neutral'
+                  }
+                  shape="rounded"
+                  size="sm"
+                  icon={
+                    animeItem.format === 'TV' ? '📺' :
+                    animeItem.format === 'MOVIE' ? '🎬' :
+                    animeItem.format === 'OVA' || animeItem.format === 'ONA' ? '💿' :
+                    animeItem.format === 'SPECIAL' ? '⭐' : '📼'
+                  }
+                >
                   {animeItem.format}
-                </span>
+                </Badge>
               )}
             </div>
           </div>
@@ -196,20 +211,24 @@ const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase
           <div className="space-y-3">
             {animeItem.genres && animeItem.genres.length > 0 && (
               <div>
-                <div className="text-xs text-white/70 mb-2 font-medium">Genres:</div>
+                <Typography variant="caption" color="tertiary" className="mb-2 font-medium">
+                  Genres:
+                </Typography>
                 <div className="flex flex-wrap gap-1">
                   {animeItem.genres.slice(0, 4).map((genre, index) => (
-                    <span
+                    <Badge
                       key={index}
-                      className="bg-blue-600/80 text-white text-xs px-2 py-1 rounded backdrop-blur-sm"
+                      variant="primary"
+                      size="xs"
+                      shape="rounded"
                     >
                       {genre}
-                    </span>
+                    </Badge>
                   ))}
                   {animeItem.genres.length > 4 && (
-                    <span className="text-xs text-white/70">
+                    <Typography variant="caption" color="tertiary">
                       +{animeItem.genres.length - 4} more
-                    </span>
+                    </Typography>
                   )}
                 </div>
               </div>
@@ -265,96 +284,99 @@ const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase
                     {/* Watching */}
                     {currentStatus !== (animeItem.source === 'mal' ? 'watching' : 'CURRENT') && (
                       <div className={`status-option-item ${selectedStatus === (animeItem.source === 'mal' ? 'watching' : 'CURRENT') ? 'selected-option' : ''} ${selectedStatus === (animeItem.source === 'mal' ? 'watching' : 'CURRENT') && takeoverReady ? 'takeover-ready' : ''}`}>
-                        <button
-                          type="button"
+                        <Button
+                          variant="primary"
+                          size="xs"
+                          fullWidth
                           onClick={(e) => handleStatusChange(e, animeItem.source === 'mal' ? 'watching' : 'CURRENT')}
                           disabled={isUpdating}
-                          className="w-full text-xs text-white px-2 py-1.5 rounded-md hover:bg-blue-500/80 transition-all duration-200 disabled:opacity-50 flex items-center gap-1.5 font-medium"
-                          style={{ background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(37, 99, 235, 0.9))' }}
+                          leftIcon={getStatusIcon('watching')}
+                          className="!bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
                         >
-                          <span>{getStatusIcon('watching')}</span>
-                          <span>Watching</span>
-                        </button>
+                          Watching
+                        </Button>
                       </div>
                     )}
                     
                     {/* Completed */}
                     {currentStatus !== (animeItem.source === 'mal' ? 'completed' : 'COMPLETED') && (
                       <div className={`status-option-item ${selectedStatus === (animeItem.source === 'mal' ? 'completed' : 'COMPLETED') ? 'selected-option' : ''} ${selectedStatus === (animeItem.source === 'mal' ? 'completed' : 'COMPLETED') && takeoverReady ? 'takeover-ready' : ''}`}>
-                        <button
-                          type="button"
+                        <Button
+                          variant="success"
+                          size="xs"
+                          fullWidth
                           onClick={(e) => handleStatusChange(e, animeItem.source === 'mal' ? 'completed' : 'COMPLETED')}
                           disabled={isUpdating}
-                          className="w-full text-xs text-white px-2 py-1.5 rounded-md hover:bg-green-500/80 transition-all duration-200 disabled:opacity-50 flex items-center gap-1.5 font-medium"
-                          style={{ background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.9), rgba(21, 128, 61, 0.9))' }}
+                          leftIcon={getStatusIcon('completed')}
                         >
-                          <span>{getStatusIcon('completed')}</span>
-                          <span>Completed</span>
-                        </button>
+                          Completed
+                        </Button>
                       </div>
                     )}
                     
                     {/* Plan to Watch */}
                     {currentStatus !== (animeItem.source === 'mal' ? 'plan_to_watch' : 'PLANNING') && (
                       <div className={`status-option-item ${selectedStatus === (animeItem.source === 'mal' ? 'plan_to_watch' : 'PLANNING') ? 'selected-option' : ''} ${selectedStatus === (animeItem.source === 'mal' ? 'plan_to_watch' : 'PLANNING') && takeoverReady ? 'takeover-ready' : ''}`}>
-                        <button
-                          type="button"
+                        <Button
+                          variant="warning"
+                          size="xs"
+                          fullWidth
                           onClick={(e) => handleStatusChange(e, animeItem.source === 'mal' ? 'plan_to_watch' : 'PLANNING')}
                           disabled={isUpdating}
-                          className="w-full text-xs text-white px-2 py-1.5 rounded-md hover:bg-yellow-500/80 transition-all duration-200 disabled:opacity-50 flex items-center gap-1.5 font-medium"
-                          style={{ background: 'linear-gradient(135deg, rgba(234, 179, 8, 0.9), rgba(161, 98, 7, 0.9))' }}
+                          leftIcon={getStatusIcon('plan_to_watch')}
                         >
-                          <span>{getStatusIcon('plan_to_watch')}</span>
-                          <span>Plan</span>
-                        </button>
+                          Plan
+                        </Button>
                       </div>
                     )}
                     
                     {/* On Hold */}
                     {currentStatus !== (animeItem.source === 'mal' ? 'on_hold' : 'PAUSED') && (
                       <div className={`status-option-item ${selectedStatus === (animeItem.source === 'mal' ? 'on_hold' : 'PAUSED') ? 'selected-option' : ''} ${selectedStatus === (animeItem.source === 'mal' ? 'on_hold' : 'PAUSED') && takeoverReady ? 'takeover-ready' : ''}`}>
-                        <button
-                          type="button"
+                        <Button
+                          variant="info"
+                          size="xs"
+                          fullWidth
                           onClick={(e) => handleStatusChange(e, animeItem.source === 'mal' ? 'on_hold' : 'PAUSED')}
                           disabled={isUpdating}
-                          className="w-full text-xs text-white px-2 py-1.5 rounded-md hover:bg-orange-500/80 transition-all duration-200 disabled:opacity-50 flex items-center gap-1.5 font-medium"
-                          style={{ background: 'linear-gradient(135deg, rgba(249, 115, 22, 0.9), rgba(194, 65, 12, 0.9))' }}
+                          leftIcon={getStatusIcon('on_hold')}
+                          className="!bg-gradient-to-br from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800"
                         >
-                          <span>{getStatusIcon('on_hold')}</span>
-                          <span>Hold</span>
-                        </button>
+                          Hold
+                        </Button>
                       </div>
                     )}
                     
                     {/* Dropped */}
                     {currentStatus !== (animeItem.source === 'mal' ? 'dropped' : 'DROPPED') && (
                       <div className={`status-option-item ${selectedStatus === (animeItem.source === 'mal' ? 'dropped' : 'DROPPED') ? 'selected-option' : ''} ${selectedStatus === (animeItem.source === 'mal' ? 'dropped' : 'DROPPED') && takeoverReady ? 'takeover-ready' : ''}`}>
-                        <button
-                          type="button"
+                        <Button
+                          variant="danger"
+                          size="xs"
+                          fullWidth
                           onClick={(e) => handleStatusChange(e, animeItem.source === 'mal' ? 'dropped' : 'DROPPED')}
                           disabled={isUpdating}
-                          className="w-full text-xs text-white px-2 py-1.5 rounded-md hover:bg-red-500/80 transition-all duration-200 disabled:opacity-50 flex items-center gap-1.5 font-medium"
-                          style={{ background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(185, 28, 28, 0.9))' }}
+                          leftIcon={getStatusIcon('dropped')}
                         >
-                          <span>{getStatusIcon('dropped')}</span>
-                          <span>Drop</span>
-                        </button>
+                          Drop
+                        </Button>
                       </div>
                     )}
                     
                     {/* Remove from List - only if user has a current status */}
                     {currentStatus && (
                       <div className="status-option-item">
-                        <button
-                          type="button"
+                        <Button
+                          variant="outline"
+                          size="xs"
+                          fullWidth
                           onClick={(e) => handleRemoveFromList(e)}
                           disabled={isUpdating}
-                          className="w-full text-xs text-white px-2 py-1.5 rounded-md hover:bg-red-600/80 transition-all duration-200 disabled:opacity-50 flex items-center gap-1.5 font-medium border border-red-400/30"
-                          style={{ background: 'linear-gradient(135deg, rgba(127, 29, 29, 0.9), rgba(87, 13, 13, 0.9))' }}
+                          leftIcon="🗑️"
+                          className="!border-red-400/30 !text-red-400 hover:!bg-red-600 hover:!text-white !bg-gradient-to-br from-red-900/60 to-red-800/60"
                         >
-                          <span>🗑️</span>
-                          <span>Remove</span>
-                        </button>
+                          Remove
+                        </Button>
                       </div>
                     )}
                   </div>
@@ -363,24 +385,36 @@ const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase
 
               {/* Always Visible Main Action Buttons */}
               <div className="flex gap-2">
-                <button
-                  type="button"
+                <Button
+                  variant={currentStatus ? "secondary" : "primary"}
+                  size="sm"
+                  fullWidth
                   onClick={(e) => {
                     e.preventDefault()
                     e.stopPropagation()
                     toggleStatusOptions()
                   }}
-                  className={`flex-1 text-sm text-white px-4 py-2 rounded-lg transition-all duration-200 font-medium backdrop-blur-sm ${getStatusColor(currentStatus)} ${showStatusOptions ? 'ring-2 ring-white/30' : ''}`}
+                  leftIcon={getStatusIcon(currentStatus || 'add')}
+                  rightIcon={
+                    <span className={`transition-transform duration-200 ${showStatusOptions ? 'rotate-180' : ''}`}>
+                      ▼
+                    </span>
+                  }
+                  className={`backdrop-blur-sm ${showStatusOptions ? 'ring-2 ring-white/30' : ''}`}
                 >
-                  {getStatusIcon(currentStatus || 'add')} {getStatusLabel(currentStatus)}
-                  <span className={`ml-2 transition-transform duration-200 ${showStatusOptions ? 'rotate-180' : ''}`}>▼</span>
-                </button>
-                <Link 
+                  {getStatusLabel(currentStatus)}
+                </Button>
+                <Button
+                  as={Link}
                   to={`/anime/${animeItem.source}/${animeItem.id}`}
-                  className="flex-1 text-sm bg-gray-600/80 text-white px-4 py-2 rounded-lg hover:bg-gray-500/80 transition-colors font-medium text-center backdrop-blur-sm"
+                  variant="ghost"
+                  size="sm"
+                  fullWidth
+                  leftIcon="📄"
+                  className="!bg-gray-600/80 hover:!bg-gray-500/80 !text-white backdrop-blur-sm"
                 >
-                  📄 Details
-                </Link>
+                  Details
+                </Button>
               </div>
             </div>
           )}
@@ -388,27 +422,40 @@ const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase
           {!isAuthenticated && (
             <div className="space-y-2">
               <div className="flex gap-2">
-                <Link 
+                <Button
+                  as={Link}
                   to={`/anime/${animeItem.source}/${animeItem.id}`}
-                  className="flex-1 text-sm bg-blue-600/80 text-white px-4 py-2 rounded-lg hover:bg-blue-500/80 transition-colors font-medium text-center backdrop-blur-sm"
+                  variant="primary"
+                  size="sm"
+                  fullWidth
+                  leftIcon="📄"
+                  className="backdrop-blur-sm"
                 >
-                  📄 View Details
-                </Link>
-                <button
-                  type="button"
-                  className="flex-1 text-sm bg-green-600/80 text-white px-4 py-2 rounded-lg hover:bg-green-500/80 transition-colors font-medium backdrop-blur-sm"
+                  View Details
+                </Button>
+                <Button
+                  variant="success"
+                  size="sm"
+                  fullWidth
+                  leftIcon="🔒"
+                  className="backdrop-blur-sm"
                 >
-                  🔒 Sign In to Track
-                </button>
+                  Sign In to Track
+                </Button>
               </div>
             </div>
           )}
 
           {animeItem.userScore && (
             <div className="mt-3 flex justify-end">
-              <span className="text-sm bg-purple-600/80 text-white px-3 py-1 rounded font-semibold backdrop-blur-sm">
-                Your Score: ⭐ {animeItem.userScore}/10
-              </span>
+              <Badge 
+                variant="secondary" 
+                size="md" 
+                icon="⭐"
+                className="backdrop-blur-sm"
+              >
+                Your Score: {animeItem.userScore}/10
+              </Badge>
             </div>
           )}
         </div>
@@ -475,9 +522,9 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10 }: ExpandableGridPr
   return (
     <section className="expandable-grid-section">
       {title && (
-        <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6 transition-theme tracking-tight">
+        <Typography variant="h2" className="mb-6 tracking-tight">
           {title}
-        </h2>
+        </Typography>
       )}
       <div className="expandable-grid-container" ref={containerRef}>
         {displayAnime.map((animeItem, index) => (
@@ -506,14 +553,23 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10 }: ExpandableGridPr
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent rounded-xl">
                 {/* Score badge - top left */}
                 {animeItem.score && (
-                  <div className="absolute top-3 left-3 bg-yellow-500/90 text-white px-2 py-1 rounded font-semibold backdrop-blur-sm text-xs card-score-badge">
-                    ⭐ {animeItem.score.toFixed(1)}
+                  <div className="absolute top-3 left-3 card-score-badge">
+                    <Badge 
+                      variant="warning" 
+                      size="xs" 
+                      icon="⭐"
+                      className="backdrop-blur-sm"
+                    >
+                      {animeItem.score.toFixed(1)}
+                    </Badge>
                   </div>
                 )}
                 
                 {/* Bottom info */}
                 <div className="absolute bottom-0 left-0 right-0 p-3">
-                  <h3 className="text-white font-bold text-sm mb-1 line-clamp-2">{animeItem.title}</h3>
+                  <Typography variant="h6" color="inverse" className="mb-1 line-clamp-2 text-sm">
+                    {animeItem.title}
+                  </Typography>
                   <div className="flex items-center gap-2 text-xs text-white/90">
                     {animeItem.year && (
                       <span>📅 {animeItem.year}</span>

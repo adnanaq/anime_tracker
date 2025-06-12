@@ -1,0 +1,508 @@
+Design one
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Drop Menu</title>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
+</head>
+<body>
+  <p class="commander">Click the Button!</p>
+  <div class="wrapper">
+    <div class="menu">
+      <ul class="menu__list">
+        <li class="menu__list__item"><a href="#">Home</a></li>
+        <li class="menu__list__item"><a href="#">Portfolio</a></li>
+        <li class="menu__list__item"><a href="#">About</a></li>
+      </ul>
+    </div>
+    <div class="button">
+      <span class="button__line"></span>
+      <span class="button__line"></span>
+      <span class="button__line"></span>
+    </div>
+  
+  </div>
+</body>
+</html>\
+
+// vars and keyframes
+$delay: .5s;
+$menu-items: 3;
+
+@keyframes drop {
+  from {
+    top: 0px;
+  }
+  70% {
+    top: 165px;
+    animation-timing-function: ease-in;
+  }
+  to {
+    top: 150px;
+    animation-timing-function: ease-out;
+  }
+}
+
+// Dat CSS
+html {
+  width: 100% ;
+  height: 100% ;
+  background: radial-gradient(center, #FFF 0%, #CCC 70%, #CCC 100%) no-repeat;
+}
+
+body {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.commander {
+  width: 100%;
+  color: #2E3F47;
+  font-size: 1.5em;
+  font-family: 'Open Sans', sans-serif;
+  text-align: center;
+}
+
+.wrapper {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 10px auto;
+}
+
+.button {
+  display: flex;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #2E3F47;
+  z-index: 2;
+}
+
+.button__line {
+  background: #ccc;
+  width: 90px;
+  height: 15px;
+  
+  &:not(:first-child) {
+    margin-top: 15px;
+  }
+}
+
+.menu {
+  width: 100%;
+}
+
+.menu__list {
+  text-align: center;
+  width: 100%;
+  padding-left: 0;
+}
+
+.menu__list__item {
+  position: relative;
+  list-style: none;
+  padding-bottom: 15px;
+  top: 0px;
+}
+
+.menu__list__item a {
+  text-decoration: none;
+  color: grey;
+  text-align: center;
+  font-size: 1.5em;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.menu__list__item {
+  opacity: 0;
+}
+
+.menu__list--animate .menu__list__item {
+  animation: drop 0.9s;
+  animation-fill-mode: forwards;
+  opacity: 1;
+  
+  @for $i from 2 through $menu-items {
+    &:nth-child(#{$i}) {
+      animation-delay: $delay * ($i - 1);
+    }
+  }
+}
+
+// function to trigger animation
+document.querySelector('.button').addEventListener('click', () => {
+  document.querySelector('.menu__list')
+    .classList.toggle('menu__list--animate');
+});
+  
+
+Design two
+<div class="dropdown">
+  <input type="checkbox" id="dropdown">
+
+  <label class="dropdown__face" for="dropdown">
+    <div class="dropdown__text">Dropdown</div>
+
+    <div class="dropdown__arrow"></div>
+  </label>
+
+  <ul class="dropdown__items">
+    <li>🙂</li>
+    <li>😺</li>
+    <li>😽</li>
+    <li>😎</li>
+    <li>🤗</li>
+  </ul>
+</div>
+
+<svg>
+  <filter id="goo">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+    <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" />
+    <feBlend in="SourceGraphic" in2="goo" />
+  </filter>
+</svg>
+
+.dropdown {
+  position: relative;
+  width: 230px;
+  filter: url(#goo);
+
+  &__face,
+  &__items {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 25px;
+  }
+
+  &__face {
+    display: block;
+    position: relative;
+  }
+
+  &__items {
+    margin: 0;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 100%;
+    list-style: none;
+    list-style-type: none;
+    display: flex;
+    justify-content: space-between;
+    visibility: hidden;
+    z-index: -1;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.93, 0.88, 0.1, 0.8);
+
+    &::before {
+      content: "";
+      background-color: #fff;
+      position: absolute;
+      bottom: 100%;
+      right: 20%;
+      height: 40px;
+      width: 20px;
+    }
+  }
+
+  &__arrow {
+    border-bottom: 2px solid #000;
+    border-right: 2px solid #000;
+    position: absolute;
+    top: 50%;
+    right: 30px;
+    width: 10px;
+    height: 10px;
+    transform: rotate(45deg) translateY(-50%);
+    transform-origin: right;
+  }
+
+  input {
+    display: none;
+
+    &:checked ~ .dropdown__items {
+      top: calc(100% + 25px);
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+}
+
+body {
+  background-image: linear-gradient(140deg, #e2e2e2, #cdcdcd);
+  display: grid;
+  place-items: center;
+  font-family: "Lato", Arial, sans-serif;
+  height: 100vh;
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+svg {
+  display: none;
+}
+
+Design three
+<select data-menu>
+    <option>Easy</option>
+    <option selected>Normal</option>
+    <option>Hard</option>
+    <option>Expert</option>
+</select>
+
+<!-- dribbble -->
+<a class="dribbble" href="https://dribbble.com/shots/7018412-Dropdown-menu-interaction" target="_blank"><img src="https://cdn.dribbble.com/assets/dribbble-ball-mark-2bd45f09c2fb58dbbfb44766d5d1d07c5a12972d602ef8b32204d28fa3dda554.svg" alt=""></a>
+
+.select-menu {
+    --background: #242836;
+    --text: #fff;
+    --icon: #fff;
+    --icon-active: #3F4656;
+    --list: #1C212E;
+    --list-text: rgba(255, 255, 255, .2);
+    --list-text-hover: rgba(255, 255, 255, .5);
+    position: relative;
+    z-index: 1;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 25px;
+    select,
+    .button {
+        font-family: inherit;
+        margin: 0;
+        border: 0;
+        text-align: left;
+        text-transform: none;
+        -webkit-appearance: none;
+    }
+    select {
+        pointer-events: none;
+        user-select: none;
+        opacity: 0;
+        padding: 8px 36px 8px 12px;
+        visibility: hidden;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 25px;
+    }
+    ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        transform: translateY(var(--t));
+        transition: opacity .3s ease, transform .4s cubic-bezier(.2, .9, .4, 1.1);
+        li {
+            padding: 8px 36px 8px 12px;
+            cursor: pointer;
+        }
+    }
+    & > ul {
+        background: var(--list);
+        color: var(--list-text);
+        border-radius: 6px;
+        li {
+            transition: color .3s ease;
+            &:hover {
+                color: var(--list-text-hover);
+            }
+        }
+    }
+    .button {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        padding: 0;
+        z-index: 1;
+        width: 100%;
+        display: block;
+        overflow: hidden;
+        border-radius: 6px;
+        color: var(--text);
+        background: var(--background);
+        em {
+            --r: 45deg;
+            display: block;
+            position: absolute;
+            right: 12px;
+            top: 0;
+            width: 7px;
+            height: 7px;
+            margin-top: 13px;
+            -webkit-backface-visibility: hidden;
+            &:before,
+            &:after {
+                --o: .4;
+                content: '';
+                width: 7px;
+                height: 7px;
+                opacity: var(--o);
+                display: block;
+                position: relative;
+                transition: opacity .2s ease;
+                transform: rotate(var(--r)) scale(.75);
+            }
+            &:before {
+                border-left: 2px solid var(--icon);
+                border-top: 2px solid var(--icon);
+                top: 1px;
+            }
+            &:after {
+                border-right: 2px solid var(--icon);
+                border-bottom: 2px solid var(--icon);
+                bottom: 1px;
+            }
+        }
+    }
+    &:not(.open) {
+        & > ul {
+            opacity: 0;
+            pointer-events: none;
+        }
+    }
+    &.open {
+        &.tilt-up {
+            animation: tilt-up .4s linear forwards;
+            .button {
+                em {
+                    &:before {
+                        --o: 1;
+                    }
+                }
+            }
+        }
+        &.tilt-down {
+            animation: tilt-down .4s linear forwards;
+            .button {
+                em {
+                    &:after {
+                        --o: 1;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@keyframes tilt-up {
+    40%,
+    60% {
+        transform: perspective(500px) rotateX(8deg);
+    }
+}
+
+@keyframes tilt-down {
+    40%,
+    60% {
+        transform: perspective(500px) rotateX(-8deg);
+    }
+}
+
+html {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+}
+
+* {
+    box-sizing: inherit;
+    &:before,
+    &:after {
+        box-sizing: inherit;
+    }
+}
+
+// Center & dribbble
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Roboto', Arial;
+    background: #171C28;
+    .dribbble {
+        position: fixed;
+        display: block;
+        right: 20px;
+        bottom: 20px;
+        img {
+            display: block;
+            height: 28px;
+        }
+    }
+}
+
+$('select[data-menu]').each(function() {
+
+    let select = $(this),
+        options = select.find('option'),
+        menu = $('<div />').addClass('select-menu'),
+        button = $('<div />').addClass('button'),
+        list = $('<ul />'),
+        arrow = $('<em />').prependTo(button);
+
+    options.each(function(i) {
+        let option = $(this);
+        list.append($('<li />').text(option.text()));
+    });
+
+    menu.css('--t', select.find(':selected').index() * -41 + 'px');
+
+    select.wrap(menu);
+
+    button.append(list).insertAfter(select);
+
+    list.clone().insertAfter(button);
+
+});
+
+$(document).on('click', '.select-menu', function(e) {
+
+    let menu = $(this);
+
+    if(!menu.hasClass('open')) {
+        menu.addClass('open');
+    }
+
+});
+
+$(document).on('click', '.select-menu > ul > li', function(e) {
+
+    let li = $(this),
+        menu = li.parent().parent(),
+        select = menu.children('select'),
+        selected = select.find('option:selected'),
+        index = li.index();
+
+    menu.css('--t', index * -41 + 'px');
+    selected.attr('selected', false);
+    select.find('option').eq(index).attr('selected', true);
+
+    menu.addClass(index > selected.index() ? 'tilt-down' : 'tilt-up');
+
+    setTimeout(() => {
+        menu.removeClass('open tilt-up tilt-down');
+    }, 500);
+
+});
+
+$(document).click(e => {
+    e.stopPropagation();
+    if($('.select-menu').has(e.target).length === 0) {
+        $('.select-menu').removeClass('open');
+    }
+})

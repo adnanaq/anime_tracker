@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { getAuthService } from '../services/shared'
 import { AnimeSource } from '../types/anime'
+import { Button } from './ui'
 
 interface AuthButtonProps {
   source: AnimeSource
@@ -45,29 +46,28 @@ export const AuthButton = ({ source }: AuthButtonProps) => {
 
   if (isAuthenticated) {
     return (
-      <button
+      <Button
+        variant="danger"
+        size="sm"
         onClick={handleLogout}
-        className="flex items-center px-4 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+        leftIcon="🚪"
+        className="!h-8"
       >
         Logout from {sourceName}
-      </button>
+      </Button>
     )
   }
 
   return (
-    <button
+    <Button
+      variant="primary"
+      size="sm"
       onClick={handleLogin}
-      disabled={isLoading}
-      className="flex items-center px-4 py-2 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50"
+      loading={isLoading}
+      leftIcon={isLoading ? undefined : "🔑"}
+      className="!h-8"
     >
-      {isLoading ? (
-        <>
-          <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
-          Connecting...
-        </>
-      ) : (
-        `Login with ${sourceName}`
-      )}
-    </button>
+      {isLoading ? "Connecting..." : `Login with ${sourceName}`}
+    </Button>
   )
 }

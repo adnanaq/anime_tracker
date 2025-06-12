@@ -16,6 +16,9 @@ interface ExpandableGridProps {
 const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase, onStatusReset?: () => void }) => {
   const [showStatusOptions, setShowStatusOptions] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
+  const [animationState, setAnimationState] = useState<'closed' | 'opening' | 'open' | 'closing'>('closed')
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null)
+  const [takeoverReady, setTakeoverReady] = useState(false)
   const { isAuthenticated } = useAnimeAuth(animeItem.source)
   const { updateAnimeStatus } = useAnimeStore()
 
@@ -23,8 +26,39 @@ const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase
   React.useEffect(() => {
     if (onStatusReset !== undefined) {
       setShowStatusOptions(false)
+      setAnimationState('closed')
+      setSelectedStatus(null)
+      setTakeoverReady(false)
     }
   }, [onStatusReset])
+
+  const toggleStatusOptions = () => {
+    if (!showStatusOptions) {
+      // Opening
+      setShowStatusOptions(true)
+      setAnimationState('opening')
+      // Trigger opening animation after render
+      setTimeout(() => setAnimationState('open'), 10)
+    } else {
+      // Closing
+      setAnimationState('closing')
+      
+      // If there's a selected status, trigger takeover after others finish
+      if (selectedStatus) {
+        setTimeout(() => {
+          setTakeoverReady(true)
+        }, 700) // Wait for other animations to finish (0.35s delay + 0.3s duration)
+      }
+      
+      // Wait for closing animation to complete (including selected takeover)
+      setTimeout(() => {
+        setShowStatusOptions(false)
+        setAnimationState('closed')
+        setSelectedStatus(null)
+        setTakeoverReady(false)
+      }, 1400) // Extended to account for selected option takeover
+    }
+  }
   
   const getCurrentStatus = () => {
     return animeItem.userStatus || null
@@ -44,15 +78,23 @@ const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase
     if (isUpdating) return
     
     setIsUpdating(true)
+    setSelectedStatus(status) // Mark this status as selected for animation
     
     try {
       await animeStatusService.updateAnimeStatus(animeItem.id, animeItem.source, { status })
       updateAnimeStatus(animeItem.id, animeItem.source, status)
-      setShowStatusOptions(false)
+      
+      // Wait a moment for the selection to be visually registered, then start closing
+      setTimeout(() => {
+        toggleStatusOptions()
+      }, 100)
     } catch (error) {
       console.error('Failed to update anime status:', error)
+      toggleStatusOptions()
     } finally {
       setIsUpdating(false)
+      // Clear selected status after animation completes
+      setTimeout(() => setSelectedStatus(null), 1500)
     }
   }
 
@@ -67,7 +109,7 @@ const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase
     try {
       await animeStatusService.removeAnimeFromList(animeItem.id, animeItem.source)
       updateAnimeStatus(animeItem.id, animeItem.source, '')
-      setShowStatusOptions(false)
+      toggleStatusOptions()
     } catch (error) {
       console.error('Failed to remove anime from list:', error)
     } finally {
@@ -79,7 +121,7 @@ const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase
     <div className="expanded-content">
       <div className="expanded-content-inner">
         {/* Top Content Area - with bottom padding for fixed buttons */}
-        <div className="pb-24 overflow-hidden">
+        <div className="pb-28 overflow-hidden">
           <div className="mb-4">
             <h3 className="text-white font-bold text-lg mb-2 line-clamp-2">{animeItem.title}</h3>
             
@@ -210,19 +252,128 @@ const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase
         {/* Bottom Button Area - Fixed Position */}
         <div className="absolute bottom-0 left-0 right-0 px-4 py-4">
           {isAuthenticated && (
-            <div className="space-y-3">
-            {!showStatusOptions ? (
+            <div className="status-options-container">
+              {/* Status Options - Ripple Effect from Button */}
+              {showStatusOptions && (
+                <div className="status-dropdown-overlay">
+                  <div className={`status-options-list ${
+                    animationState === 'open' ? 'status-options-animate' : 
+                    animationState === 'closing' ? 'status-options-closing' : ''
+                  }`}>
+                    {/* Only show status options that aren't currently selected */}
+                    
+                    {/* Watching */}
+                    {currentStatus !== (animeItem.source === 'mal' ? 'watching' : 'CURRENT') && (
+                      <div className={`status-option-item ${selectedStatus === (animeItem.source === 'mal' ? 'watching' : 'CURRENT') ? 'selected-option' : ''} ${selectedStatus === (animeItem.source === 'mal' ? 'watching' : 'CURRENT') && takeoverReady ? 'takeover-ready' : ''}`}>
+                        <button
+                          type="button"
+                          onClick={(e) => handleStatusChange(e, animeItem.source === 'mal' ? 'watching' : 'CURRENT')}
+                          disabled={isUpdating}
+                          className="w-full text-xs text-white px-2 py-1.5 rounded-md hover:bg-blue-500/80 transition-all duration-200 disabled:opacity-50 flex items-center gap-1.5 font-medium"
+                          style={{ background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(37, 99, 235, 0.9))' }}
+                        >
+                          <span>{getStatusIcon('watching')}</span>
+                          <span>Watching</span>
+                        </button>
+                      </div>
+                    )}
+                    
+                    {/* Completed */}
+                    {currentStatus !== (animeItem.source === 'mal' ? 'completed' : 'COMPLETED') && (
+                      <div className={`status-option-item ${selectedStatus === (animeItem.source === 'mal' ? 'completed' : 'COMPLETED') ? 'selected-option' : ''} ${selectedStatus === (animeItem.source === 'mal' ? 'completed' : 'COMPLETED') && takeoverReady ? 'takeover-ready' : ''}`}>
+                        <button
+                          type="button"
+                          onClick={(e) => handleStatusChange(e, animeItem.source === 'mal' ? 'completed' : 'COMPLETED')}
+                          disabled={isUpdating}
+                          className="w-full text-xs text-white px-2 py-1.5 rounded-md hover:bg-green-500/80 transition-all duration-200 disabled:opacity-50 flex items-center gap-1.5 font-medium"
+                          style={{ background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.9), rgba(21, 128, 61, 0.9))' }}
+                        >
+                          <span>{getStatusIcon('completed')}</span>
+                          <span>Completed</span>
+                        </button>
+                      </div>
+                    )}
+                    
+                    {/* Plan to Watch */}
+                    {currentStatus !== (animeItem.source === 'mal' ? 'plan_to_watch' : 'PLANNING') && (
+                      <div className={`status-option-item ${selectedStatus === (animeItem.source === 'mal' ? 'plan_to_watch' : 'PLANNING') ? 'selected-option' : ''} ${selectedStatus === (animeItem.source === 'mal' ? 'plan_to_watch' : 'PLANNING') && takeoverReady ? 'takeover-ready' : ''}`}>
+                        <button
+                          type="button"
+                          onClick={(e) => handleStatusChange(e, animeItem.source === 'mal' ? 'plan_to_watch' : 'PLANNING')}
+                          disabled={isUpdating}
+                          className="w-full text-xs text-white px-2 py-1.5 rounded-md hover:bg-yellow-500/80 transition-all duration-200 disabled:opacity-50 flex items-center gap-1.5 font-medium"
+                          style={{ background: 'linear-gradient(135deg, rgba(234, 179, 8, 0.9), rgba(161, 98, 7, 0.9))' }}
+                        >
+                          <span>{getStatusIcon('plan_to_watch')}</span>
+                          <span>Plan</span>
+                        </button>
+                      </div>
+                    )}
+                    
+                    {/* On Hold */}
+                    {currentStatus !== (animeItem.source === 'mal' ? 'on_hold' : 'PAUSED') && (
+                      <div className={`status-option-item ${selectedStatus === (animeItem.source === 'mal' ? 'on_hold' : 'PAUSED') ? 'selected-option' : ''} ${selectedStatus === (animeItem.source === 'mal' ? 'on_hold' : 'PAUSED') && takeoverReady ? 'takeover-ready' : ''}`}>
+                        <button
+                          type="button"
+                          onClick={(e) => handleStatusChange(e, animeItem.source === 'mal' ? 'on_hold' : 'PAUSED')}
+                          disabled={isUpdating}
+                          className="w-full text-xs text-white px-2 py-1.5 rounded-md hover:bg-orange-500/80 transition-all duration-200 disabled:opacity-50 flex items-center gap-1.5 font-medium"
+                          style={{ background: 'linear-gradient(135deg, rgba(249, 115, 22, 0.9), rgba(194, 65, 12, 0.9))' }}
+                        >
+                          <span>{getStatusIcon('on_hold')}</span>
+                          <span>Hold</span>
+                        </button>
+                      </div>
+                    )}
+                    
+                    {/* Dropped */}
+                    {currentStatus !== (animeItem.source === 'mal' ? 'dropped' : 'DROPPED') && (
+                      <div className={`status-option-item ${selectedStatus === (animeItem.source === 'mal' ? 'dropped' : 'DROPPED') ? 'selected-option' : ''} ${selectedStatus === (animeItem.source === 'mal' ? 'dropped' : 'DROPPED') && takeoverReady ? 'takeover-ready' : ''}`}>
+                        <button
+                          type="button"
+                          onClick={(e) => handleStatusChange(e, animeItem.source === 'mal' ? 'dropped' : 'DROPPED')}
+                          disabled={isUpdating}
+                          className="w-full text-xs text-white px-2 py-1.5 rounded-md hover:bg-red-500/80 transition-all duration-200 disabled:opacity-50 flex items-center gap-1.5 font-medium"
+                          style={{ background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(185, 28, 28, 0.9))' }}
+                        >
+                          <span>{getStatusIcon('dropped')}</span>
+                          <span>Drop</span>
+                        </button>
+                      </div>
+                    )}
+                    
+                    {/* Remove from List - only if user has a current status */}
+                    {currentStatus && (
+                      <div className="status-option-item">
+                        <button
+                          type="button"
+                          onClick={(e) => handleRemoveFromList(e)}
+                          disabled={isUpdating}
+                          className="w-full text-xs text-white px-2 py-1.5 rounded-md hover:bg-red-600/80 transition-all duration-200 disabled:opacity-50 flex items-center gap-1.5 font-medium border border-red-400/30"
+                          style={{ background: 'linear-gradient(135deg, rgba(127, 29, 29, 0.9), rgba(87, 13, 13, 0.9))' }}
+                        >
+                          <span>🗑️</span>
+                          <span>Remove</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Always Visible Main Action Buttons */}
               <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={(e) => {
                     e.preventDefault()
                     e.stopPropagation()
-                    setShowStatusOptions(true)
+                    toggleStatusOptions()
                   }}
-                  className={`flex-1 text-sm text-white px-4 py-2 rounded-lg transition-colors font-medium backdrop-blur-sm ${getStatusColor(currentStatus)}`}
+                  className={`flex-1 text-sm text-white px-4 py-2 rounded-lg transition-all duration-200 font-medium backdrop-blur-sm ${getStatusColor(currentStatus)} ${showStatusOptions ? 'ring-2 ring-white/30' : ''}`}
                 >
                   {getStatusIcon(currentStatus || 'add')} {getStatusLabel(currentStatus)}
+                  <span className={`ml-2 transition-transform duration-200 ${showStatusOptions ? 'rotate-180' : ''}`}>▼</span>
                 </button>
                 <Link 
                   to={`/anime/${animeItem.source}/${animeItem.id}`}
@@ -231,76 +382,6 @@ const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase
                   📄 Details
                 </Link>
               </div>
-            ) : (
-              <div className="space-y-2">
-                  <div className="text-sm font-medium text-white/90 mb-2">
-                    {currentStatus ? 'Change status to:' : 'Add to list as:'}
-                  </div>
-                  <div className="grid grid-cols-3 gap-2">
-                  <button
-                    type="button"
-                    onClick={(e) => handleStatusChange(e, animeItem.source === 'mal' ? 'watching' : 'CURRENT')}
-                    disabled={isUpdating}
-                    className="text-xs bg-blue-600/80 text-white px-2 py-2 rounded hover:bg-blue-500/80 transition-colors disabled:opacity-50 backdrop-blur-sm"
-                  >
-                    {getStatusIcon('watching')} Watching
-                  </button>
-                  <button
-                    type="button"
-                    onClick={(e) => handleStatusChange(e, animeItem.source === 'mal' ? 'completed' : 'COMPLETED')}
-                    disabled={isUpdating}
-                    className="text-xs bg-green-600/80 text-white px-2 py-2 rounded hover:bg-green-500/80 transition-colors disabled:opacity-50 backdrop-blur-sm"
-                  >
-                    {getStatusIcon('completed')} Completed
-                  </button>
-                  <button
-                    type="button"
-                    onClick={(e) => handleStatusChange(e, animeItem.source === 'mal' ? 'plan_to_watch' : 'PLANNING')}
-                    disabled={isUpdating}
-                    className="text-xs bg-yellow-600/80 text-white px-2 py-2 rounded hover:bg-yellow-500/80 transition-colors disabled:opacity-50 backdrop-blur-sm"
-                  >
-                    {getStatusIcon('plan_to_watch')} Plan
-                  </button>
-                  <button
-                    type="button"
-                    onClick={(e) => handleStatusChange(e, animeItem.source === 'mal' ? 'on_hold' : 'PAUSED')}
-                    disabled={isUpdating}
-                    className="text-xs bg-orange-600/80 text-white px-2 py-2 rounded hover:bg-orange-500/80 transition-colors disabled:opacity-50 backdrop-blur-sm"
-                  >
-                    {getStatusIcon('on_hold')} Hold
-                  </button>
-                  <button
-                    type="button"
-                    onClick={(e) => handleStatusChange(e, animeItem.source === 'mal' ? 'dropped' : 'DROPPED')}
-                    disabled={isUpdating}
-                    className="text-xs bg-red-600/80 text-white px-2 py-2 rounded hover:bg-red-500/80 transition-colors disabled:opacity-50 backdrop-blur-sm"
-                  >
-                    {getStatusIcon('dropped')} Drop
-                  </button>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      setShowStatusOptions(false)
-                    }}
-                    className="text-xs bg-gray-600/80 text-white px-2 py-2 rounded hover:bg-gray-500/80 transition-colors backdrop-blur-sm"
-                  >
-                    ❌ Cancel
-                  </button>
-                </div>
-                {currentStatus && (
-                  <button
-                    type="button"
-                    onClick={(e) => handleRemoveFromList(e)}
-                    disabled={isUpdating}
-                    className="w-full text-xs bg-red-600/80 text-white px-2 py-2 rounded hover:bg-red-500/80 transition-colors disabled:opacity-50 backdrop-blur-sm"
-                  >
-                    🗑️ Remove from List
-                  </button>
-                )}
-              </div>
-            )}
             </div>
           )}
 
@@ -350,6 +431,21 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10 }: ExpandableGridPr
     navigate(`/anime/${animeItem.source}/${animeItem.id}`)
   }
 
+  const handleCardHover = (cardIndex: number) => {
+    if (containerRef.current) {
+      // Check if any card is currently expanded (clicked)
+      const expandedRadio = containerRef.current.querySelector('.card-radio:checked') as HTMLInputElement
+      if (expandedRadio) {
+        const expandedIndex = parseInt(expandedRadio.getAttribute('data-index') || '0')
+        // If hovering over a different card than the expanded one, close the expanded card
+        if (expandedIndex !== cardIndex) {
+          expandedRadio.checked = false
+          setStatusResetTrigger(prev => prev + 1) // Reset status options
+        }
+      }
+    }
+  }
+
   // Close expanded cards and reset status options when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -385,7 +481,11 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10 }: ExpandableGridPr
       )}
       <div className="expandable-grid-container" ref={containerRef}>
         {displayAnime.map((animeItem, index) => (
-          <div key={`${animeItem.source}-${animeItem.id}`} className="expandable-grid-card">
+          <div 
+            key={`${animeItem.source}-${animeItem.id}`} 
+            className="expandable-grid-card"
+            onMouseEnter={() => handleCardHover(index)}
+          >
             <div 
               className="card-image-container w-full h-full relative cursor-pointer"
               onClick={(e) => handleCardClick(animeItem, e)}

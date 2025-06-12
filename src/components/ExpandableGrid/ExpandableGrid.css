@@ -177,19 +177,23 @@
 /* Scrolling text animation for synopsis */
 .scrolling-synopsis {
   overflow: hidden;
-  height: 80px;
+  height: 120px; /* Increased from 80px to 120px */
   position: relative;
   background: rgba(0, 0, 0, 0.2);
   border-radius: 8px;
-  padding: 8px 12px;
+  padding: 12px 16px; /* Increased padding for better spacing */
 }
 
 .scrolling-synopsis p {
   display: block;
   white-space: normal;
   word-wrap: break-word;
-  line-height: 1.6;
+  line-height: 1.7;
   font-size: 13px;
+  text-align: justify;
+  hyphens: auto;
+  margin: 0;
+  padding: 0;
 }
 
 .scrolling-synopsis.long-text {
@@ -217,7 +221,7 @@
 
 .scrolling-synopsis.short-text {
   height: auto;
-  max-height: 80px;
+  max-height: 120px; /* Increased to match the regular synopsis height */
 }
 
 .scrolling-synopsis.short-text p {
@@ -226,14 +230,15 @@
 }
 
 
-/* Reset animation when card is not expanded */
-.expandable-grid-card:not(:has(.card-radio:checked)) .scrolling-synopsis.long-text p {
+/* Reset animation when card is not expanded or hovered */
+.expandable-grid-card:not(:has(.card-radio:checked)):not(:hover) .scrolling-synopsis.long-text p {
   animation: none;
   transform: translateY(0);
 }
 
-/* Restart animation when card becomes expanded */
-.expandable-grid-card:has(.card-radio:checked) .scrolling-synopsis.long-text p {
+/* Start animation when card is expanded (clicked) OR hovered */
+.expandable-grid-card:has(.card-radio:checked) .scrolling-synopsis.long-text p,
+.expandable-grid-card:hover .scrolling-synopsis.long-text p {
   animation: scroll-text-vertical 25s linear infinite;
   animation-delay: 2s;
 }
@@ -325,6 +330,318 @@
 .expandable-grid-container:has(.expandable-grid-card:nth-child(10) > .card-radio:checked) {
   --col-9: 1.5fr;
   --col-10: 4fr;
+}
+
+/* Ripple Effect Animation - Options jump out from button position */
+.status-options-container {
+  position: relative;
+}
+
+.status-dropdown-overlay {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  width: calc(50% - 4px); /* Same width as trigger button (flex-1 with gap) */
+  margin-bottom: 12px;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.status-options-list {
+  display: flex;
+  flex-direction: column-reverse; /* Reverse so first item is at bottom */
+  gap: 4px;
+}
+
+.status-option-item {
+  opacity: 0;
+  pointer-events: none;
+  position: relative;
+}
+
+/* Each option starts at the button position (bottom) */
+.status-option-item:nth-child(1) {
+  transform: translateY(120px) scale(0.3); /* Start from button position */
+}
+
+.status-option-item:nth-child(2) {
+  transform: translateY(110px) scale(0.3);
+}
+
+.status-option-item:nth-child(3) {
+  transform: translateY(100px) scale(0.3);
+}
+
+.status-option-item:nth-child(4) {
+  transform: translateY(90px) scale(0.3);
+}
+
+.status-option-item:nth-child(5) {
+  transform: translateY(80px) scale(0.3);
+}
+
+.status-option-item:nth-child(6) {
+  transform: translateY(70px) scale(0.3);
+}
+
+.status-option-item:nth-child(7) {
+  transform: translateY(60px) scale(0.3);
+}
+
+.status-option-item:nth-child(8) {
+  transform: translateY(50px) scale(0.3);
+}
+
+.status-option-item button {
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Animation keyframes for each position */
+@keyframes jumpToPosition1 {
+  0% { transform: translateY(120px) scale(0.3); opacity: 0; }
+  70% { transform: translateY(-5px) scale(1.05); opacity: 0.9; }
+  100% { transform: translateY(0px) scale(1); opacity: 1; }
+}
+
+@keyframes jumpToPosition2 {
+  0% { transform: translateY(110px) scale(0.3); opacity: 0; }
+  70% { transform: translateY(-5px) scale(1.05); opacity: 0.9; }
+  100% { transform: translateY(0px) scale(1); opacity: 1; }
+}
+
+@keyframes jumpToPosition3 {
+  0% { transform: translateY(100px) scale(0.3); opacity: 0; }
+  70% { transform: translateY(-5px) scale(1.05); opacity: 0.9; }
+  100% { transform: translateY(0px) scale(1); opacity: 1; }
+}
+
+@keyframes jumpToPosition4 {
+  0% { transform: translateY(90px) scale(0.3); opacity: 0; }
+  70% { transform: translateY(-5px) scale(1.05); opacity: 0.9; }
+  100% { transform: translateY(0px) scale(1); opacity: 1; }
+}
+
+@keyframes jumpToPosition5 {
+  0% { transform: translateY(80px) scale(0.3); opacity: 0; }
+  70% { transform: translateY(-5px) scale(1.05); opacity: 0.9; }
+  100% { transform: translateY(0px) scale(1); opacity: 1; }
+}
+
+@keyframes jumpToPosition6 {
+  0% { transform: translateY(70px) scale(0.3); opacity: 0; }
+  70% { transform: translateY(-5px) scale(1.05); opacity: 0.9; }
+  100% { transform: translateY(0px) scale(1); opacity: 1; }
+}
+
+@keyframes jumpToPosition7 {
+  0% { transform: translateY(60px) scale(0.3); opacity: 0; }
+  70% { transform: translateY(-5px) scale(1.05); opacity: 0.9; }
+  100% { transform: translateY(0px) scale(1); opacity: 1; }
+}
+
+@keyframes jumpToPosition8 {
+  0% { transform: translateY(50px) scale(0.3); opacity: 0; }
+  70% { transform: translateY(-5px) scale(1.05); opacity: 0.9; }
+  100% { transform: translateY(0px) scale(1); opacity: 1; }
+}
+
+/* Animation keyframes for closing - stop at button level, don't go past */
+@keyframes closeToButton1 {
+  0% { transform: translateY(0px) scale(1); opacity: 1; }
+  100% { transform: translateY(50px) scale(0.3); opacity: 0; }
+}
+
+@keyframes closeToButton2 {
+  0% { transform: translateY(0px) scale(1); opacity: 1; }
+  100% { transform: translateY(50px) scale(0.3); opacity: 0; }
+}
+
+@keyframes closeToButton3 {
+  0% { transform: translateY(0px) scale(1); opacity: 1; }
+  100% { transform: translateY(50px) scale(0.3); opacity: 0; }
+}
+
+@keyframes closeToButton4 {
+  0% { transform: translateY(0px) scale(1); opacity: 1; }
+  100% { transform: translateY(50px) scale(0.3); opacity: 0; }
+}
+
+@keyframes closeToButton5 {
+  0% { transform: translateY(0px) scale(1); opacity: 1; }
+  100% { transform: translateY(50px) scale(0.3); opacity: 0; }
+}
+
+@keyframes closeToButton6 {
+  0% { transform: translateY(0px) scale(1); opacity: 1; }
+  100% { transform: translateY(50px) scale(0.3); opacity: 0; }
+}
+
+@keyframes closeToButton7 {
+  0% { transform: translateY(0px) scale(1); opacity: 1; }
+  100% { transform: translateY(50px) scale(0.3); opacity: 0; }
+}
+
+@keyframes closeToButton8 {
+  0% { transform: translateY(0px) scale(1); opacity: 1; }
+  100% { transform: translateY(50px) scale(0.3); opacity: 0; }
+}
+
+/* Special animation for selected status - takes over the dropdown */
+@keyframes selectedTakeover {
+  0% { 
+    transform: translateY(0px) scale(1); 
+    opacity: 1; 
+    width: calc(50% - 4px);
+  }
+  100% { 
+    transform: translateY(50px) scale(1.8); 
+    opacity: 1; 
+    width: calc(100% - 8px); /* Grow to match button width */
+  }
+}
+
+/* Apply opening animations */
+.status-options-animate .status-option-item:nth-child(1) {
+  animation: jumpToPosition1 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation-fill-mode: forwards;
+  animation-delay: 0.05s;
+  pointer-events: auto;
+}
+
+.status-options-animate .status-option-item:nth-child(2) {
+  animation: jumpToPosition2 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation-fill-mode: forwards;
+  animation-delay: 0.1s;
+  pointer-events: auto;
+}
+
+.status-options-animate .status-option-item:nth-child(3) {
+  animation: jumpToPosition3 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation-fill-mode: forwards;
+  animation-delay: 0.15s;
+  pointer-events: auto;
+}
+
+.status-options-animate .status-option-item:nth-child(4) {
+  animation: jumpToPosition4 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation-fill-mode: forwards;
+  animation-delay: 0.2s;
+  pointer-events: auto;
+}
+
+.status-options-animate .status-option-item:nth-child(5) {
+  animation: jumpToPosition5 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation-fill-mode: forwards;
+  animation-delay: 0.25s;
+  pointer-events: auto;
+}
+
+.status-options-animate .status-option-item:nth-child(6) {
+  animation: jumpToPosition6 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation-fill-mode: forwards;
+  animation-delay: 0.3s;
+  pointer-events: auto;
+}
+
+.status-options-animate .status-option-item:nth-child(7) {
+  animation: jumpToPosition7 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation-fill-mode: forwards;
+  animation-delay: 0.35s;
+  pointer-events: auto;
+}
+
+.status-options-animate .status-option-item:nth-child(8) {
+  animation: jumpToPosition8 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation-fill-mode: forwards;
+  animation-delay: 0.4s;
+  pointer-events: auto;
+}
+
+/* Apply closing animations - same order as opening (first out, first in) */
+.status-options-closing .status-option-item:nth-child(1) {
+  animation: closeToButton1 0.3s ease-in;
+  animation-fill-mode: forwards;
+  animation-delay: 0.0s;
+  pointer-events: none;
+  z-index: -1; /* Go behind the dropdown button */
+}
+
+.status-options-closing .status-option-item:nth-child(2) {
+  animation: closeToButton2 0.3s ease-in;
+  animation-fill-mode: forwards;
+  animation-delay: 0.05s;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.status-options-closing .status-option-item:nth-child(3) {
+  animation: closeToButton3 0.3s ease-in;
+  animation-fill-mode: forwards;
+  animation-delay: 0.1s;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.status-options-closing .status-option-item:nth-child(4) {
+  animation: closeToButton4 0.3s ease-in;
+  animation-fill-mode: forwards;
+  animation-delay: 0.15s;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.status-options-closing .status-option-item:nth-child(5) {
+  animation: closeToButton5 0.3s ease-in;
+  animation-fill-mode: forwards;
+  animation-delay: 0.2s;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.status-options-closing .status-option-item:nth-child(6) {
+  animation: closeToButton6 0.3s ease-in;
+  animation-fill-mode: forwards;
+  animation-delay: 0.25s;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.status-options-closing .status-option-item:nth-child(7) {
+  animation: closeToButton7 0.3s ease-in;
+  animation-fill-mode: forwards;
+  animation-delay: 0.3s;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.status-options-closing .status-option-item:nth-child(8) {
+  animation: closeToButton8 0.3s ease-in;
+  animation-fill-mode: forwards;
+  animation-delay: 0.35s;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Special styling for the newly selected option during closing */
+.status-option-item.selected-option {
+  /* Override any other animations when selected */
+  animation: none !important;
+  opacity: 1 !important;
+  transform: translateY(0px) scale(1) !important;
+  z-index: 100 !important;
+  pointer-events: none;
+  position: relative;
+}
+
+/* Apply the takeover animation after delay */
+.status-option-item.selected-option.takeover-ready {
+  animation: selectedTakeover 0.6s ease-out !important;
+  animation-fill-mode: forwards !important;
+  animation-delay: 0s !important; /* No delay since we trigger it manually */
+  z-index: 100 !important;
 }
 
 /* Responsive breakpoints to match existing grid layouts */

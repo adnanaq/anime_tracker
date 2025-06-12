@@ -14,7 +14,7 @@ import { CacheStats } from '../CacheManager/CacheStats'
 import { CacheTest } from '../CacheTest'
 import { ExpandingAnimeCards } from '../ExpandingAnimeCards'
 import { ExpandableGrid } from '../ExpandableGrid'
-import { Typography } from '../ui'
+import { Typography, AnimeGridSkeleton } from '../ui'
 
 const AnimeSection = memo(({
   title,
@@ -90,28 +90,7 @@ const Dashboard = () => {
 
 
   const LoadingGrid = useCallback(() => {
-    return (
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-        {Array.from({ length: 10 }).map((_, i) => (
-          <div 
-            key={i} 
-            className="bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 aspect-[3/4] rounded-xl shadow-lg animate-pulse"
-            style={{ animationDelay: `${i * 150}ms` }}
-          >
-            <div className="p-4 h-full flex flex-col justify-between">
-              <div className="space-y-2">
-                <div className="h-3 bg-white/30 rounded-full"></div>
-                <div className="h-2 bg-white/20 rounded-full w-3/4"></div>
-              </div>
-              <div className="space-y-1">
-                <div className="h-2 bg-white/20 rounded-full w-1/2"></div>
-                <div className="h-2 bg-white/20 rounded-full w-1/3"></div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    )
+    return <AnimeGridSkeleton count={10} />
   }, [])
 
 

@@ -117,7 +117,7 @@ const AnimeCardComponent = ({ anime: animeItem }: AnimeCardProps) => {
     <div className="relative anime-card-container group/card hover:z-[1000]">
       <div
         ref={cardRef}
-        className="relative bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden cursor-pointer"
+        className="relative at-bg-surface rounded-xl at-shadow-lg overflow-hidden cursor-pointer"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
@@ -136,8 +136,8 @@ const AnimeCardComponent = ({ anime: animeItem }: AnimeCardProps) => {
                 }}
               />
             ) : (
-              <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                <span className="text-gray-400 text-sm">No Image</span>
+              <div className="w-full h-full at-bg-secondary flex items-center justify-center">
+                <Typography variant="bodySmall" color="muted">No Image</Typography>
               </div>
             )}
             
@@ -198,16 +198,16 @@ const AnimeCardComponent = ({ anime: animeItem }: AnimeCardProps) => {
               <Typography variant="h6" color="inverse" className="mb-2 line-clamp-2 tracking-wide">
                 {animeItem.title}
               </Typography>
-              <div className="flex items-center gap-3 text-sm opacity-90">
+              <div className="flex items-center gap-3 opacity-90">
                 {animeItem.episodes && (
-                  <span className="flex items-center gap-1">
+                  <Typography variant="bodySmall" color="inverse" className="flex items-center gap-1">
                     📺 {animeItem.episodes} eps
-                  </span>
+                  </Typography>
                 )}
                 {animeItem.year && (
-                  <span className="flex items-center gap-1">
+                  <Typography variant="bodySmall" color="inverse" className="flex items-center gap-1">
                     📅 {animeItem.year}
-                  </span>
+                  </Typography>
                 )}
               </div>
             </div>

@@ -1,0 +1,368 @@
+.expandable-grid-container {
+  display: grid;
+  grid-template-columns:
+    var(--col-1, 1fr)
+    var(--col-2, 1fr)
+    var(--col-3, 1fr)
+    var(--col-4, 1fr)
+    var(--col-5, 1fr)
+    var(--col-6, 1fr)
+    var(--col-7, 1fr)
+    var(--col-8, 1fr)
+    var(--col-9, 1fr)
+    var(--col-10, 1fr);
+  grid-template-rows: 370px;
+  transition: grid-template-columns 2s
+    linear(
+      0,
+      0.01,
+      0.04 1.6%,
+      0.161 3.3%,
+      0.816 9.4%,
+      1.046,
+      1.189 14.4%,
+      1.231,
+      1.254 17%,
+      1.259,
+      1.257 18.6%,
+      1.236,
+      1.194 22.3%,
+      1.057 27%,
+      0.999 29.4%,
+      0.955 32.1%,
+      0.942,
+      0.935 34.9%,
+      0.933,
+      0.939 38.4%,
+      1 47.3%,
+      1.011,
+      1.017 52.6%,
+      1.016 56.4%,
+      1 65.2%,
+      0.996 70.2%,
+      1.001 87.2%,
+      1
+    );
+  gap: 16px;
+}
+
+.expandable-grid-card {
+  position: relative;
+}
+
+.expandable-grid-card .card-radio {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  inset: 0;
+  z-index: 5;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Allow clicks through to expanded content */
+.expandable-grid-card:has(.card-radio:checked) .card-radio {
+  pointer-events: none;
+}
+
+/* Ensure expanded content can receive clicks */
+.expandable-grid-card:has(.card-radio:checked) .card-expanded-overlay {
+  pointer-events: auto;
+}
+
+
+.expandable-grid-card .card-image-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.expandable-grid-card .card-image-container img {
+  object-position: top center;
+}
+
+.expandable-grid-card .card-overlay-hover {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.expandable-grid-card:hover .card-overlay-hover {
+  opacity: 1;
+}
+
+.expandable-grid-card .card-expanded-overlay {
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 15;
+  pointer-events: none;
+}
+
+/* Hide hover overlay when card is expanded or being hovered */
+.expandable-grid-container:has(.expandable-grid-card .card-radio:checked) .expandable-grid-card .card-overlay-hover,
+.expandable-grid-card:hover .card-overlay-hover {
+  opacity: 0 !important;
+}
+
+/* Score badge fade out animation */
+.card-score-badge {
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hide score badge when card is expanded OR on hover */
+.expandable-grid-card:has(.card-radio:checked) .card-score-badge,
+.expandable-grid-card:hover .card-score-badge {
+  opacity: 0;
+}
+
+/* Show expanded content when radio is checked OR on hover */
+.expandable-grid-card:has(.card-radio:checked) .card-expanded-overlay,
+.expandable-grid-card:hover .card-expanded-overlay {
+  opacity: 1;
+}
+
+/* Expanded content styling */
+.expanded-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.expanded-content-inner {
+  width: 100%;
+  max-width: 500px;
+  padding-right: 20px;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Status and format badges animation */
+.expanded-content-inner span[class*="bg-"] {
+  transition: all 0.3s ease-in-out;
+  transform: scale(1);
+}
+
+.expanded-content-inner span[class*="bg-"]:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+
+/* Badge hierarchy styling */
+.expanded-content-inner .episode-status-row {
+  min-height: 20px; /* Reserve space for future episode status badges */
+}
+
+/* Primary status badges (release status) - more prominent */
+.expanded-content-inner span[class*="rounded-full"] {
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Secondary badges (format) - more subtle */
+.expanded-content-inner span[class*="rounded-md"] {
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+/* Future episode status badges will use distinct styling */
+.episode-status-row span {
+  /* Will be styled with rounded-lg, different colors, and pulsing animations for live content */
+}
+
+/* Hide scrollbars */
+.card-expanded-overlay > div {
+  overflow: hidden !important;
+}
+
+/* Scrolling text animation for synopsis */
+.scrolling-synopsis {
+  overflow: hidden;
+  height: 80px;
+  position: relative;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.scrolling-synopsis p {
+  display: block;
+  white-space: normal;
+  word-wrap: break-word;
+  line-height: 1.6;
+  font-size: 13px;
+}
+
+.scrolling-synopsis.long-text {
+  mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+}
+
+.scrolling-synopsis.long-text p {
+  animation: scroll-text-vertical 30s linear infinite;
+  animation-delay: 3s;
+  transform: translateY(0);
+}
+
+@keyframes scroll-text-vertical {
+  0% {
+    transform: translateY(0);
+  }
+  10% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+.scrolling-synopsis.short-text {
+  height: auto;
+  max-height: 80px;
+}
+
+.scrolling-synopsis.short-text p {
+  animation: none;
+  transform: none;
+}
+
+
+/* Reset animation when card is not expanded */
+.expandable-grid-card:not(:has(.card-radio:checked)) .scrolling-synopsis.long-text p {
+  animation: none;
+  transform: translateY(0);
+}
+
+/* Restart animation when card becomes expanded */
+.expandable-grid-card:has(.card-radio:checked) .scrolling-synopsis.long-text p {
+  animation: scroll-text-vertical 25s linear infinite;
+  animation-delay: 2s;
+}
+
+/* Grid expansion states using :has() selector - Click */
+.expandable-grid-container:has(.expandable-grid-card:nth-child(1) > .card-radio:checked) {
+  --col-1: 4fr;
+  --col-2: 1.5fr;
+}
+
+/* Grid expansion states on hover */
+.expandable-grid-container:has(.expandable-grid-card:nth-child(1):hover) {
+  --col-1: 4fr;
+  --col-2: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(2) > .card-radio:checked) {
+  --col-1: 1.5fr;
+  --col-2: 4fr;
+  --col-3: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(2):hover) {
+  --col-1: 1.5fr;
+  --col-2: 4fr;
+  --col-3: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(3) > .card-radio:checked) {
+  --col-2: 1.5fr;
+  --col-3: 4fr;
+  --col-4: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(3):hover) {
+  --col-2: 1.5fr;
+  --col-3: 4fr;
+  --col-4: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(4) > .card-radio:checked) {
+  --col-3: 1.5fr;
+  --col-4: 4fr;
+  --col-5: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(4):hover) {
+  --col-3: 1.5fr;
+  --col-4: 4fr;
+  --col-5: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(5) > .card-radio:checked) {
+  --col-4: 1.5fr;
+  --col-5: 4fr;
+  --col-6: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(5):hover) {
+  --col-4: 1.5fr;
+  --col-5: 4fr;
+  --col-6: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(6) > .card-radio:checked) {
+  --col-5: 1.5fr;
+  --col-6: 4fr;
+  --col-7: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(7) > .card-radio:checked) {
+  --col-6: 1.5fr;
+  --col-7: 4fr;
+  --col-8: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(8) > .card-radio:checked) {
+  --col-7: 1.5fr;
+  --col-8: 4fr;
+  --col-9: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(9) > .card-radio:checked) {
+  --col-8: 1.5fr;
+  --col-9: 4fr;
+  --col-10: 1.5fr;
+}
+
+.expandable-grid-container:has(.expandable-grid-card:nth-child(10) > .card-radio:checked) {
+  --col-9: 1.5fr;
+  --col-10: 4fr;
+}
+
+/* Responsive breakpoints to match existing grid layouts */
+@media (max-width: 640px) {
+  .expandable-grid-container {
+    grid-template-columns: var(--col-1, 1fr) var(--col-2, 1fr);
+  }
+  
+  .expandable-grid-container:has(.expandable-grid-card:nth-child(1) > .card-radio:checked) {
+    --col-1: 2fr;
+    --col-2: 1fr;
+  }
+  
+  .expandable-grid-container:has(.expandable-grid-card:nth-child(2) > .card-radio:checked) {
+    --col-1: 1fr;
+    --col-2: 2fr;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  .expandable-grid-container {
+    grid-template-columns: var(--col-1, 1fr) var(--col-2, 1fr) var(--col-3, 1fr);
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .expandable-grid-container {
+    grid-template-columns: var(--col-1, 1fr) var(--col-2, 1fr) var(--col-3, 1fr) var(--col-4, 1fr);
+  }
+}
+
+@media (min-width: 1025px) {
+  .expandable-grid-container {
+    grid-template-columns:
+      var(--col-1, 1fr)
+      var(--col-2, 1fr)
+      var(--col-3, 1fr)
+      var(--col-4, 1fr)
+      var(--col-5, 1fr);
+  }
+}

@@ -464,10 +464,17 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10, useClickMode = fal
   const [activeCardIndex, setActiveCardIndex] = useState(0) // First card active by default for click mode
   const [isPaused, setIsPaused] = useState(false)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragStart, setDragStart] = useState({ x: 0, scrollLeft: 0 })
 
   const handleCardClick = (animeItem: AnimeBase, event: React.MouseEvent, cardIndex?: number) => {
     // Don't navigate if clicking on expanded content
     if ((event.target as HTMLElement).closest('.expanded-content')) {
+      return
+    }
+    
+    // Don't trigger click if we were dragging
+    if (isDragging) {
       return
     }
     
@@ -547,6 +554,39 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10, useClickMode = fal
     return () => clearInterval(interval)
   }, [useClickMode, isPaused, displayAnime.length])
 
+  // Auto-scroll to active card when it changes
+  useEffect(() => {
+    if (!useClickMode || !containerRef.current) return
+
+    const container = containerRef.current
+    const cardWidth = 200 + 16 // Card width + gap
+    const expandedCardWidth = 480 + 16 // Expanded card width + gap
+    const containerWidth = container.clientWidth
+
+    // Calculate scroll position to show complete cards
+    let scrollPosition = activeCardIndex * cardWidth
+    
+    // Adjust for expanded card if not the active one
+    if (activeCardIndex > 0) {
+      scrollPosition += (expandedCardWidth - cardWidth) // Add extra width for expanded card
+    }
+    
+    // Center the active card in the viewport but snap to complete card positions
+    scrollPosition -= (containerWidth / 2) - (expandedCardWidth / 2)
+    
+    // Snap to nearest complete card position (rounded to card width intervals)
+    const snapInterval = cardWidth
+    scrollPosition = Math.round(scrollPosition / snapInterval) * snapInterval
+    
+    // Ensure we don't scroll past the beginning or end
+    scrollPosition = Math.max(0, Math.min(scrollPosition, container.scrollWidth - containerWidth))
+
+    container.scrollTo({
+      left: scrollPosition,
+      behavior: 'smooth'
+    })
+  }, [activeCardIndex, useClickMode])
+
   // Cleanup timer on unmount
   useEffect(() => {
     return () => {
@@ -555,6 +595,74 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10, useClickMode = fal
       }
     }
   }, [])
+
+  // Drag scrolling handlers for click mode
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!useClickMode || !containerRef.current) return
+    
+    setIsDragging(false)
+    setDragStart({
+      x: e.pageX - containerRef.current.offsetLeft,
+      scrollLeft: containerRef.current.scrollLeft
+    })
+  }
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!useClickMode || !containerRef.current) return
+    
+    const x = e.pageX - containerRef.current.offsetLeft
+    const walk = (x - dragStart.x) * 2 // Scroll speed multiplier
+    
+    if (Math.abs(walk) > 5) { // Only set dragging if significant movement
+      setIsDragging(true)
+      containerRef.current.scrollLeft = dragStart.scrollLeft - walk
+    }
+  }
+
+  const handleMouseUp = () => {
+    if (!useClickMode) return
+    
+    // Small delay to prevent click after drag
+    setTimeout(() => {
+      setIsDragging(false)
+    }, 100)
+  }
+
+  const handleMouseLeave = () => {
+    if (!useClickMode) return
+    setIsDragging(false)
+  }
+
+  // Touch support for mobile
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!useClickMode || !containerRef.current) return
+    
+    setIsDragging(false)
+    setDragStart({
+      x: e.touches[0].pageX - containerRef.current.offsetLeft,
+      scrollLeft: containerRef.current.scrollLeft
+    })
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!useClickMode || !containerRef.current) return
+    
+    const x = e.touches[0].pageX - containerRef.current.offsetLeft
+    const walk = (x - dragStart.x) * 1.5 // Scroll speed for touch
+    
+    if (Math.abs(walk) > 5) {
+      setIsDragging(true)
+      containerRef.current.scrollLeft = dragStart.scrollLeft - walk
+    }
+  }
+
+  const handleTouchEnd = () => {
+    if (!useClickMode) return
+    
+    setTimeout(() => {
+      setIsDragging(false)
+    }, 100)
+  }
 
   // Also reset status options when switching between cards
   const handleCardRadioChange = () => {
@@ -568,7 +676,17 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10, useClickMode = fal
           {title}
         </Typography>
       )}
-      <div className={`expandable-grid-container ${useClickMode ? 'click-mode' : ''}`} ref={containerRef}>
+      <div 
+        className={`expandable-grid-container ${useClickMode ? 'click-mode' : ''}`} 
+        ref={containerRef}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         {displayAnime.map((animeItem, index) => (
           <div 
             key={`${animeItem.source}-${animeItem.id}`} 

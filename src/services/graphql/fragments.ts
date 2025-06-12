@@ -58,7 +58,7 @@ export const USER_MEDIA_LIST_ENTRY_FRAGMENT = `
 /**
  * Utility functions to build common queries
  */
-export const buildPageQuery = (sort: string, perPage: number = 6, page: number = 1) => `
+export const buildPageQuery = (sort: string, perPage: number = 12, page: number = 1) => `
   query {
     Page(page: ${page}, perPage: ${perPage}) {
       media(type: ANIME, sort: ${sort}) {
@@ -69,7 +69,7 @@ export const buildPageQuery = (sort: string, perPage: number = 6, page: number =
   ${ANIME_FIELDS_FRAGMENT}
 `
 
-export const buildSearchQuery = (perPage: number = 6) => `
+export const buildSearchQuery = (perPage: number = 12) => `
   query($search: String) {
     Page(page: 1, perPage: ${perPage}) {
       media(type: ANIME, search: $search) {
@@ -80,7 +80,7 @@ export const buildSearchQuery = (perPage: number = 6) => `
   ${ANIME_FIELDS_FRAGMENT}
 `
 
-export const buildSeasonQuery = (perPage: number = 6) => `
+export const buildSeasonQuery = (perPage: number = 12) => `
   query($season: MediaSeason, $year: Int) {
     Page(page: 1, perPage: ${perPage}) {
       media(type: ANIME, season: $season, seasonYear: $year, sort: POPULARITY_DESC) {

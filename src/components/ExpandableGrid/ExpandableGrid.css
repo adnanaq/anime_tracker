@@ -651,6 +651,43 @@
   height: 370px;
   gap: 16px;
   transition: none;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  cursor: grab;
+  user-select: none;
+  -webkit-overflow-scrolling: touch; /* iOS smooth scrolling */
+  scroll-snap-type: x mandatory; /* Snap to card positions */
+  
+  /* Subtle fade at edges - keep cards readable */
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 3%,
+    black 97%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 3%,
+    black 97%,
+    transparent 100%
+  );
+}
+
+.expandable-grid-container.click-mode:active {
+  cursor: grabbing;
+}
+
+/* Hide scrollbar but keep functionality */
+.expandable-grid-container.click-mode::-webkit-scrollbar {
+  display: none;
+}
+
+.expandable-grid-container.click-mode {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 .expandable-grid-container.click-mode .expandable-grid-card {
@@ -660,6 +697,7 @@
   transition: width 0.7s ease-in;
   border-radius: 12px;
   overflow: hidden;
+  scroll-snap-align: start; /* Snap each card to start position */
 }
 
 .expandable-grid-container.click-mode .expandable-grid-card.active {

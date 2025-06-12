@@ -154,7 +154,7 @@ export const malService = {
               params: {
                 fields:
                   "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,my_list_status",
-                limit: 6,
+                limit: 12,
               },
             });
             return response.data.data.map((item: { node: MALAnime }) =>
@@ -186,7 +186,7 @@ export const malService = {
                 ranking_type: rankingType,
                 fields:
                   "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,my_list_status",
-                limit: 6,
+                limit: 12,
               },
             });
             
@@ -215,7 +215,7 @@ export const malService = {
                 q: query,
                 fields:
                   "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,my_list_status",
-                limit: 6,
+                limit: 12,
               },
             });
             return response.data.data.map((item: { node: MALAnime }) =>

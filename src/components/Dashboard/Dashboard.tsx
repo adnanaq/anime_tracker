@@ -171,7 +171,7 @@ const Dashboard = () => {
                   <ExpandableGrid
                     anime={currentlyWatching}
                     title="Currently Watching (Grid View)"
-                    maxCards={5}
+                    maxCards={12}
                     useClickMode={true}
                   />
                 </section>
@@ -190,7 +190,7 @@ const Dashboard = () => {
                 <ExpandableGrid 
                   anime={trendingAnime} 
                   title="Trending Now" 
-                  maxCards={5} 
+                  maxCards={12} 
                   useClickMode={true}
                 />
               )}
@@ -208,7 +208,7 @@ const Dashboard = () => {
                 <ExpandableGrid 
                   anime={popularAnime} 
                   title="Most Popular" 
-                  maxCards={5} 
+                  maxCards={12} 
                   useClickMode={true}
                 />
               )}
@@ -229,7 +229,7 @@ const Dashboard = () => {
                 <ExpandableGrid
                   anime={trendingAnime}
                   title="🔥 Expandable Grid Test"
-                  maxCards={5}
+                  maxCards={12}
                   useClickMode={true}
                 />
               </section>
@@ -247,7 +247,7 @@ const Dashboard = () => {
                 <ExpandableGrid 
                   anime={topRatedAnime} 
                   title="Top Rated" 
-                  maxCards={5} 
+                  maxCards={12} 
                   useClickMode={true}
                 />
               )}
@@ -265,7 +265,7 @@ const Dashboard = () => {
                 <ExpandableGrid 
                   anime={currentSeasonAnime} 
                   title="Current Season" 
-                  maxCards={5} 
+                  maxCards={12} 
                   useClickMode={true}
                 />
               )}

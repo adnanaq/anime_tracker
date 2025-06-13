@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { devtools } from 'zustand/middleware'
 import { AnimeBase, AnimeSource } from '../types/anime'
 import { animeService } from '../services/animeService'
 import { getAuthService } from '../services/shared'
@@ -55,7 +56,9 @@ interface AnimeStore {
   removeAnimeFromStore: (animeId: number, source: string) => void
 }
 
-export const useAnimeStore = create<AnimeStore>((set, get) => ({
+export const useAnimeStore = create<AnimeStore>()(
+  devtools(
+    (set, get) => ({
   // Initial state
   currentSource: 'mal',
   trendingAnime: [],
@@ -126,7 +129,7 @@ export const useAnimeStore = create<AnimeStore>((set, get) => ({
       const animeWithUserStatus = get().mergeUserStatus(animeWithUserScores)
       set({ trendingAnime: animeWithUserStatus })
     } catch (error) {
-      // Error handling - trending anime fetch failed
+      console.error('Error fetching trending anime:', error)
     } finally {
       set(state => ({ loading: { ...state.loading, trending: false } }))
     }
@@ -149,7 +152,7 @@ export const useAnimeStore = create<AnimeStore>((set, get) => ({
       const animeWithUserStatus = get().mergeUserStatus(animeWithUserScores)
       set({ popularAnime: animeWithUserStatus })
     } catch (error) {
-      // Error handling - popular anime fetch failed
+      console.error('Error fetching popular anime:', error)
     } finally {
       set(state => ({ loading: { ...state.loading, popular: false } }))
     }
@@ -172,7 +175,7 @@ export const useAnimeStore = create<AnimeStore>((set, get) => ({
       const animeWithUserStatus = get().mergeUserStatus(animeWithUserScores)
       set({ topRatedAnime: animeWithUserStatus })
     } catch (error) {
-      // Error handling - top rated anime fetch failed
+      console.error('Error fetching top rated anime:', error)
     } finally {
       set(state => ({ loading: { ...state.loading, topRated: false } }))
     }
@@ -195,7 +198,7 @@ export const useAnimeStore = create<AnimeStore>((set, get) => ({
       const animeWithUserStatus = get().mergeUserStatus(animeWithUserScores)
       set({ currentSeasonAnime: animeWithUserStatus })
     } catch (error) {
-      // Error handling - current season anime fetch failed
+      console.error('Error fetching current season anime:', error)
     } finally {
       set(state => ({ loading: { ...state.loading, currentSeason: false } }))
     }
@@ -652,4 +655,7 @@ export const useAnimeStore = create<AnimeStore>((set, get) => ({
     newStatusMap.delete(animeId)
     set({ userAnimeStatus: newStatusMap })
   }
-}))
+}),
+{ name: 'anime-store' }
+)
+)

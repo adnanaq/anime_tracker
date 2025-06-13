@@ -1,5 +1,6 @@
 import { useEffect, useCallback, memo } from 'react'
 import { useAnimeStore } from '../../store/animeStore'
+import { shallow } from 'zustand/shallow'
 import { SourceToggle } from '../SourceToggle'
 import { ThemeToggle } from '../ThemeToggle'
 import { SearchBar } from '../SearchBar'
@@ -47,28 +48,63 @@ const AnimeSection = memo(({
 })
 
 const Dashboard = () => {
-  const currentSource = useAnimeStore(state => state.currentSource)
-  const trendingAnime = useAnimeStore(state => state.trendingAnime)
-  const popularAnime = useAnimeStore(state => state.popularAnime)
-  const topRatedAnime = useAnimeStore(state => state.topRatedAnime)
-  const currentSeasonAnime = useAnimeStore(state => state.currentSeasonAnime)
-  const searchResults = useAnimeStore(state => state.searchResults)
-  const currentlyWatching = useAnimeStore(state => state.currentlyWatching)
-  const loading = useAnimeStore(state => state.loading)
-  const fetchTrendingAnime = useAnimeStore(state => state.fetchTrendingAnime)
-  const fetchPopularAnime = useAnimeStore(state => state.fetchPopularAnime)
-  const fetchTopRatedAnime = useAnimeStore(state => state.fetchTopRatedAnime)
-  const fetchCurrentSeasonAnime = useAnimeStore(state => state.fetchCurrentSeasonAnime)
-  const fetchUserScores = useAnimeStore(state => state.fetchUserScores)
-  const fetchUserStatus = useAnimeStore(state => state.fetchUserStatus)
-  const fetchCurrentlyWatching = useAnimeStore(state => state.fetchCurrentlyWatching)
+  // Optimized selector 1: Core state data with shallow comparison
+  const { currentSource, loading } = useAnimeStore(
+    (state) => ({
+      currentSource: state.currentSource,
+      loading: state.loading,
+    }),
+    shallow
+  )
+
+  // Optimized selector 2: All anime data with shallow comparison  
+  const {
+    trendingAnime,
+    popularAnime,
+    topRatedAnime,
+    currentSeasonAnime,
+    searchResults,
+    currentlyWatching,
+  } = useAnimeStore(
+    (state) => ({
+      trendingAnime: state.trendingAnime,
+      popularAnime: state.popularAnime,
+      topRatedAnime: state.topRatedAnime,
+      currentSeasonAnime: state.currentSeasonAnime,
+      searchResults: state.searchResults,
+      currentlyWatching: state.currentlyWatching,
+    }),
+    shallow
+  )
+
+  // Optimized selector 3: Action functions with shallow comparison
+  const {
+    fetchTrendingAnime,
+    fetchPopularAnime,
+    fetchTopRatedAnime,
+    fetchCurrentSeasonAnime,
+    fetchUserScores,
+    fetchUserStatus,
+    fetchCurrentlyWatching,
+  } = useAnimeStore(
+    (state) => ({
+      fetchTrendingAnime: state.fetchTrendingAnime,
+      fetchPopularAnime: state.fetchPopularAnime,
+      fetchTopRatedAnime: state.fetchTopRatedAnime,
+      fetchCurrentSeasonAnime: state.fetchCurrentSeasonAnime,
+      fetchUserScores: state.fetchUserScores,
+      fetchUserStatus: state.fetchUserStatus,
+      fetchCurrentlyWatching: state.fetchCurrentlyWatching,
+    }),
+    shallow
+  )
 
   useEffect(() => {
     const fetchData = async () => {
       if (currentSource === 'anilist') {
         await Promise.all([
           fetchUserScores(),
-          fetchUserStatus(),
+          fetchUserStatus(), 
           fetchCurrentlyWatching()
         ])
       } else {

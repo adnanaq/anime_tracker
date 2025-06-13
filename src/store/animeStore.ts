@@ -41,6 +41,9 @@ interface AnimeStore {
   }
 
   // Actions
+  getAuthToken: () => string | undefined
+  applyUserData: (animeList: AnimeBase[]) => AnimeBase[]
+  withLoading: <T>(loadingKey: keyof AnimeStore['loading'], action: () => Promise<T>) => Promise<T | void>
   fetchTrendingAnime: () => Promise<void>
   fetchPopularAnime: () => Promise<void>
   fetchTopRatedAnime: () => Promise<void>
@@ -112,96 +115,69 @@ export const useAnimeStore = create<AnimeStore>()(
     })
   },
 
-  fetchTrendingAnime: async () => {
-    set(state => ({ loading: { ...state.loading, trending: true } }))
+  // Helper: Get authentication token for current source
+  getAuthToken: () => {
+    const { currentSource } = get()
+    const authService = getAuthService(currentSource)
+    return authService?.isAuthenticated() ? authService.getToken()?.access_token : undefined
+  },
+
+  // Helper: Apply user scores and status to anime list
+  applyUserData: (animeList: AnimeBase[]) => {
+    const store = get()
+    const animeWithUserScores = store.mergeUserScores(animeList)
+    return store.mergeUserStatus(animeWithUserScores)
+  },
+
+  // Helper: Execute action with loading state management
+  withLoading: async <T>(
+    loadingKey: keyof AnimeStore['loading'],
+    action: () => Promise<T>
+  ): Promise<T | void> => {
+    set(state => ({ loading: { ...state.loading, [loadingKey]: true } }))
     try {
-      const { currentSource } = get()
-      let accessToken: string | undefined
-      
-      // Get access token if user is authenticated
-      const authService = getAuthService(currentSource)
-      if (authService?.isAuthenticated()) {
-        accessToken = authService.getToken()?.access_token
-      }
-      
-      const anime = await animeService.getTrendingAnime(accessToken)
-      const animeWithUserScores = get().mergeUserScores(anime)
-      const animeWithUserStatus = get().mergeUserStatus(animeWithUserScores)
-      set({ trendingAnime: animeWithUserStatus })
+      return await action()
     } catch (error) {
-      console.error('Error fetching trending anime:', error)
+      console.error('Error in withLoading:', error)
     } finally {
-      set(state => ({ loading: { ...state.loading, trending: false } }))
+      set(state => ({ loading: { ...state.loading, [loadingKey]: false } }))
     }
+  },
+
+  fetchTrendingAnime: async () => {
+    await get().withLoading('trending', async () => {
+      const accessToken = get().getAuthToken()
+      const anime = await animeService.getTrendingAnime(accessToken)
+      const processedAnime = get().applyUserData(anime)
+      set({ trendingAnime: processedAnime })
+    })
   },
 
   fetchPopularAnime: async () => {
-    set(state => ({ loading: { ...state.loading, popular: true } }))
-    try {
-      const { currentSource } = get()
-      let accessToken: string | undefined
-      
-      // Get access token if user is authenticated
-      const authService = getAuthService(currentSource)
-      if (authService?.isAuthenticated()) {
-        accessToken = authService.getToken()?.access_token
-      }
-      
+    await get().withLoading('popular', async () => {
+      const accessToken = get().getAuthToken()
       const anime = await animeService.getPopularAnime(accessToken)
-      const animeWithUserScores = get().mergeUserScores(anime)
-      const animeWithUserStatus = get().mergeUserStatus(animeWithUserScores)
-      set({ popularAnime: animeWithUserStatus })
-    } catch (error) {
-      console.error('Error fetching popular anime:', error)
-    } finally {
-      set(state => ({ loading: { ...state.loading, popular: false } }))
-    }
+      const processedAnime = get().applyUserData(anime)
+      set({ popularAnime: processedAnime })
+    })
   },
 
   fetchTopRatedAnime: async () => {
-    set(state => ({ loading: { ...state.loading, topRated: true } }))
-    try {
-      const { currentSource } = get()
-      let accessToken: string | undefined
-      
-      // Get access token if user is authenticated
-      const authService = getAuthService(currentSource)
-      if (authService?.isAuthenticated()) {
-        accessToken = authService.getToken()?.access_token
-      }
-      
+    await get().withLoading('topRated', async () => {
+      const accessToken = get().getAuthToken()
       const anime = await animeService.getTopRatedAnime(accessToken)
-      const animeWithUserScores = get().mergeUserScores(anime)
-      const animeWithUserStatus = get().mergeUserStatus(animeWithUserScores)
-      set({ topRatedAnime: animeWithUserStatus })
-    } catch (error) {
-      console.error('Error fetching top rated anime:', error)
-    } finally {
-      set(state => ({ loading: { ...state.loading, topRated: false } }))
-    }
+      const processedAnime = get().applyUserData(anime)
+      set({ topRatedAnime: processedAnime })
+    })
   },
 
   fetchCurrentSeasonAnime: async () => {
-    set(state => ({ loading: { ...state.loading, currentSeason: true } }))
-    try {
-      const { currentSource } = get()
-      let accessToken: string | undefined
-      
-      // Get access token if user is authenticated
-      const authService = getAuthService(currentSource)
-      if (authService?.isAuthenticated()) {
-        accessToken = authService.getToken()?.access_token
-      }
-      
+    await get().withLoading('currentSeason', async () => {
+      const accessToken = get().getAuthToken()
       const anime = await animeService.getCurrentSeasonAnime(accessToken)
-      const animeWithUserScores = get().mergeUserScores(anime)
-      const animeWithUserStatus = get().mergeUserStatus(animeWithUserScores)
-      set({ currentSeasonAnime: animeWithUserStatus })
-    } catch (error) {
-      console.error('Error fetching current season anime:', error)
-    } finally {
-      set(state => ({ loading: { ...state.loading, currentSeason: false } }))
-    }
+      const processedAnime = get().applyUserData(anime)
+      set({ currentSeasonAnime: processedAnime })
+    })
   },
 
   searchAnime: async (query: string) => {

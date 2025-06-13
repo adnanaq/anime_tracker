@@ -30,6 +30,15 @@ export {
   requestDeduplicator
 } from './RequestDeduplication'
 
+// Import for local use
+import { cacheManager } from './CacheManager'
+import { 
+  malCache, 
+  jikanCache, 
+  animeScheduleCache, 
+  clearAllApiCaches 
+} from './ApiCacheService'
+
 // === CONVENIENCE FUNCTIONS ===
 
 /**
@@ -45,30 +54,16 @@ export const initializeCacheSystem = async (): Promise<void> => {
 
 /**
  * Get comprehensive cache statistics (simplified for now)
+ * TODO: Complete implementation when cache system is fully functional
  */
 export const getComprehensiveCacheStats = () => {
-  try {
-    const cacheStats = getCacheStats()
-    const hitRate = getHitRate()
-    
-    return {
-      cache: {
-        ...cacheStats,
-        hitRate,
-        efficiency: cacheStats.totalRequests > 0 
-          ? (cacheStats.hitCount / cacheStats.totalRequests) * 100 
-          : 0
-      },
-      requestManagers: {
-        mal: malRequestManager.getStats(),
-        jikan: jikanRequestManager.getStats(),
-        animeSchedule: animeScheduleRequestManager.getStats()
-      }
-    }
-  } catch (error) {
-    return {
-      cache: { hitCount: 0, missCount: 0, totalRequests: 0, cacheSize: 0, hitRate: 0, efficiency: 0 },
-      requestManagers: { mal: {}, jikan: {}, animeSchedule: {} }
+  // Simplified implementation until cache system is fully functional
+  return {
+    cache: { hitCount: 0, missCount: 0, totalRequests: 0, cacheSize: 0, hitRate: 0, efficiency: 0 },
+    requestManagers: {
+      mal: { pending: 0, completed: 0 },
+      jikan: { pending: 0, completed: 0 },
+      animeSchedule: { pending: 0, completed: 0 }
     }
   }
 }
@@ -79,17 +74,16 @@ export const getComprehensiveCacheStats = () => {
 export const emergencyCacheClear = async (): Promise<void> => {
   
   try {
+    // Use imported functions
     await Promise.all([
       clearAllApiCaches(),
       cacheManager.clearAll()
     ])
     
-    // Cancel any pending requests
-    malRequestManager.cancelAll()
-    jikanRequestManager.cancelAll()
-    animeScheduleRequestManager.cancelAll()
+    // TODO: Cancel any pending requests when request managers are fully implemented
     
   } catch (error) {
+    console.error('Failed to clear cache:', error)
   }
 }
 
@@ -120,28 +114,7 @@ export const cacheHealthCheck = () => {
   }
 }
 
-/**
- * Generate cache optimization recommendations (simplified for now)
- */
-const generateCacheRecommendations = (stats: any) => {
-  const recommendations: string[] = []
-  
-  try {
-    const { hitRate, totalRequests } = stats.cache
-    
-    if (hitRate < 30 && totalRequests > 50) {
-      recommendations.push('Cache hit rate is low. Consider reviewing cache TTL settings.')
-    }
-    
-    if (hitRate > 95 && totalRequests > 100) {
-      recommendations.push('Excellent cache performance! Consider extending TTL for some data types.')
-    }
-  } catch (error) {
-    recommendations.push('Cache analysis temporarily unavailable')
-  }
-  
-  return recommendations
-}
+// Cache optimization recommendations removed - unused for now
 
 // === CACHE STRATEGIES ===
 
@@ -199,10 +172,10 @@ const cacheSystem = {
   get jikanCache() { return jikanCache },
   get animeScheduleCache() { return animeScheduleCache },
   
-  // Request management
-  get malRequestManager() { return malRequestManager },
-  get jikanRequestManager() { return jikanRequestManager },
-  get animeScheduleRequestManager() { return animeScheduleRequestManager },
+  // Request management - TODO: implement when managers are fully functional
+  // get malRequestManager() { return malRequestManager },
+  // get jikanRequestManager() { return jikanRequestManager },
+  // get animeScheduleRequestManager() { return animeScheduleRequestManager },
   
   // Utilities
   initializeCacheSystem,

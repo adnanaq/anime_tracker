@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { AnimeBase } from '../../types/anime'
-import { getStatusLabel, getStatusColor, getStatusIcon } from '../../utils/animeStatus'
+import { getStatusLabel, getStatusIcon } from '../../utils/animeStatus'
 import { useAnimeAuth } from '../../hooks/useAuth'
 import { useAnimeStore } from '../../store/animeStore'
 import { animeStatusService } from '../../services/shared/animeStatusService'
@@ -12,10 +12,11 @@ interface ExpandableGridProps {
   anime: AnimeBase[]
   title?: string
   maxCards?: number
-  useClickMode?: boolean
+  variant?: 'hover' | 'click'
+  interactive?: boolean
 }
 
-const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase, onStatusReset?: () => void }) => {
+const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase, onStatusReset?: number }) => {
   const [showStatusOptions, setShowStatusOptions] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
   const [animationState, setAnimationState] = useState<'closed' | 'opening' | 'open' | 'closing'>('closed')
@@ -83,7 +84,20 @@ const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase
     setSelectedStatus(status) // Mark this status as selected for animation
     
     try {
-      await animeStatusService.updateAnimeStatus(animeItem.id, animeItem.source, { status })
+      // Prepare update data with automatic episode adjustment
+      const updateData: any = { status }
+      
+      // Auto-logic: When status becomes "completed", set episodes to max
+      const isCompletedStatus = status === 'completed' || status === 'COMPLETED'
+      if (isCompletedStatus && animeItem.episodes) {
+        if (animeItem.source === 'mal') {
+          updateData.num_watched_episodes = animeItem.episodes
+        } else {
+          updateData.progress = animeItem.episodes  
+        }
+      }
+      
+      await animeStatusService.updateAnimeStatus(animeItem.id, animeItem.source, updateData)
       updateAnimeStatus(animeItem.id, animeItem.source, status)
       
       // Wait a moment for the selection to be visually registered, then start closing
@@ -292,7 +306,7 @@ const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase
                           variant="primary"
                           size="xs"
                           fullWidth
-                          onClick={(e) => handleStatusChange(e, animeItem.source === 'mal' ? 'watching' : 'CURRENT')}
+                          onClick={(e: React.MouseEvent) => handleStatusChange(e, animeItem.source === 'mal' ? 'watching' : 'CURRENT')}
                           disabled={isUpdating}
                           leftIcon={getStatusIcon('watching')}
                           className="!bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
@@ -309,7 +323,7 @@ const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase
                           variant="success"
                           size="xs"
                           fullWidth
-                          onClick={(e) => handleStatusChange(e, animeItem.source === 'mal' ? 'completed' : 'COMPLETED')}
+                          onClick={(e: React.MouseEvent) => handleStatusChange(e, animeItem.source === 'mal' ? 'completed' : 'COMPLETED')}
                           disabled={isUpdating}
                           leftIcon={getStatusIcon('completed')}
                         >
@@ -325,7 +339,7 @@ const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase
                           variant="warning"
                           size="xs"
                           fullWidth
-                          onClick={(e) => handleStatusChange(e, animeItem.source === 'mal' ? 'plan_to_watch' : 'PLANNING')}
+                          onClick={(e: React.MouseEvent) => handleStatusChange(e, animeItem.source === 'mal' ? 'plan_to_watch' : 'PLANNING')}
                           disabled={isUpdating}
                           leftIcon={getStatusIcon('plan_to_watch')}
                         >
@@ -341,7 +355,7 @@ const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase
                           variant="info"
                           size="xs"
                           fullWidth
-                          onClick={(e) => handleStatusChange(e, animeItem.source === 'mal' ? 'on_hold' : 'PAUSED')}
+                          onClick={(e: React.MouseEvent) => handleStatusChange(e, animeItem.source === 'mal' ? 'on_hold' : 'PAUSED')}
                           disabled={isUpdating}
                           leftIcon={getStatusIcon('on_hold')}
                           className="!bg-gradient-to-br from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800"
@@ -358,7 +372,7 @@ const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase
                           variant="danger"
                           size="xs"
                           fullWidth
-                          onClick={(e) => handleStatusChange(e, animeItem.source === 'mal' ? 'dropped' : 'DROPPED')}
+                          onClick={(e: React.MouseEvent) => handleStatusChange(e, animeItem.source === 'mal' ? 'dropped' : 'DROPPED')}
                           disabled={isUpdating}
                           leftIcon={getStatusIcon('dropped')}
                         >
@@ -374,7 +388,7 @@ const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase
                           variant="outline"
                           size="xs"
                           fullWidth
-                          onClick={(e) => handleRemoveFromList(e)}
+                          onClick={(e: React.MouseEvent) => handleRemoveFromList(e)}
                           disabled={isUpdating}
                           leftIcon="🗑️"
                           className="!border-red-400/30 !text-red-400 hover:!bg-red-600 hover:!text-white !bg-gradient-to-br from-red-900/60 to-red-800/60"
@@ -393,7 +407,7 @@ const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase
                   variant={currentStatus ? "secondary" : "primary"}
                   size="sm"
                   fullWidth
-                  onClick={(e) => {
+                  onClick={(e: React.MouseEvent) => {
                     e.preventDefault()
                     e.stopPropagation()
                     toggleStatusOptions()
@@ -456,18 +470,21 @@ const ExpandedContent = ({ anime: animeItem, onStatusReset }: { anime: AnimeBase
   )
 }
 
-export const ExpandableGrid = ({ anime, title, maxCards = 10, useClickMode = false }: ExpandableGridProps) => {
+export const ExpandableGrid = ({ anime, title, maxCards = 10, variant = 'hover', interactive = true }: ExpandableGridProps) => {
   const navigate = useNavigate()
   const displayAnime = anime.slice(0, maxCards)
   const containerRef = useRef<HTMLDivElement>(null)
   const [statusResetTrigger, setStatusResetTrigger] = useState(0)
   const [activeCardIndex, setActiveCardIndex] = useState(0) // First card active by default for click mode
   const [isPaused, setIsPaused] = useState(false)
-  const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const timerRef = useRef<number | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, scrollLeft: 0 })
 
   const handleCardClick = (animeItem: AnimeBase, event: React.MouseEvent, cardIndex?: number) => {
+    // Skip all click interactions if not interactive
+    if (!interactive) return
+    
     // Don't navigate if clicking on expanded content
     if ((event.target as HTMLElement).closest('.expanded-content')) {
       return
@@ -478,7 +495,7 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10, useClickMode = fal
       return
     }
     
-    if (useClickMode && cardIndex !== undefined) {
+    if (variant === 'click' && cardIndex !== undefined) {
       // In click mode, expand the clicked card and pause auto-cycling
       setActiveCardIndex(cardIndex)
       setStatusResetTrigger(prev => prev + 1)
@@ -499,8 +516,8 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10, useClickMode = fal
   }
 
   const handleCardHover = (cardIndex: number) => {
-    // Skip hover logic in click mode
-    if (useClickMode) return
+    // Skip hover logic if not interactive or in click mode
+    if (!interactive || variant === 'click') return
     
     if (containerRef.current) {
       // Check if any card is currently expanded (clicked)
@@ -519,7 +536,7 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10, useClickMode = fal
   // Close expanded cards and reset status options when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (useClickMode) return // Skip outside click logic in click mode
+      if (variant === 'click') return // Skip outside click logic in click mode
       
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         // Reset status options first
@@ -537,11 +554,11 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10, useClickMode = fal
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [useClickMode])
+  }, [variant === 'click'])
 
   // Auto-cycling effect for click mode
   useEffect(() => {
-    if (!useClickMode || isPaused) return
+    if (variant !== 'click' || isPaused) return
 
     const interval = setInterval(() => {
       setActiveCardIndex(prevIndex => {
@@ -552,11 +569,11 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10, useClickMode = fal
     }, 4000) // Change card every 4 seconds
 
     return () => clearInterval(interval)
-  }, [useClickMode, isPaused, displayAnime.length])
+  }, [variant === 'click', isPaused, displayAnime.length])
 
   // Auto-scroll to active card when it changes
   useEffect(() => {
-    if (!useClickMode || !containerRef.current) return
+    if (variant !== 'click' || !containerRef.current) return
 
     const container = containerRef.current
     const cardWidth = 200 + 16 // Card width + gap
@@ -585,7 +602,7 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10, useClickMode = fal
       left: scrollPosition,
       behavior: 'smooth'
     })
-  }, [activeCardIndex, useClickMode])
+  }, [activeCardIndex, variant === 'click'])
 
   // Cleanup timer on unmount
   useEffect(() => {
@@ -598,7 +615,7 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10, useClickMode = fal
 
   // Drag scrolling handlers for click mode
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (!useClickMode || !containerRef.current) return
+    if (variant !== 'click' || !containerRef.current) return
     
     setIsDragging(false)
     setDragStart({
@@ -608,7 +625,7 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10, useClickMode = fal
   }
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!useClickMode || !containerRef.current) return
+    if (variant !== 'click' || !containerRef.current) return
     
     const x = e.pageX - containerRef.current.offsetLeft
     const walk = (x - dragStart.x) * 2 // Scroll speed multiplier
@@ -620,7 +637,7 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10, useClickMode = fal
   }
 
   const handleMouseUp = () => {
-    if (!useClickMode) return
+    if (variant !== 'click') return
     
     // Small delay to prevent click after drag
     setTimeout(() => {
@@ -629,13 +646,13 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10, useClickMode = fal
   }
 
   const handleMouseLeave = () => {
-    if (!useClickMode) return
+    if (variant !== 'click') return
     setIsDragging(false)
   }
 
   // Touch support for mobile
   const handleTouchStart = (e: React.TouchEvent) => {
-    if (!useClickMode || !containerRef.current) return
+    if (variant !== 'click' || !containerRef.current) return
     
     setIsDragging(false)
     setDragStart({
@@ -645,7 +662,7 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10, useClickMode = fal
   }
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!useClickMode || !containerRef.current) return
+    if (variant !== 'click' || !containerRef.current) return
     
     const x = e.touches[0].pageX - containerRef.current.offsetLeft
     const walk = (x - dragStart.x) * 1.5 // Scroll speed for touch
@@ -657,7 +674,7 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10, useClickMode = fal
   }
 
   const handleTouchEnd = () => {
-    if (!useClickMode) return
+    if (variant !== 'click') return
     
     setTimeout(() => {
       setIsDragging(false)
@@ -677,7 +694,7 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10, useClickMode = fal
         </Typography>
       )}
       <div 
-        className={`expandable-grid-container ${useClickMode ? 'click-mode' : ''}`} 
+        className={`expandable-grid-container ${variant === 'click' ? 'click-mode' : ''}`} 
         ref={containerRef}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
@@ -690,7 +707,7 @@ export const ExpandableGrid = ({ anime, title, maxCards = 10, useClickMode = fal
         {displayAnime.map((animeItem, index) => (
           <div 
             key={`${animeItem.source}-${animeItem.id}`} 
-            className={`expandable-grid-card ${useClickMode && activeCardIndex === index ? 'active' : ''}`}
+            className={`expandable-grid-card ${variant === 'click' && activeCardIndex === index ? 'active' : ''}`}
             onMouseEnter={() => handleCardHover(index)}
           >
             <div 

@@ -226,19 +226,7 @@ export class JikanCacheService extends BaseCacheService {
     })
   }
 
-  // Random anime caching (small cache to avoid immediate repeats)
-  async getRandomAnime<T>(
-    requestFn: () => Promise<T>
-  ): Promise<T> {
-    const timestamp = Math.floor(Date.now() / (15 * 60 * 1000)) // 15 minute buckets
-    const cacheKey = this.createCacheKey(`random:${timestamp}`)
-    
-    return this.cachedRequest(cacheKey, requestFn, {
-      ttl: 15 * 60 * 1000, // 15 minutes
-      persistent: false,
-      version: '1.0.0'
-    })
-  }
+  // Random anime excluded from caching - uses direct API calls for true randomness
 
   // Generic caching helper for Jikan-specific data
   async cacheJikanData<T>(

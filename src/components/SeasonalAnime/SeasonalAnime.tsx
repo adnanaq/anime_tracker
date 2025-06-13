@@ -186,7 +186,7 @@ export const SeasonalAnime = () => {
           <div className="at-bg-danger/10 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
             <div className="flex items-center">
               <span className="text-red-500 mr-2">⚠️</span>
-              <Typography variant="bodyMedium" className="text-red-700 dark:text-red-300">{error}</Typography>
+              <Typography variant="body" className="text-red-700 dark:text-red-300">{error}</Typography>
             </div>
           </div>
         )}

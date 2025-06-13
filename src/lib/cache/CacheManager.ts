@@ -54,7 +54,7 @@ export class CacheManager {
   /**
    * Get data from cache (memory first, then IndexedDB)
    */
-  async get<T>(key: string, config?: Partial<CacheConfig>): Promise<T | null> {
+  async get<T>(key: string, _config?: Partial<CacheConfig>): Promise<T | null> {
     this.stats.totalRequests++
     
     // Try memory cache first
@@ -284,7 +284,7 @@ export class CacheManager {
         this.dbInitialized = true
       }
 
-      request.onerror = (event) => {
+      request.onerror = (_event) => {
         this.dbInitialized = false
       }
     } catch (error) {
@@ -310,7 +310,7 @@ export class CacheManager {
     })
   }
 
-  private async setPersistentEntry<T>(key: string, entry: CacheEntry<T>): Promise<void> {
+  private async setPersistentEntry<T>(_key: string, entry: CacheEntry<T>): Promise<void> {
     if (!this.db) return
 
     return new Promise((resolve, reject) => {
@@ -358,5 +358,4 @@ export class CacheManager {
 // Singleton instance
 export const cacheManager = new CacheManager()
 
-// Export types for external use
-export type { CacheConfig, CacheEntry, CacheStats }
+// Types are already exported as interfaces above

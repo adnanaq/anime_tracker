@@ -38,10 +38,10 @@ const spinnerVariants = cva(
 )
 
 export interface SpinnerProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'color'>,
     VariantProps<typeof spinnerVariants> {
   message?: string
-  messageVariant?: 'bodySmall' | 'bodyMedium' | 'bodyLarge'
+  messageVariant?: 'bodySmall' | 'body' | 'bodyLarge'
   centered?: boolean
 }
 

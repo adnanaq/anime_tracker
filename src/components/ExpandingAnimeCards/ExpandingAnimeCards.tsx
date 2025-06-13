@@ -8,13 +8,15 @@ interface ExpandingAnimeCardsProps {
   title?: string
   variant?: 'horizontal' | 'vertical' | 'grid'
   maxCards?: number
+  interactive?: boolean
 }
 
 export const ExpandingAnimeCards: React.FC<ExpandingAnimeCardsProps> = ({
   anime,
   title = "Featured Anime",
   variant = 'horizontal',
-  maxCards = 6
+  maxCards = 6,
+  interactive = true
 }) => {
   const navigate = useNavigate()
   const [selectedIndex, setSelectedIndex] = useState(0)
@@ -23,6 +25,9 @@ export const ExpandingAnimeCards: React.FC<ExpandingAnimeCardsProps> = ({
   const displayAnime = anime.slice(0, maxCards)
 
   const handleCardClick = (index: number, animeItem: AnimeBase) => {
+    // Skip click interactions if not interactive
+    if (!interactive) return
+    
     if (variant === 'grid') {
       // For grid variant, navigate directly
       navigate(`/anime/${animeItem.source}/${animeItem.id}`)
@@ -33,6 +38,8 @@ export const ExpandingAnimeCards: React.FC<ExpandingAnimeCardsProps> = ({
   }
 
   const handleNavigate = (animeItem: AnimeBase) => {
+    // Skip navigation if not interactive
+    if (!interactive) return
     navigate(`/anime/${animeItem.source}/${animeItem.id}`)
   }
 

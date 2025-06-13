@@ -423,25 +423,15 @@ export const jikanService = {
   },
 
   async getRandomAnime(): Promise<AnimeBase> {
-    const requestKey = 'jikan:random:anime'
+    // Random anime bypasses cache entirely for true randomness
+    const response = await rateLimitedFetch(`${JIKAN_BASE_URL}/random/anime`)
     
-    return await jikanRequestManager.enhancedRequest(
-      requestKey,
-      async () => {
-        return await jikanCache.getRandomAnime(
-          async () => {
-            const response = await rateLimitedFetch(`${JIKAN_BASE_URL}/random/anime`)
-            
-            if (!response.ok) {
-              throw new Error(`Jikan API error: ${response.status} ${response.statusText}`)
-            }
-            
-            const data = await response.json()
-            return normalizeJikanAnime(data.data)
-          }
-        )
-      }
-    )
+    if (!response.ok) {
+      throw new Error(`Jikan API error: ${response.status} ${response.statusText}`)
+    }
+    
+    const data = await response.json()
+    return normalizeJikanAnime(data.data)
   },
 
   async getAnimeRecommendations(id: number): Promise<AnimeBase[]> {

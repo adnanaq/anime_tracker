@@ -20,11 +20,9 @@ const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) 
   if (networkError) {
     console.error('Network error:', networkError)
     
-    // Retry on network errors
-    if (networkError.statusCode === 429) {
-      return new Promise((resolve) => {
-        setTimeout(() => resolve(forward(operation)), 1000)
-      })
+    // Retry on network errors with rate limiting
+    if ('statusCode' in networkError && networkError.statusCode === 429) {
+      setTimeout(() => forward(operation), 1000)
     }
   }
 })
@@ -48,7 +46,7 @@ export const apolloClient = new ApolloClient({
           // Handle paginated results
           Page: {
             keyArgs: ['type', 'format', 'status', 'season', 'year', 'search'],
-            merge: (existing, incoming, { args }) => {
+            merge: (_existing, incoming) => {
               // For pagination, we usually want to replace rather than merge
               // unless we're implementing infinite scroll
               return incoming

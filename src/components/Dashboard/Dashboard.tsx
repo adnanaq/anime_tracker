@@ -172,7 +172,7 @@ const Dashboard = () => {
                     anime={currentlyWatching}
                     title="Currently Watching (Grid View)"
                     maxCards={12}
-                    useClickMode={true}
+                    variant="click"
                   />
                 </section>
               </>
@@ -191,7 +191,7 @@ const Dashboard = () => {
                   anime={trendingAnime} 
                   title="Trending Now" 
                   maxCards={12} 
-                  useClickMode={true}
+                  variant="click"
                 />
               )}
             </section>
@@ -209,7 +209,7 @@ const Dashboard = () => {
                   anime={popularAnime} 
                   title="Most Popular" 
                   maxCards={12} 
-                  useClickMode={true}
+                  variant="click"
                 />
               )}
             </section>
@@ -222,7 +222,7 @@ const Dashboard = () => {
                   anime={trendingAnime}
                   title="🔥 Expandable Grid Test"
                   maxCards={12}
-                  useClickMode={true}
+                  variant="click"
                 />
               </section>
             )}
@@ -240,7 +240,7 @@ const Dashboard = () => {
                   anime={topRatedAnime} 
                   title="Top Rated" 
                   maxCards={12} 
-                  useClickMode={true}
+                  variant="click"
                 />
               )}
             </section>
@@ -258,7 +258,7 @@ const Dashboard = () => {
                   anime={currentSeasonAnime} 
                   title="Current Season" 
                   maxCards={12} 
-                  useClickMode={true}
+                  variant="click"
                 />
               )}
             </section>

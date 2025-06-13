@@ -7,18 +7,19 @@ export interface AnimeStatusUpdate {
   status?: string
   score?: number
   progress?: number
+  num_watched_episodes?: number
   notes?: string
 }
 
 interface MalStatusUpdate {
-  status?: string
+  status?: "watching" | "completed" | "on_hold" | "dropped" | "plan_to_watch"
   score?: number
   num_watched_episodes?: number
   comments?: string
 }
 
 interface AnilistStatusUpdate {
-  status?: string
+  status?: "CURRENT" | "COMPLETED" | "PAUSED" | "DROPPED" | "PLANNING" | "REPEATING"
   score?: number
   progress?: number
   notes?: string
@@ -46,13 +47,26 @@ export const animeStatusService = {
         const malStatusUpdate: MalStatusUpdate = {}
         
         if (statusUpdate.status) {
-          malStatusUpdate.status = statusUpdate.status
+          // Convert generic status to MAL-specific status
+          const malStatusMapping: Record<string, MalStatusUpdate['status']> = {
+            'watching': 'watching',
+            'completed': 'completed',
+            'on_hold': 'on_hold',
+            'paused': 'on_hold',
+            'dropped': 'dropped',
+            'plan_to_watch': 'plan_to_watch',
+            'planning': 'plan_to_watch'
+          }
+          malStatusUpdate.status = malStatusMapping[statusUpdate.status.toLowerCase()] || 'watching'
         }
         if (statusUpdate.score !== undefined) {
           malStatusUpdate.score = statusUpdate.score
         }
         if (statusUpdate.progress !== undefined) {
           malStatusUpdate.num_watched_episodes = statusUpdate.progress
+        }
+        if (statusUpdate.num_watched_episodes !== undefined) {
+          malStatusUpdate.num_watched_episodes = statusUpdate.num_watched_episodes
         }
         if (statusUpdate.notes) {
           malStatusUpdate.comments = statusUpdate.notes
@@ -64,21 +78,28 @@ export const animeStatusService = {
         const anilistStatusUpdate: AnilistStatusUpdate = {}
         
         if (statusUpdate.status) {
-          // Convert MAL status to AniList status
-          const statusMapping: Record<string, string> = {
+          // Convert generic status to AniList-specific status
+          const anilistStatusMapping: Record<string, AnilistStatusUpdate['status']> = {
             'watching': 'CURRENT',
+            'current': 'CURRENT',
             'completed': 'COMPLETED',
             'on_hold': 'PAUSED',
+            'paused': 'PAUSED',
             'dropped': 'DROPPED',
-            'plan_to_watch': 'PLANNING'
+            'plan_to_watch': 'PLANNING',
+            'planning': 'PLANNING',
+            'repeating': 'REPEATING'
           }
-          anilistStatusUpdate.status = statusMapping[statusUpdate.status] || statusUpdate.status
+          anilistStatusUpdate.status = anilistStatusMapping[statusUpdate.status.toLowerCase()] || 'CURRENT'
         }
         if (statusUpdate.score !== undefined) {
           anilistStatusUpdate.score = statusUpdate.score
         }
         if (statusUpdate.progress !== undefined) {
           anilistStatusUpdate.progress = statusUpdate.progress
+        }
+        if (statusUpdate.num_watched_episodes !== undefined) {
+          anilistStatusUpdate.progress = statusUpdate.num_watched_episodes
         }
         if (statusUpdate.notes) {
           anilistStatusUpdate.notes = statusUpdate.notes

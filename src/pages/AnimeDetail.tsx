@@ -10,7 +10,6 @@ import { animeStatusService } from '../services/shared/animeStatusService'
 import { malService } from '../services/mal'
 import { anilistService } from '../services/anilist'
 import { getStatusOptions } from '../utils/animeStatus'
-import { Typography, Button, Badge } from '../components/ui'
 
 export const AnimeDetail = () => {
   const { source, id } = useParams<{ source: string; id: string }>()
@@ -160,7 +159,23 @@ export const AnimeDetail = () => {
 
     setIsUpdatingStatus(true)
     try {
-      await animeStatusService.updateAnimeStatus(parseInt(id), source as 'mal' | 'anilist', { status: newStatus })
+      // Prepare update data with automatic episode adjustment
+      const updateData: any = { status: newStatus }
+      
+      // Auto-logic: When status becomes "completed", set episodes to max
+      const isCompletedStatus = newStatus === 'completed' || newStatus === 'COMPLETED'
+      if (isCompletedStatus && animeData?.episodes) {
+        if (source === 'mal') {
+          updateData.num_watched_episodes = animeData.episodes
+        } else {
+          updateData.progress = animeData.episodes  
+        }
+        // Update local state immediately
+        setUserEpisodes(animeData.episodes)
+        setTempEpisodes(animeData.episodes)
+      }
+      
+      await animeStatusService.updateAnimeStatus(parseInt(id), source as 'mal' | 'anilist', updateData)
 
       setUserStatus(newStatus)
     } catch (error) {
@@ -184,13 +199,32 @@ export const AnimeDetail = () => {
       const token = authServiceInstance.getToken()?.access_token
       if (!token) throw new Error('No auth token')
 
+      // Auto-logic: If user sets a score and isn't watching/completed, change status to watching
+      let newStatus = userStatus
+      const currentStatus = userStatus
+      const isWatching = currentStatus === (source === 'mal' ? 'watching' : 'CURRENT')
+      const isCompleted = currentStatus === (source === 'mal' ? 'completed' : 'COMPLETED')
+      
+      if (newScore > 0 && !isWatching && !isCompleted) {
+        newStatus = source === 'mal' ? 'watching' : 'CURRENT'
+      }
+
+      // Prepare update data
+      const updateData: any = { score: newScore }
+      if (newStatus !== currentStatus) {
+        updateData.status = newStatus
+      }
+
       if (source === 'mal') {
-        await malService.updateAnimeStatus(parseInt(id), token, { score: newScore })
+        await malService.updateAnimeStatus(parseInt(id), token, updateData)
       } else {
-        await anilistService.updateAnimeStatus(parseInt(id), token, { score: newScore })
+        await anilistService.updateAnimeStatus(parseInt(id), token, updateData)
       }
 
       setUserScore(newScore)
+      if (newStatus !== currentStatus) {
+        setUserStatus(newStatus)
+      }
     } catch (error) {
       console.error('Failed to update anime score:', error)
       alert('Failed to update anime score. Please try again.')
@@ -219,9 +253,12 @@ export const AnimeDetail = () => {
         if (newEpisodes >= maxEpisodes) {
           // Watched all episodes = Completed
           newStatus = source === 'mal' ? 'completed' : 'COMPLETED'
-        } else if (newEpisodes > 0 && (userStatus === (source === 'mal' ? 'completed' : 'COMPLETED') || !userStatus)) {
-          // Watching some episodes (and was completed or not in list) = Watching
-          newStatus = source === 'mal' ? 'watching' : 'CURRENT'
+        } else if (newEpisodes > 0) {
+          // Watching some episodes = Watching (unless already watching)
+          const isCurrentlyWatching = userStatus === (source === 'mal' ? 'watching' : 'CURRENT')
+          if (!isCurrentlyWatching) {
+            newStatus = source === 'mal' ? 'watching' : 'CURRENT'
+          }
         }
       }
 

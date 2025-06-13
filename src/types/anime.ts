@@ -14,8 +14,18 @@ export interface AnimeBase {
   year?: number;
   season?: string;
   format?: string;
-  source: "mal" | "anilist";
+  source: "mal" | "anilist" | "jikan";
   relatedAnime?: AnimeBase[];
+  malId?: number; // MAL ID for cross-referencing
+  hasValidId?: boolean; // Whether the anime has a valid ID for navigation
+  episodeNumber?: number; // For scheduled anime episodes
+  episodeDate?: string; // For scheduled anime episodes
+  duration?: string; // Episode duration
+  studios?: string[]; // Animation studios
+  popularity?: number; // Popularity ranking
+  lengthMin?: number; // Episode length in minutes
+  airingStatus?: 'aired' | 'airing' | 'delayed' | 'skipped' | 'tba'; // Current airing status
+  episodeDelay?: number; // Episode delay information
 }
 
 export interface MALAnime {
@@ -81,4 +91,4 @@ export interface AnimeListResponse {
   };
 }
 
-export type AnimeSource = "mal" | "anilist";
+export type AnimeSource = "mal" | "anilist" | "jikan";

@@ -92,11 +92,7 @@ const normalizeAnimeScheduleEntry = (entry: AnimeScheduleEntry): AnimeBase => {
     // Additional AnimeSchedule-specific data
     episodeNumber: entry.episodeNumber,
     episodeDate: entry.episodeDate,
-    airType: entry.airType,
     lengthMin: entry.lengthMin,
-    streams: entry.streams ? Object.fromEntries(
-      Object.entries(entry.streams).filter(([_, url]) => url !== undefined)
-    ) as { [key: string]: string } : undefined,
     airingStatus: entry.airingStatus,
     episodeDelay: entry.episodeDelay,
     hasValidId: hasValidMalId, // Flag to indicate this has a valid MAL ID

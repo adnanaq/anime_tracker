@@ -17,6 +17,8 @@ const CLIENT_ID = '195a1bf1e8043ed0507576d020e9e17d'
 const ANILIST_CLIENT_ID = '24531'
 const ANILIST_CLIENT_SECRET = '5rUv0GnpO2dwYtV6PnxtEMmMRFWWUiocUtox8HNt'
 
+const ANIME_SCHEDULE_TOKEN = process.env.ANIME_SCHEDULE_TOKEN || 'MDnyW7kcDAMtyiaIg4bc2IIMOrHpbQ'
+
 // Proxy middleware for AniList OAuth token exchange
 app.post('/anilist/oauth/token', async (req, res) => {
   try {
@@ -217,6 +219,36 @@ app.post('/anilist/graphql', async (req, res) => {
   }
 })
 
+// Proxy middleware for AnimeSchedule API
+app.get('/animeschedule/*', async (req, res) => {
+  try {
+    const schedulePath = req.path.replace('/animeschedule', '')
+    const scheduleUrl = `https://animeschedule.net/api/v3${schedulePath}`
+    
+    console.log('📅 AnimeSchedule Proxy:', { scheduleUrl, params: req.query })
+    
+    const response = await axios.get(scheduleUrl, {
+      params: req.query,
+      headers: {
+        'Authorization': `Bearer ${ANIME_SCHEDULE_TOKEN}`,
+        'Content-Type': 'application/json'
+      }
+    })
+    
+    res.json(response.data)
+  } catch (error) {
+    console.error('AnimeSchedule Proxy Error:', error.response?.status, error.response?.statusText)
+    if (error.response?.data) {
+      console.error('AnimeSchedule Error Details:', error.response.data)
+    }
+    res.status(error.response?.status || 500).json({
+      error: 'AnimeSchedule API Error',
+      message: error.message,
+      status: error.response?.status,
+    })
+  }
+})
+
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() })
@@ -229,6 +261,7 @@ app.listen(PORT, () => {
   console.log(`MAL OAuth proxy: http://localhost:${PORT}/mal/oauth/token`)
   console.log(`AniList OAuth proxy: http://localhost:${PORT}/anilist/oauth/token`)
   console.log(`AniList GraphQL proxy: http://localhost:${PORT}/anilist/graphql`)
+  console.log(`AnimeSchedule API proxy: http://localhost:${PORT}/animeschedule/...`)
 })
 
 export default app

@@ -10,6 +10,20 @@ export interface AnimeStatusUpdate {
   notes?: string
 }
 
+interface MalStatusUpdate {
+  status?: string
+  score?: number
+  num_watched_episodes?: number
+  comments?: string
+}
+
+interface AnilistStatusUpdate {
+  status?: string
+  score?: number
+  progress?: number
+  notes?: string
+}
+
 export const animeStatusService = {
   async updateAnimeStatus(
     animeId: number,
@@ -29,7 +43,7 @@ export const animeStatusService = {
     try {
       if (source === 'mal') {
         // Convert status values for MAL
-        const malStatusUpdate: any = {}
+        const malStatusUpdate: MalStatusUpdate = {}
         
         if (statusUpdate.status) {
           malStatusUpdate.status = statusUpdate.status
@@ -47,7 +61,7 @@ export const animeStatusService = {
         await malService.updateAnimeStatus(animeId, token, malStatusUpdate)
       } else {
         // Convert status values for AniList
-        const anilistStatusUpdate: any = {}
+        const anilistStatusUpdate: AnilistStatusUpdate = {}
         
         if (statusUpdate.status) {
           // Convert MAL status to AniList status

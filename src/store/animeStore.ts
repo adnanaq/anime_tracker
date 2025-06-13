@@ -524,7 +524,7 @@ export const useAnimeStore = create<AnimeStore>((set, get) => ({
     }
     
     // Track which arrays were actually modified
-    const updates: any = {}
+    const updates: Partial<Pick<AnimeStore, 'trendingAnime' | 'popularAnime' | 'topRatedAnime' | 'currentSeasonAnime' | 'currentlyWatching' | 'searchResults' | 'userAnimeStatus'>> = {}
     let anyChanges = false
     
     // Update arrays with minimal new references

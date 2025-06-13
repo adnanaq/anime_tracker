@@ -1,3 +1,5 @@
+/* ExpandingAnimeCards Component Styles using Design Tokens */
+
 /* ========================================
    EXPANDING ANIME CARDS STYLES
    ======================================== */
@@ -133,16 +135,17 @@
 }
 
 .view-details-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-secondary-600) 100%);
+  color: var(--color-text-inverse);
   border: none;
-  padding: 12px 24px;
-  border-radius: 25px;
-  font-weight: 600;
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-3xl);
+  font-weight: var(--font-semibold);
+  font-family: var(--font-primary);
   cursor: pointer;
   transition: 
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
   box-shadow: var(--shadow-md);
 }
 
@@ -170,7 +173,7 @@
 }
 
 .dot.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-secondary-600) 100%);
   transform: scale(1.2);
 }
 
@@ -313,14 +316,15 @@
 }
 
 .vertical-action-btn {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--color-secondary-400) 0%, var(--color-danger-500) 100%);
+  color: var(--color-text-inverse);
   border: none;
-  padding: 10px 20px;
-  border-radius: 20px;
-  font-weight: 600;
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-2xl);
+  font-weight: var(--font-semibold);
+  font-family: var(--font-primary);
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: transform var(--transition-base);
 }
 
 .vertical-action-btn:hover {

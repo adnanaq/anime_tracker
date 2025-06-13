@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { AnimeBase } from '../../types/anime'
-import { malService } from '../../services/mal'
-import { anilistService } from '../../services/anilist'
+import { animeStatusService } from '../../services/shared/animeStatusService'
 import { getStatusOptions, getStatusColor } from '../../utils/animeStatus'
 import { useAnimeAuth } from '../../hooks/useAuth'
 
@@ -17,7 +16,7 @@ export const AnimeStatus = ({ anime, onStatusUpdate }: AnimeStatusProps) => {
   const [showScoreInput, setShowScoreInput] = useState(false)
 
   // Check if user is authenticated for this anime's source
-  const { isAuthenticated, accessToken } = useAnimeAuth(anime.source)
+  const { isAuthenticated } = useAnimeAuth(anime.source)
 
   if (!isAuthenticated) {
     return (
@@ -33,16 +32,11 @@ export const AnimeStatus = ({ anime, onStatusUpdate }: AnimeStatusProps) => {
   const statusOptions = getStatusOptions(anime.source)
 
   const handleStatusUpdate = async (status: string) => {
-    if (!isAuthenticated || !accessToken) return
+    if (!isAuthenticated) return
 
     setIsUpdating(true)
     try {
-
-      if (anime.source === 'mal') {
-        await malService.updateAnimeStatus(anime.id, accessToken, { status: status as any })
-      } else {
-        await anilistService.updateAnimeStatus(anime.id, accessToken, { status: status as any })
-      }
+      await animeStatusService.updateAnimeStatus(anime.id, anime.source, { status })
 
       setCurrentStatus(status)
       onStatusUpdate?.(status, currentScore)
@@ -57,16 +51,11 @@ export const AnimeStatus = ({ anime, onStatusUpdate }: AnimeStatusProps) => {
   }
 
   const handleScoreUpdate = async (score: number) => {
-    if (!isAuthenticated || !accessToken) return
+    if (!isAuthenticated) return
 
     setIsUpdating(true)
     try {
-
-      if (anime.source === 'mal') {
-        await malService.updateAnimeStatus(anime.id, accessToken, { score })
-      } else {
-        await anilistService.updateAnimeStatus(anime.id, accessToken, { score })
-      }
+      await animeStatusService.updateAnimeStatus(anime.id, anime.source, { score })
 
       setCurrentScore(score)
       onStatusUpdate?.(currentStatus || '', score)
@@ -81,17 +70,12 @@ export const AnimeStatus = ({ anime, onStatusUpdate }: AnimeStatusProps) => {
   }
 
   const handleRemoveFromList = async () => {
-    if (!isAuthenticated || !accessToken) return
+    if (!isAuthenticated) return
     if (!confirm('Are you sure you want to remove this anime from your list?')) return
 
     setIsUpdating(true)
     try {
-
-      if (anime.source === 'mal') {
-        await malService.deleteAnimeFromList(anime.id, accessToken)
-      } else {
-        await anilistService.deleteAnimeFromList(anime.id, accessToken)
-      }
+      await animeStatusService.removeAnimeFromList(anime.id, anime.source)
 
       setCurrentStatus(null)
       setCurrentScore(0)

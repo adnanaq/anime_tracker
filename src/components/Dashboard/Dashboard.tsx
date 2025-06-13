@@ -94,7 +94,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50/80 dark:bg-gray-900/80 backdrop-blur-sm transition-theme">
       {/* Header */}
-      <header className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md shadow-sm border-b border-gray-200 dark:border-gray-700 transition-theme animate-fade-in">
+      <header className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md shadow-sm border-b border-gray-200 dark:border-gray-700 transition-theme at-animate-fade-in">
         <div className="mx-auto px-5">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center flex-shrink-0">
@@ -132,7 +132,7 @@ const Dashboard = () => {
         ) : null
       )}
 
-      <main className="mx-auto px-5 py-8 animate-slide-up">
+      <main className="mx-auto px-5 py-8 at-animate-slide-up">
         {searchResults.length > 0 && (
           <AnimeSection
             title="Search Results"

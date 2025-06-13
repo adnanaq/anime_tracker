@@ -33,14 +33,10 @@
   border: 2px solid transparent;
   border-top-color: var(--spinner-color);
   border-radius: 50%;
-  animation: at-spinner-spin 1s linear infinite;
+  animation: at-spin 1s linear infinite;
 }
 
-@keyframes at-spinner-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
+/* Using consolidated at-spin from design-tokens.css */
 
 /* === DOTS SPINNER === */
 .at-spinner-dots {

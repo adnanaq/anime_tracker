@@ -13,9 +13,21 @@ const ANILIST_BASE_URL = isDevelopment
   : 'https://graphql.anilist.co'
 const ANILIST_GRAPHQL_URL = ANILIST_BASE_URL
 
+interface AniListAnimeWithUserData extends AniListAnime {
+  mediaListEntry?: {
+    score?: number;
+    status?: string;
+    progress?: number;
+  };
+  score?: number;
+  status?: string;
+  progress?: number;
+}
+
 export const normalizeAniListAnime = (anime: AniListAnime, includeRelated: boolean = false): AnimeBase => {
   // Handle user data if available (for anime from user's list)
-  const userEntry = (anime as any).mediaListEntry || (anime as any);
+  const animeWithUserData = anime as AniListAnimeWithUserData;
+  const userEntry = animeWithUserData.mediaListEntry || animeWithUserData;
   const userScore = userEntry?.score || undefined;
   const userStatus = userEntry?.status || undefined;
   const userProgress = userEntry?.progress || undefined;
@@ -700,7 +712,7 @@ export const anilistService = {
       
       // Find the entry for this anime
       const query = `
-        query($userId: Int, $mediaId: Int) {
+        query($userId: Int) {
           MediaListCollection(userId: $userId, type: ANIME) {
             lists {
               entries {
@@ -723,7 +735,7 @@ export const anilistService = {
         },
         body: JSON.stringify({
           query: query,
-          variables: { userId: user.id, mediaId: animeId }
+          variables: { userId: user.id }
         })
       })
 

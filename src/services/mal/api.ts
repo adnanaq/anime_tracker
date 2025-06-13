@@ -94,13 +94,22 @@ malApi.interceptors.response.use(
   }
 );
 
+interface MALAnimeWithUserData extends MALAnime {
+  my_list_status?: {
+    score?: number;
+    status?: string;
+    num_episodes_watched?: number;
+  };
+}
+
 export const normalizeMALAnime = (
   anime: MALAnime,
   includeRelated: boolean = false
 ): AnimeBase => {
-  const userScore = (anime as any).my_list_status?.score || undefined;
-  const userStatus = (anime as any).my_list_status?.status || undefined;
-  const userProgress = (anime as any).my_list_status?.num_episodes_watched || undefined;
+  const animeWithUserData = anime as MALAnimeWithUserData;
+  const userScore = animeWithUserData.my_list_status?.score || undefined;
+  const userStatus = animeWithUserData.my_list_status?.status || undefined;
+  const userProgress = animeWithUserData.my_list_status?.num_episodes_watched || undefined;
 
   const normalized: AnimeBase = {
     id: anime.id,
@@ -464,13 +473,19 @@ export const malService = {
       return response.data;
     } catch (error) {
       console.error("MAL updateAnimeStatus error:", error);
-      console.error("Error details:", {
-        status: (error as any).response?.status,
-        statusText: (error as any).response?.statusText,
-        data: (error as any).response?.data,
-        url: (error as any).config?.url,
-        method: (error as any).config?.method,
-      });
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { 
+          response?: { status?: number; statusText?: string; data?: any };
+          config?: { url?: string; method?: string };
+        };
+        console.error("Error details:", {
+          status: axiosError.response?.status,
+          statusText: axiosError.response?.statusText,
+          data: axiosError.response?.data,
+          url: axiosError.config?.url,
+          method: axiosError.config?.method,
+        });
+      }
       throw error;
     }
   },

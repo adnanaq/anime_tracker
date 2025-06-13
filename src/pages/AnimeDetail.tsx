@@ -6,6 +6,7 @@ import { animeService } from '../services/animeService'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { ExpandableGrid } from '../components/ExpandableGrid'
 import { getAuthService } from '../services/shared'
+import { animeStatusService } from '../services/shared/animeStatusService'
 import { malService } from '../services/mal'
 import { anilistService } from '../services/anilist'
 import { getStatusOptions } from '../utils/animeStatus'
@@ -159,14 +160,7 @@ export const AnimeDetail = () => {
 
     setIsUpdatingStatus(true)
     try {
-      const token = authServiceInstance.getToken()?.access_token
-      if (!token) throw new Error('No auth token')
-
-      if (source === 'mal') {
-        await malService.updateAnimeStatus(parseInt(id), token, { status: newStatus as any })
-      } else {
-        await anilistService.updateAnimeStatus(parseInt(id), token, { status: newStatus as any })
-      }
+      await animeStatusService.updateAnimeStatus(parseInt(id), source as 'mal' | 'anilist', { status: newStatus })
 
       setUserStatus(newStatus)
     } catch (error) {

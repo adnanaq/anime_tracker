@@ -9,19 +9,12 @@
     var(--color-background-secondary) 75%
   );
   background-size: 200% 100%;
-  animation: at-skeleton-shimmer 1.5s ease-in-out infinite;
+  animation: at-shimmer 1.5s ease-in-out infinite;
   border-radius: var(--radius-md);
 }
 
 /* === SKELETON SHIMMER ANIMATION === */
-@keyframes at-skeleton-shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
+/* Using consolidated at-shimmer from design-tokens.css */
 
 /* === VARIANT STYLES === */
 

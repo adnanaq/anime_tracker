@@ -5,6 +5,12 @@ import { jikanService } from '../../services/jikan'
 import { AnimeBase } from '../../types/anime'
 import { Typography, Button, AnimeGridSkeleton } from '../ui'
 
+interface ScheduledAnime extends AnimeBase {
+  episodeNumber?: number;
+  lengthMin?: number;
+  episodeDate?: string;
+}
+
 // Common timezones for the dropdown
 const COMMON_TIMEZONES = [
   { value: 'UTC', label: 'UTC (Coordinated Universal Time)', emoji: '🌍' },
@@ -273,22 +279,22 @@ export const AnimeSchedule = () => {
                           </Typography>
                           
                           <div className="space-y-2 text-sm">
-                            {(anime as any).episodeNumber && (
+                            {(anime as ScheduledAnime).episodeNumber && (
                               <div className="flex items-center space-x-2">
                                 <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded text-xs font-medium">
-                                  Episode {(anime as any).episodeNumber}
+                                  Episode {(anime as ScheduledAnime).episodeNumber}
                                 </span>
-                                {(anime as any).lengthMin && (
+                                {(anime as ScheduledAnime).lengthMin && (
                                   <Typography variant="bodySmall" color="muted">
-                                    {(anime as any).lengthMin}min
+                                    {(anime as ScheduledAnime).lengthMin}min
                                   </Typography>
                                 )}
                               </div>
                             )}
                             
-                            {(anime as any).episodeDate && (
+                            {(anime as ScheduledAnime).episodeDate && (
                               <Typography variant="bodySmall" color="muted">
-                                🕒 {new Date((anime as any).episodeDate).toLocaleTimeString([], { 
+                                🕒 {new Date((anime as ScheduledAnime).episodeDate!).toLocaleTimeString([], { 
                                   hour: '2-digit', 
                                   minute: '2-digit',
                                   timeZone: selectedTimezone,

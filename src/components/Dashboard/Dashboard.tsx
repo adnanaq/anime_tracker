@@ -95,7 +95,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gray-50/80 dark:bg-gray-900/80 backdrop-blur-sm transition-theme">
       {/* Header */}
       <header className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md shadow-sm border-b border-gray-200 dark:border-gray-700 transition-theme animate-fade-in">
-        <div className="max-w-[1600px] mx-auto px-2 sm:px-3 lg:px-4">
+        <div className="mx-auto px-5">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center flex-shrink-0">
               <Typography variant="h3" className="at-typography-gradient font-bold">
@@ -132,7 +132,7 @@ const Dashboard = () => {
         ) : null
       )}
 
-      <main className="max-w-[1600px] mx-auto px-2 sm:px-3 lg:px-4 py-8 animate-slide-up">
+      <main className="mx-auto px-5 py-8 animate-slide-up">
         {searchResults.length > 0 && (
           <AnimeSection
             title="Search Results"
@@ -214,14 +214,6 @@ const Dashboard = () => {
               )}
             </section>
 
-            <section className="mb-12">
-              <ExpandingAnimeCards
-                anime={topRatedAnime}
-                title="🏆 Top Rated - Interactive Grid"
-                variant="grid"
-                maxCards={8}
-              />
-            </section>
 
             {/* Expandable Grid Test Section */}
             {trendingAnime.length > 0 && (
@@ -276,14 +268,6 @@ const Dashboard = () => {
             {currentSource === 'mal' && (
               <>
                 <section className="mb-12">
-                  <CacheStats />
-                </section>
-                
-                <section className="mb-12">
-                  <CacheTest />
-                </section>
-                
-                <section className="mb-12">
                   <AdvancedSearch />
                 </section>
                 
@@ -297,6 +281,15 @@ const Dashboard = () => {
                 
                 <section className="mb-12">
                   <RandomAnime />
+                </section>
+                
+                {/* Developer Tools - Cache Management */}
+                <section className="mb-12">
+                  <CacheStats />
+                </section>
+                
+                <section className="mb-12">
+                  <CacheTest />
                 </section>
               </>
             )}

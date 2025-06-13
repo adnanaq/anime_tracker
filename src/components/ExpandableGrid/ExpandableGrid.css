@@ -690,6 +690,7 @@
   scrollbar-width: none;  /* Firefox */
 }
 
+
 .expandable-grid-container.click-mode .expandable-grid-card {
   /* Collapsed state - fixed width matching original grid cards */
   flex: 0 0 auto;

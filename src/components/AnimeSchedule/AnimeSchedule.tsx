@@ -61,13 +61,8 @@ export const AnimeSchedule = () => {
     return isCommonTz ? userTz : 'UTC'
   })
   const [filters, setFilters] = useState({
-    airType: 'all', // 'all', 'raw', 'sub', 'dub'
-    platform: 'all', // 'all', 'crunchyroll', 'youtube', etc.
     search: '', // Search by title
-    favoritesOnly: false, // Show only favorite shows
   })
-  const [favoriteShows, setFavoriteShows] = useState<Set<string>>(new Set())
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -90,44 +85,6 @@ export const AnimeSchedule = () => {
     fetchSchedule()
   }, [selectedTimezone])
 
-  // Check for notification permission and upcoming episodes
-  useEffect(() => {
-    if (notificationsEnabled) {
-      const checkUpcomingEpisodes = () => {
-        const now = new Date()
-        const thirtyMinutesFromNow = new Date(now.getTime() + 30 * 60 * 1000)
-        
-        Object.values(scheduleData).flat().forEach(episode => {
-          if (episode.episodeDate && favoriteShows.has(episode.title)) {
-            const episodeDate = new Date(episode.episodeDate)
-            
-            // Notify 30 minutes before episode airs
-            if (episodeDate > now && episodeDate <= thirtyMinutesFromNow) {
-              if (Notification.permission === 'granted') {
-                new Notification(`${episode.title} - Episode ${episode.episodeNumber}`, {
-                  body: `Airs in ${Math.round((episodeDate.getTime() - now.getTime()) / (1000 * 60))} minutes`,
-                  icon: '/anime-icon.png', // You could add an anime icon
-                  tag: `episode-${episode.id}-${episode.episodeNumber}`,
-                })
-              }
-            }
-          }
-        })
-      }
-      
-      // Check every 5 minutes
-      const interval = setInterval(checkUpcomingEpisodes, 5 * 60 * 1000)
-      
-      return () => clearInterval(interval)
-    }
-  }, [scheduleData, favoriteShows, notificationsEnabled])
-
-  const requestNotificationPermission = async () => {
-    if ('Notification' in window) {
-      const permission = await Notification.requestPermission()
-      setNotificationsEnabled(permission === 'granted')
-    }
-  }
 
   const handleAnimeNavigation = async (anime: AnimeBase) => {
     // First try to navigate using MAL ID if available
@@ -151,91 +108,21 @@ export const AnimeSchedule = () => {
     }
   }
 
-  const toggleFavorite = (title: string) => {
-    setFavoriteShows(prev => {
-      const newFavorites = new Set(prev)
-      if (newFavorites.has(title)) {
-        newFavorites.delete(title)
-      } else {
-        newFavorites.add(title)
-      }
-      return newFavorites
-    })
-  }
 
-  const exportToCalendar = () => {
-    const favoriteEpisodes = Object.values(scheduleData)
-      .flat()
-      .filter(episode => favoriteShows.has(episode.title) && episode.episodeDate)
-      .sort((a, b) => new Date(a.episodeDate!).getTime() - new Date(b.episodeDate!).getTime())
-
-    if (favoriteEpisodes.length === 0) {
-      alert('No favorite episodes to export. Add some shows to favorites first!')
-      return
-    }
-
-    // Generate ICS file content
-    let icsContent = [
-      'BEGIN:VCALENDAR',
-      'VERSION:2.0',
-      'PRODID:-//AnimeTrackr//Anime Schedule//EN',
-      'CALSCALE:GREGORIAN',
-      'METHOD:PUBLISH',
-    ].join('\n')
-
-    favoriteEpisodes.forEach(episode => {
-      const startDate = new Date(episode.episodeDate!)
-      const endDate = new Date(startDate.getTime() + (episode.lengthMin || 24) * 60 * 1000)
-      
-      // Format dates for ICS (YYYYMMDDTHHMMSSZ)
-      const formatDate = (date: Date) => {
-        return date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
-      }
-
-      icsContent += '\n' + [
-        'BEGIN:VEVENT',
-        `UID:${episode.id}-${episode.episodeNumber}@animetrackr.com`,
-        `DTSTART:${formatDate(startDate)}`,
-        `DTEND:${formatDate(endDate)}`,
-        `SUMMARY:${episode.title} - Episode ${episode.episodeNumber}`,
-        `DESCRIPTION:${episode.airType?.toUpperCase()} episode\\n` +
-        `${episode.lengthMin ? `Duration: ${episode.lengthMin} minutes\\n` : ''}` +
-        `${episode.streams && Object.keys(episode.streams).length > 0 ? 
-          `Available on: ${Object.keys(episode.streams).join(', ')}` : ''}`,
-        'CATEGORIES:Anime,Entertainment',
-        'END:VEVENT'
-      ].join('\n')
-    })
-
-    icsContent += '\nEND:VCALENDAR'
-
-    // Create and download file
-    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = 'anime-schedule.ics'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(url)
-  }
-
-  // Filter episodes based on current filters
+  // Filter and deduplicate episodes based on current filters
   const filterEpisodes = (episodes: AnimeBase[]) => {
-    return episodes.filter(episode => {
-      // Air type filter
-      if (filters.airType !== 'all' && episode.airType !== filters.airType) {
-        return false
+    // First deduplicate by title to show only one entry per anime
+    const uniqueEpisodes = new Map<string, AnimeBase>()
+    
+    episodes.forEach(episode => {
+      const title = episode.title
+      if (!uniqueEpisodes.has(title)) {
+        uniqueEpisodes.set(title, episode)
       }
-      
-      // Platform filter
-      if (filters.platform !== 'all') {
-        if (!episode.streams || !Object.keys(episode.streams).includes(filters.platform)) {
-          return false
-        }
-      }
-      
+    })
+    
+    // Then apply filters
+    return Array.from(uniqueEpisodes.values()).filter(episode => {
       // Search filter
       if (filters.search) {
         const searchTerm = filters.search.toLowerCase()
@@ -244,10 +131,6 @@ export const AnimeSchedule = () => {
         }
       }
       
-      // Favorites filter
-      if (filters.favoritesOnly && !favoriteShows.has(episode.title)) {
-        return false
-      }
       
       return true
     })
@@ -257,16 +140,6 @@ export const AnimeSchedule = () => {
   const selectedDayData = filterEpisodes(rawSelectedDayData)
   const selectedDayInfo = DAYS_OF_WEEK.find(day => day.key === selectedDay) || DAYS_OF_WEEK[0]
   
-  // Get available platforms from current day's data for filter dropdown
-  const availablePlatforms = React.useMemo(() => {
-    const platforms = new Set<string>()
-    rawSelectedDayData.forEach(episode => {
-      if (episode.streams) {
-        Object.keys(episode.streams).forEach(platform => platforms.add(platform))
-      }
-    })
-    return Array.from(platforms).sort()
-  }, [rawSelectedDayData])
 
   const LoadingSkeleton = () => <AnimeGridSkeleton count={8} />
 
@@ -295,34 +168,6 @@ export const AnimeSchedule = () => {
               </select>
             </div>
             
-            <div className="flex items-center space-x-4">
-              {/* Notifications Toggle */}
-              <Button
-                onClick={requestNotificationPermission}
-                variant={notificationsEnabled ? "success" : "ghost"}
-                size="xs"
-                title={notificationsEnabled ? 'Notifications enabled' : 'Enable notifications for favorite shows'}
-              >
-                <span>{notificationsEnabled ? '🔔' : '🔕'}</span>
-                <span>{notificationsEnabled ? 'Notifications On' : 'Enable Notifications'}</span>
-              </Button>
-
-              {/* Calendar Export */}
-              <Button
-                onClick={exportToCalendar}
-                variant="secondary"
-                size="xs"
-                title="Export favorite shows to calendar"
-              >
-                <span>📅</span>
-                <span>Export Calendar</span>
-              </Button>
-              
-              <div className="flex items-center space-x-2">
-                <span>🌐</span>
-                <Typography variant="bodySmall" color="muted">Powered by AnimeSchedule.net</Typography>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -366,55 +211,11 @@ export const AnimeSchedule = () => {
             />
           </div>
 
-          {/* Air Type Filter */}
-          <div className="flex items-center space-x-2">
-            <span className="text-sm at-text-muted">📺</span>
-            <select
-              value={filters.airType}
-              onChange={(e) => setFilters(prev => ({ ...prev, airType: e.target.value }))}
-              className="at-bg-surface at-border rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:at-border-focus at-transition-colors at-text-primary"
-            >
-              <option value="all">All Types</option>
-              <option value="raw">🔴 RAW</option>
-              <option value="sub">🟢 SUB</option>
-              <option value="dub">🟣 DUB</option>
-            </select>
-          </div>
-
-          {/* Platform Filter */}
-          <div className="flex items-center space-x-2">
-            <span className="text-sm at-text-muted">📱</span>
-            <select
-              value={filters.platform}
-              onChange={(e) => setFilters(prev => ({ ...prev, platform: e.target.value }))}
-              className="at-bg-surface at-border rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:at-border-focus at-transition-colors at-text-primary"
-            >
-              <option value="all">All Platforms</option>
-              {availablePlatforms.map(platform => (
-                <option key={platform} value={platform}>
-                  {platform.charAt(0).toUpperCase() + platform.slice(1)}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Favorites Filter */}
-          <div className="flex items-center space-x-2">
-            <label className="flex items-center space-x-1 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={filters.favoritesOnly}
-                onChange={(e) => setFilters(prev => ({ ...prev, favoritesOnly: e.target.checked }))}
-                className="rounded at-border text-red-500 focus:ring-red-500"
-              />
-              <Typography variant="bodySmall" color="muted">❤️ Favorites only</Typography>
-            </label>
-          </div>
 
           {/* Filter Results Count */}
-          {(filters.search || filters.airType !== 'all' || filters.platform !== 'all' || filters.favoritesOnly) && (
+          {filters.search && (
             <Typography variant="bodySmall" color="muted">
-              {selectedDayData.length} of {rawSelectedDayData.length} episodes
+              {selectedDayData.length} of {rawSelectedDayData.length} anime
             </Typography>
           )}
         </div>
@@ -440,8 +241,8 @@ export const AnimeSchedule = () => {
                 {selectedDayInfo.emoji} Airing on {selectedDayInfo.label}
               </Typography>
               <Typography variant="body" color="muted">
-                {selectedDayData.length} episode{selectedDayData.length !== 1 ? 's' : ''} 
-                {(filters.search || filters.airType !== 'all' || filters.platform !== 'all' || filters.favoritesOnly) && 
+                {selectedDayData.length} anime{selectedDayData.length !== 1 ? '' : ''} 
+                {filters.search && 
                   ` (${rawSelectedDayData.length} total)`
                 }
               </Typography>
@@ -449,7 +250,6 @@ export const AnimeSchedule = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {selectedDayData.slice(0, 12).map((anime) => {
-                const hasValidId = anime.hasValidId && anime.malId && anime.malId > 0
                 
                 const ContentArea = ({ children }: { children: React.ReactNode }) => {
                   return (
@@ -470,30 +270,25 @@ export const AnimeSchedule = () => {
                         <div className="relative">
                           <Typography variant="h4" weight="semibold" className="mb-2 line-clamp-2 at-transition-colors group-hover:text-blue-600 dark:group-hover:text-blue-400">
                             {anime.title}
-                            {!hasValidId && (
-                              <span className="ml-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900 px-2 py-1 rounded">
-                                Search Fallback
-                              </span>
-                            )}
                           </Typography>
                           
                           <div className="space-y-2 text-sm">
-                            {anime.episodeNumber && (
+                            {(anime as any).episodeNumber && (
                               <div className="flex items-center space-x-2">
                                 <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded text-xs font-medium">
-                                  Episode {anime.episodeNumber}
+                                  Episode {(anime as any).episodeNumber}
                                 </span>
-                                {anime.lengthMin && (
+                                {(anime as any).lengthMin && (
                                   <Typography variant="bodySmall" color="muted">
-                                    {anime.lengthMin}min
+                                    {(anime as any).lengthMin}min
                                   </Typography>
                                 )}
                               </div>
                             )}
                             
-                            {anime.episodeDate && (
+                            {(anime as any).episodeDate && (
                               <Typography variant="bodySmall" color="muted">
-                                🕒 {new Date(anime.episodeDate).toLocaleTimeString([], { 
+                                🕒 {new Date((anime as any).episodeDate).toLocaleTimeString([], { 
                                   hour: '2-digit', 
                                   minute: '2-digit',
                                   timeZone: selectedTimezone,
@@ -501,72 +296,10 @@ export const AnimeSchedule = () => {
                                 })}
                               </Typography>
                             )}
-                            
-                            {anime.airType && (
-                              <div className="flex items-center space-x-2">
-                                <span className={`px-2 py-1 rounded text-xs font-medium ${
-                                  anime.airType === 'raw' ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200' :
-                                  anime.airType === 'sub' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' :
-                                  'bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200'
-                                }`}>
-                                  {anime.airType.toUpperCase()}
-                                </span>
-                                {anime.episodeDelay && (
-                                  <Typography variant="bodySmall" className="text-orange-600 dark:text-orange-400">
-                                    Delayed {anime.episodeDelay}min
-                                  </Typography>
-                                )}
-                              </div>
-                            )}
-                            
-                            {anime.streams && Object.keys(anime.streams).length > 0 && (
-                              <div className="flex flex-wrap gap-1 mt-2">
-                                {Object.keys(anime.streams).slice(0, 3).map((platform) => (
-                                  <span 
-                                    key={platform}
-                                    className="bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 px-2 py-1 rounded text-xs"
-                                  >
-                                    {platform}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
                           </div>
                         </div>
                       </ContentArea>
                     
-                    {/* Non-clickable Action Area */}
-                    <div className="text-right space-y-2">
-                      {/* Favorite Button */}
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          toggleFavorite(anime.title)
-                        }}
-                        className={`p-1 rounded transition-colors ${
-                          favoriteShows.has(anime.title)
-                            ? 'text-red-500 hover:text-red-600'
-                            : 'text-gray-400 hover:text-red-500'
-                        }`}
-                        title={favoriteShows.has(anime.title) ? 'Remove from favorites' : 'Add to favorites'}
-                      >
-                        {favoriteShows.has(anime.title) ? '❤️' : '🤍'}
-                      </button>
-                      
-                      {/* Status Indicator */}
-                      <div className={`w-3 h-3 rounded-full mx-auto ${
-                        anime.airingStatus === 'aired' ? 'bg-green-400' :
-                        anime.airingStatus === 'airing' ? 'bg-blue-400' :
-                        anime.airingStatus === 'delayed' ? 'bg-orange-400' :
-                        'bg-gray-400'
-                      }`} title={anime.airingStatus} />
-                      
-                      {/* Click hint */}
-                      <Typography variant="bodySmall" className="at-text-muted opacity-0 group-hover:opacity-100 at-transition-opacity">
-                        {hasValidId ? 'Click to view' : 'Click to search'}
-                      </Typography>
-                    </div>
                   </div>
                 </div>
                 )
@@ -576,7 +309,7 @@ export const AnimeSchedule = () => {
             {selectedDayData.length > 12 && (
               <div className="text-center mt-6">
                 <Typography variant="bodySmall" color="muted">
-                  Showing 12 of {selectedDayData.length} episodes. More available on AnimeSchedule.net.
+                  Showing 12 of {selectedDayData.length} anime. More available on AnimeSchedule.net.
                 </Typography>
               </div>
             )}

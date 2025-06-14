@@ -70,9 +70,15 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     children,
     ...props 
   }, ref) => {
+    // Check if this is an icon-only button
+    const isIconOnly = !children && (leftIcon || rightIcon)
+    
     return (
       <Component
-        className={cn(buttonVariants({ variant, size, animated, fullWidth, className }))}
+        className={cn(
+          buttonVariants({ variant, size, animated, fullWidth, className }),
+          isIconOnly && 'at-button-icon-only'
+        )}
         ref={ref}
         disabled={disabled || loading}
         {...props}
@@ -97,9 +103,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         )}
         
         {/* Button content */}
-        <span className={cn('at-button-content', loading && 'opacity-0')}>
-          {children}
-        </span>
+        {children && (
+          <span className={cn('at-button-content', loading && 'opacity-0')}>
+            {children}
+          </span>
+        )}
         
         {/* Right icon */}
         {rightIcon && !loading && (

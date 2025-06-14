@@ -317,11 +317,23 @@
 }
 
 /* Remove margins for icon-only buttons */
-.at-button-base:not(:has(.at-button-content:not(:empty))) .at-button-icon-left {
+/* When button only contains icons without content */
+.at-button-base:not(:has(.at-button-content)) .at-button-icon-left,
+.at-button-base .at-button-icon-left:only-child {
   margin-right: 0;
 }
 
-.at-button-base:not(:has(.at-button-content:not(:empty))) .at-button-icon-right {
+.at-button-base:not(:has(.at-button-content)) .at-button-icon-right,
+.at-button-base .at-button-icon-right:only-child {
+  margin-left: 0;
+}
+
+/* Fallback for browsers without :has() support */
+.at-button-icon-only .at-button-icon-left {
+  margin-right: 0;
+}
+
+.at-button-icon-only .at-button-icon-right {
   margin-left: 0;
 }
 

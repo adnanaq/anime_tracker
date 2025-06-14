@@ -163,41 +163,47 @@ export const Link: Story = {
 // === SIZE VARIANTS ===
 
 export const AllSizes: Story = {
-  render: () => (
+  render: (args) => (
     <div className="flex items-center gap-4 flex-wrap">
-      <Button size="xs">Extra Small</Button>
-      <Button size="sm">Small</Button>
-      <Button size="md">Medium</Button>
-      <Button size="lg">Large</Button>
-      <Button size="xl">Extra Large</Button>
+      <Button {...args} size="xs">Extra Small</Button>
+      <Button {...args} size="sm">Small</Button>
+      <Button {...args} size="md">Medium</Button>
+      <Button {...args} size="lg">Large</Button>
+      <Button {...args} size="xl">Extra Large</Button>
     </div>
   ),
+  args: {
+    variant: 'primary'
+  },
   parameters: {
     docs: {
       description: {
-        story: 'Demonstrates all available button sizes from xs to xl.'
+        story: 'Demonstrates all available button sizes from xs to xl. Use controls to change variant, animation, or other properties across all sizes.'
       }
     }
   }
 }
 
 export const AllVariants: Story = {
-  render: () => (
+  render: (args) => (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <Button variant="primary">Primary</Button>
-      <Button variant="secondary">Secondary</Button>
-      <Button variant="success">Success</Button>
-      <Button variant="warning">Warning</Button>
-      <Button variant="danger">Danger</Button>
-      <Button variant="ghost">Ghost</Button>
-      <Button variant="outline">Outline</Button>
-      <Button variant="link">Link</Button>
+      <Button {...args} variant="primary">Primary</Button>
+      <Button {...args} variant="secondary">Secondary</Button>
+      <Button {...args} variant="success">Success</Button>
+      <Button {...args} variant="warning">Warning</Button>
+      <Button {...args} variant="danger">Danger</Button>
+      <Button {...args} variant="ghost">Ghost</Button>
+      <Button {...args} variant="outline">Outline</Button>
+      <Button {...args} variant="link">Link</Button>
     </div>
   ),
+  args: {
+    size: 'md'
+  },
   parameters: {
     docs: {
       description: {
-        story: 'Complete showcase of all button variants with consistent sizing.'
+        story: 'Complete showcase of all button variants with consistent sizing. Use controls to change size, animation, or other properties across all variants.'
       }
     }
   }
@@ -206,45 +212,51 @@ export const AllVariants: Story = {
 // === INTERACTIVE FEATURES ===
 
 export const WithIcons: Story = {
-  render: () => (
+  render: (args) => (
     <div className="flex flex-wrap gap-4">
-      <Button leftIcon={<StarIcon className="h-4 w-4" />}>
+      <Button {...args} leftIcon={<StarIcon className="h-4 w-4" />}>
         Add to Favorites
       </Button>
-      <Button variant="success" rightIcon={<ChevronRightIcon className="h-4 w-4" />}>
+      <Button {...args} variant="success" rightIcon={<ChevronRightIcon className="h-4 w-4" />}>
         Continue
       </Button>
-      <Button variant="outline" leftIcon={<DownloadIcon className="h-4 w-4" />} rightIcon={<ChevronDownIcon className="h-4 w-4" />}>
+      <Button {...args} variant="outline" leftIcon={<DownloadIcon className="h-4 w-4" />} rightIcon={<ChevronDownIcon className="h-4 w-4" />}>
         Download
       </Button>
-      <Button variant="ghost" leftIcon={<ShareIcon className="h-4 w-4" />}>
+      <Button {...args} variant="ghost" leftIcon={<ShareIcon className="h-4 w-4" />}>
         Share
       </Button>
     </div>
   ),
+  args: {
+    size: 'md'
+  },
   parameters: {
     docs: {
       description: {
-        story: 'Buttons with left icons, right icons, and both icons combined.'
+        story: 'Buttons with left icons, right icons, and both icons combined. Use controls to change size, animation, or other properties across all icon buttons.'
       }
     }
   }
 }
 
 export const IconOnly: Story = {
-  render: () => (
+  render: (args) => (
     <div className="flex gap-2 items-center">
-      <Button size="xs" leftIcon={<HeartIcon className="h-3 w-3" />} aria-label="Like" />
-      <Button size="sm" leftIcon={<BookmarkIcon className="h-4 w-4" />} aria-label="Bookmark" />
-      <Button size="md" leftIcon={<PlayIcon className="h-5 w-5" />} aria-label="Play" />
-      <Button size="lg" leftIcon={<EditIcon className="h-6 w-6" />} aria-label="Edit" />
-      <Button size="xl" leftIcon={<TrashIcon className="h-7 w-7" />} variant="danger" aria-label="Delete" />
+      <Button {...args} size="xs" leftIcon={<HeartIcon className="h-3 w-3" />} aria-label="Like" />
+      <Button {...args} size="sm" leftIcon={<BookmarkIcon className="h-4 w-4" />} aria-label="Bookmark" />
+      <Button {...args} size="md" leftIcon={<PlayIcon className="h-5 w-5" />} aria-label="Play" />
+      <Button {...args} size="lg" leftIcon={<EditIcon className="h-6 w-6" />} aria-label="Edit" />
+      <Button {...args} size="xl" leftIcon={<TrashIcon className="h-7 w-7" />} variant="danger" aria-label="Delete" />
     </div>
   ),
+  args: {
+    variant: 'primary'
+  },
   parameters: {
     docs: {
       description: {
-        story: 'Icon-only buttons with proper ARIA labels for accessibility.'
+        story: 'Icon-only buttons with proper ARIA labels for accessibility. Use controls to change variant, animation, or other properties across all icon-only buttons.'
       }
     }
   }

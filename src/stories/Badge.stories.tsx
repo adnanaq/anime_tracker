@@ -144,18 +144,21 @@ export const Outline: Story = {
 
 // === SIZE VARIANTS ===
 export const AllSizes: Story = {
-  render: () => (
+  render: (args) => (
     <div className="flex items-center gap-4 flex-wrap">
-      <Badge size="xs" variant="primary">Extra Small</Badge>
-      <Badge size="sm" variant="primary">Small</Badge>
-      <Badge size="md" variant="primary">Medium</Badge>
-      <Badge size="lg" variant="primary">Large</Badge>
+      <Badge {...args} size="xs">Extra Small</Badge>
+      <Badge {...args} size="sm">Small</Badge>
+      <Badge {...args} size="md">Medium</Badge>
+      <Badge {...args} size="lg">Large</Badge>
     </div>
   ),
+  args: {
+    variant: 'primary'
+  },
   parameters: {
     docs: {
       description: {
-        story: 'Different size variants from extra small to large.'
+        story: 'Different size variants from extra small to large. Use controls to change variant, shape, or interactive properties across all sizes.'
       }
     }
   }
@@ -163,17 +166,20 @@ export const AllSizes: Story = {
 
 // === SHAPE VARIANTS ===
 export const AllShapes: Story = {
-  render: () => (
+  render: (args) => (
     <div className="flex items-center gap-4 flex-wrap">
-      <Badge shape="rounded" variant="success">Rounded</Badge>
-      <Badge shape="pill" variant="success">Pill</Badge>
-      <Badge shape="square" variant="success">Square</Badge>
+      <Badge {...args} shape="rounded">Rounded</Badge>
+      <Badge {...args} shape="pill">Pill</Badge>
+      <Badge {...args} shape="square">Square</Badge>
     </div>
   ),
+  args: {
+    variant: 'success'
+  },
   parameters: {
     docs: {
       description: {
-        story: 'Different shape variants: rounded corners, pill-shaped, and square corners.'
+        story: 'Different shape variants: rounded corners, pill-shaped, and square corners. Use controls to change variant, size, or interactive properties across all shapes.'
       }
     }
   }
@@ -181,22 +187,25 @@ export const AllShapes: Story = {
 
 // === COLOR SHOWCASE ===
 export const AllVariants: Story = {
-  render: () => (
+  render: (args) => (
     <div className="flex items-center gap-2 flex-wrap">
-      <Badge variant="primary">Primary</Badge>
-      <Badge variant="secondary">Secondary</Badge>
-      <Badge variant="success">Success</Badge>
-      <Badge variant="warning">Warning</Badge>
-      <Badge variant="danger">Danger</Badge>
-      <Badge variant="info">Info</Badge>
-      <Badge variant="neutral">Neutral</Badge>
-      <Badge variant="outline">Outline</Badge>
+      <Badge {...args} variant="primary">Primary</Badge>
+      <Badge {...args} variant="secondary">Secondary</Badge>
+      <Badge {...args} variant="success">Success</Badge>
+      <Badge {...args} variant="warning">Warning</Badge>
+      <Badge {...args} variant="danger">Danger</Badge>
+      <Badge {...args} variant="info">Info</Badge>
+      <Badge {...args} variant="neutral">Neutral</Badge>
+      <Badge {...args} variant="outline">Outline</Badge>
     </div>
   ),
+  args: {
+    size: 'sm'
+  },
   parameters: {
     docs: {
       description: {
-        story: 'All available color variants displayed together.'
+        story: 'All available color variants displayed together. Use controls to change size, shape, or interactive properties across all variants.'
       }
     }
   }

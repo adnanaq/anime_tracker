@@ -173,22 +173,25 @@ export const Label: Story = {
 
 // Color Variants
 export const ColorVariants: Story = {
-  render: () => (
+  render: (args) => (
     <div className="space-y-4">
-      <Typography color="primary">Primary text color for main content</Typography>
-      <Typography color="secondary">Secondary text color for supporting content</Typography>
-      <Typography color="tertiary">Tertiary text color for subtle information</Typography>
-      <Typography color="muted">Muted text color for disabled or inactive content</Typography>
-      <Typography color="success">Success text color for positive messages</Typography>
-      <Typography color="warning">Warning text color for cautionary messages</Typography>
-      <Typography color="danger">Danger text color for error messages</Typography>
-      <Typography color="info">Info text color for informational messages</Typography>
+      <Typography {...args} color="primary">Primary text color for main content</Typography>
+      <Typography {...args} color="secondary">Secondary text color for supporting content</Typography>
+      <Typography {...args} color="tertiary">Tertiary text color for subtle information</Typography>
+      <Typography {...args} color="muted">Muted text color for disabled or inactive content</Typography>
+      <Typography {...args} color="success">Success text color for positive messages</Typography>
+      <Typography {...args} color="warning">Warning text color for cautionary messages</Typography>
+      <Typography {...args} color="danger">Danger text color for error messages</Typography>
+      <Typography {...args} color="info">Info text color for informational messages</Typography>
     </div>
   ),
+  args: {
+    variant: 'body'
+  },
   parameters: {
     docs: {
       description: {
-        story: 'All available color variants with semantic meanings and proper contrast ratios.'
+        story: 'All available color variants with semantic meanings and proper contrast ratios. Use controls to change variant, weight, or alignment across all colors.'
       }
     }
   }
@@ -196,20 +199,24 @@ export const ColorVariants: Story = {
 
 // Font Weights
 export const FontWeights: Story = {
-  render: () => (
+  render: (args) => (
     <div className="space-y-4">
-      <Typography weight="light">Light weight text (300)</Typography>
-      <Typography weight="normal">Normal weight text (400)</Typography>
-      <Typography weight="medium">Medium weight text (500)</Typography>
-      <Typography weight="semibold">Semibold weight text (600)</Typography>
-      <Typography weight="bold">Bold weight text (700)</Typography>
-      <Typography weight="extrabold">Extrabold weight text (800)</Typography>
+      <Typography {...args} weight="light">Light weight text (300)</Typography>
+      <Typography {...args} weight="normal">Normal weight text (400)</Typography>
+      <Typography {...args} weight="medium">Medium weight text (500)</Typography>
+      <Typography {...args} weight="semibold">Semibold weight text (600)</Typography>
+      <Typography {...args} weight="bold">Bold weight text (700)</Typography>
+      <Typography {...args} weight="extrabold">Extrabold weight text (800)</Typography>
     </div>
   ),
+  args: {
+    variant: 'body',
+    color: 'primary'
+  },
   parameters: {
     docs: {
       description: {
-        story: 'Font weight options for emphasis and hierarchy.'
+        story: 'Font weight options for emphasis and hierarchy. Use controls to change variant, color, or alignment across all weights.'
       }
     }
   }

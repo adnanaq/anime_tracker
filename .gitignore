@@ -95,9 +95,13 @@ dist-ssr
 
 # Temporary folders
 tmp/
-temp/issue.txt
+temp/
 
-proxy.log
+# Exclude text and log files
 *.txt
+*.log
 *storybook.log
+story.md
+
+# Storybook
 storybook-static

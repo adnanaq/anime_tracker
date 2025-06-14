@@ -518,3 +518,45 @@ export const AccessibilityDemo: Story = {
     }
   }
 }
+
+// === PLAYGROUND ===
+
+export const Playground: Story = {
+  args: {
+    children: 'Playground Badge',
+    variant: 'primary',
+    size: 'sm',
+    shape: 'rounded',
+    interactive: false,
+    animated: false,
+    icon: undefined,
+    onRemove: undefined
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+**Full Control Playground**
+
+This story gives you complete control over every Badge property. Perfect for:
+- Testing different combinations of properties
+- Experimenting with edge cases
+- Interactive development and debugging
+- Checking behavior with custom configurations
+
+**Available Controls:**
+- \`children\`: Badge text content
+- \`variant\`: Color variant (primary, secondary, success, warning, danger, info, neutral, outline)
+- \`size\`: Size variant (xs, sm, md, lg)
+- \`shape\`: Shape variant (rounded, pill, square)
+- \`interactive\`: Enable hover/click effects
+- \`animated\`: Enable animation effects
+- \`icon\`: Add an icon (Note: Use Badge stories with icons for icon examples)
+- \`onRemove\`: Add remove functionality (set to any function to enable)
+
+**Usage:** Change any control to see immediate effects. Unlike showcase stories that demonstrate specific features, this playground lets you test any combination of properties.
+        `
+      }
+    }
+  }
+}

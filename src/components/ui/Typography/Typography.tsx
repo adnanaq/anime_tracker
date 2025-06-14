@@ -22,11 +22,11 @@ const typographyVariants = cva(
         label: 'at-typography-label'
       },
       color: {
-        primary: 'at-text-primary',
-        secondary: 'at-text-secondary',
-        tertiary: 'at-text-tertiary',
-        inverse: 'at-text-inverse',
-        muted: 'at-text-muted',
+        primary: 'text-gray-900 dark:text-white',
+        secondary: 'text-gray-700 dark:text-gray-200',
+        tertiary: 'text-gray-500 dark:text-gray-400',
+        inverse: 'text-white dark:text-gray-900',
+        muted: 'text-gray-400 dark:text-gray-500',
         success: 'text-green-600 dark:text-green-400',
         warning: 'text-yellow-600 dark:text-yellow-400',
         danger: 'text-red-600 dark:text-red-400',
@@ -110,6 +110,26 @@ export const Typography = forwardRef<HTMLElement, TypographyProps>(
     // Determine the HTML element to render
     const Element = as || variantElementMap[variant || 'body'] || 'p'
     
+    // Apply default weights based on variant if no weight is specified
+    const effectiveWeight = weight || (() => {
+      switch (variant) {
+        case 'h1':
+        case 'h2':
+          return 'bold'
+        case 'h3':
+        case 'h4':
+        case 'h5':
+        case 'h6':
+          return 'semibold'
+        case 'overline':
+          return 'semibold'
+        case 'label':
+          return 'medium'
+        default:
+          return 'normal'
+      }
+    })()
+    
     return React.createElement(
       Element,
       {
@@ -117,7 +137,7 @@ export const Typography = forwardRef<HTMLElement, TypographyProps>(
           typographyVariants({ 
             variant, 
             color, 
-            weight, 
+            weight: effectiveWeight, 
             align, 
             truncate, 
             lineClamp,

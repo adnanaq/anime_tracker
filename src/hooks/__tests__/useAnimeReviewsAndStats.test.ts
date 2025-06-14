@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '@testing-library/react'
+import { renderHook, waitFor, act } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest'
 import { useAnimeReviewsAndStats } from '../useAnimeReviewsAndStats'
 import { jikanService } from '../../services/jikan'

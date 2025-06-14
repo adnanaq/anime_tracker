@@ -237,6 +237,26 @@ describe('debounce utilities', () => {
       expect(onChange).not.toHaveBeenCalled()
       expect(debouncedValue.getDebouncedValue()).toBe('initial')
     })
+
+    it('should clear existing timeout when setting new value', () => {
+      const onChange = vi.fn()
+      const debouncedValue = createDebouncedValue('initial', 100, onChange)
+
+      // Set first value
+      debouncedValue.setValue('first')
+      expect(debouncedValue.pending()).toBe(true)
+      
+      // Set second value before first timeout completes (this should clear the first timeout)
+      debouncedValue.setValue('second')
+      expect(debouncedValue.pending()).toBe(true)
+      expect(debouncedValue.getValue()).toBe('second')
+
+      // Only the second value should be processed
+      vi.advanceTimersByTime(100)
+      expect(onChange).toHaveBeenCalledTimes(1)
+      expect(onChange).toHaveBeenCalledWith('second')
+      expect(debouncedValue.getDebouncedValue()).toBe('second')
+    })
   })
 
   describe('throttle', () => {

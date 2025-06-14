@@ -1,60 +1,60 @@
-import React, { useState, useEffect } from 'react'
-import { AnimeBase } from '../../types/anime'
-import { useNavigate } from 'react-router-dom'
-import './ExpandingAnimeCards.css'
+import React, { useState, useEffect } from "react";
+import { AnimeBase } from "../../types/anime";
+import { useNavigate } from "react-router-dom";
+import "./ExpandingAnimeCards.css";
 
 interface ExpandingAnimeCardsProps {
-  anime: AnimeBase[]
-  title?: string
-  variant?: 'horizontal' | 'vertical' | 'grid'
-  maxCards?: number
-  interactive?: boolean
+  anime: AnimeBase[];
+  title?: string;
+  variant?: "horizontal" | "vertical" | "grid";
+  maxCards?: number;
+  interactive?: boolean;
 }
 
 export const ExpandingAnimeCards: React.FC<ExpandingAnimeCardsProps> = ({
   anime,
   title = "Featured Anime",
-  variant = 'horizontal',
+  variant = "horizontal",
   maxCards = 6,
-  interactive = true
+  interactive = true,
 }) => {
-  const navigate = useNavigate()
-  const [selectedIndex, setSelectedIndex] = useState(0)
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
-  
-  const displayAnime = anime.slice(0, maxCards)
+  const navigate = useNavigate();
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  const displayAnime = anime.slice(0, maxCards);
 
   const handleCardClick = (index: number, animeItem: AnimeBase) => {
     // Skip click interactions if not interactive
-    if (!interactive) return
-    
-    if (variant === 'grid') {
+    if (!interactive) return;
+
+    if (variant === "grid") {
       // For grid variant, navigate directly
-      navigate(`/anime/${animeItem.source}/${animeItem.id}`)
+      navigate(`/anime/${animeItem.source}/${animeItem.id}`);
     } else {
       // For horizontal/vertical variants, set as selected
-      setSelectedIndex(index)
+      setSelectedIndex(index);
     }
-  }
+  };
 
   const handleNavigate = (animeItem: AnimeBase) => {
     // Skip navigation if not interactive
-    if (!interactive) return
-    navigate(`/anime/${animeItem.source}/${animeItem.id}`)
-  }
+    if (!interactive) return;
+    navigate(`/anime/${animeItem.source}/${animeItem.id}`);
+  };
 
   // Auto-rotate for horizontal variant
   useEffect(() => {
-    if (variant === 'horizontal' && displayAnime.length > 1) {
+    if (variant === "horizontal" && displayAnime.length > 1) {
       const interval = setInterval(() => {
-        setSelectedIndex(prev => (prev + 1) % displayAnime.length)
-      }, 8000) // Change every 8 seconds
-      
-      return () => clearInterval(interval)
-    }
-  }, [variant, displayAnime.length])
+        setSelectedIndex((prev) => (prev + 1) % displayAnime.length);
+      }, 8000); // Change every 8 seconds
 
-  if (variant === 'horizontal') {
+      return () => clearInterval(interval);
+    }
+  }, [variant, displayAnime.length]);
+
+  if (variant === "horizontal") {
     return (
       <div className="expanding-cards-container mb-12">
         {title && (
@@ -62,14 +62,16 @@ export const ExpandingAnimeCards: React.FC<ExpandingAnimeCardsProps> = ({
             {title}
           </h2>
         )}
-        
+
         <div className="horizontal-panels">
           {displayAnime.map((animeItem, index) => (
             <div
               key={`${animeItem.source}-${animeItem.id}`}
-              className={`panel ${index === selectedIndex ? 'active' : ''}`}
+              className={`panel ${index === selectedIndex ? "active" : ""}`}
               style={{
-                backgroundImage: `url(${animeItem.coverImage || animeItem.image})`,
+                backgroundImage: `url(${
+                  animeItem.coverImage || animeItem.image
+                })`,
               }}
               onClick={() => handleCardClick(index, animeItem)}
               onMouseEnter={() => setHoveredIndex(index)}
@@ -92,8 +94,8 @@ export const ExpandingAnimeCards: React.FC<ExpandingAnimeCardsProps> = ({
                     <div className="panel-actions">
                       <button
                         onClick={(e) => {
-                          e.stopPropagation()
-                          handleNavigate(animeItem)
+                          e.stopPropagation();
+                          handleNavigate(animeItem);
                         }}
                         className="view-details-btn"
                       >
@@ -112,75 +114,13 @@ export const ExpandingAnimeCards: React.FC<ExpandingAnimeCardsProps> = ({
           {displayAnime.map((_, index) => (
             <button
               key={index}
-              className={`dot ${index === selectedIndex ? 'active' : ''}`}
+              className={`dot ${index === selectedIndex ? "active" : ""}`}
               onClick={() => setSelectedIndex(index)}
             />
           ))}
         </div>
       </div>
-    )
-  }
-
-  if (variant === 'vertical') {
-    return (
-      <div className="expanding-cards-container mb-12">
-        {title && (
-          <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">
-            {title}
-          </h2>
-        )}
-        
-        <div className="vertical-cards">
-          {displayAnime.map((animeItem, index) => (
-            <div
-              key={`${animeItem.source}-${animeItem.id}`}
-              className={`vertical-card ${index === selectedIndex ? 'selected' : ''} ${
-                hoveredIndex === index ? 'hovered' : ''
-              }`}
-              style={{
-                backgroundImage: `url(${animeItem.coverImage || animeItem.image})`,
-              }}
-              onClick={() => handleCardClick(index, animeItem)}
-              onMouseEnter={() => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
-            >
-              <div className="vertical-overlay">
-                <h3 className="vertical-title">{animeItem.title}</h3>
-                <h3 className="vertical-title-bottom">{animeItem.title}</h3>
-              </div>
-              
-              {index === selectedIndex && (
-                <div className="vertical-details">
-                  <p className="vertical-synopsis">
-                    {animeItem.synopsis?.substring(0, 150)}...
-                  </p>
-                  <div className="vertical-stats">
-                    {animeItem.score && (
-                      <span className="stat-item">⭐ {animeItem.score.toFixed(1)}</span>
-                    )}
-                    {animeItem.episodes && (
-                      <span className="stat-item">📺 {animeItem.episodes} eps</span>
-                    )}
-                    {animeItem.year && (
-                      <span className="stat-item">📅 {animeItem.year}</span>
-                    )}
-                  </div>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleNavigate(animeItem)
-                    }}
-                    className="vertical-action-btn"
-                  >
-                    View Full Details
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    )
+    );
   }
 
   // Grid variant
@@ -191,12 +131,12 @@ export const ExpandingAnimeCards: React.FC<ExpandingAnimeCardsProps> = ({
           {title}
         </h2>
       )}
-      
+
       <div className="grid-container">
         {displayAnime.map((animeItem, index) => (
           <div
             key={`${animeItem.source}-${animeItem.id}`}
-            className={`grid-card ${hoveredIndex === index ? 'expanded' : ''}`}
+            className={`grid-card ${hoveredIndex === index ? "expanded" : ""}`}
             onClick={() => handleCardClick(index, animeItem)}
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
@@ -217,7 +157,9 @@ export const ExpandingAnimeCards: React.FC<ExpandingAnimeCardsProps> = ({
                       </p>
                       <div className="grid-stats">
                         {animeItem.score && (
-                          <span className="grid-stat">⭐ {animeItem.score.toFixed(1)}</span>
+                          <span className="grid-stat">
+                            ⭐ {animeItem.score.toFixed(1)}
+                          </span>
                         )}
                         {animeItem.year && (
                           <span className="grid-stat">{animeItem.year}</span>
@@ -232,7 +174,7 @@ export const ExpandingAnimeCards: React.FC<ExpandingAnimeCardsProps> = ({
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ExpandingAnimeCards
+export default ExpandingAnimeCards;

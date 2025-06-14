@@ -78,6 +78,18 @@ describe('theme utilities', () => {
         value: mockMatchMedia
       })
     })
+
+    it('should return light in SSR environment', () => {
+      // Mock SSR environment
+      const originalWindow = global.window
+      // @ts-ignore
+      delete global.window
+
+      expect(detectSystemTheme()).toBe('light')
+
+      // Restore window
+      global.window = originalWindow
+    })
   })
 
   describe('getInitialTheme', () => {
@@ -99,6 +111,16 @@ describe('theme utilities', () => {
       
       expect(getInitialTheme()).toBe('light')
     })
+
+    it('should return light in SSR environment', () => {
+      const originalWindow = global.window
+      // @ts-ignore
+      delete global.window
+
+      expect(getInitialTheme()).toBe('light')
+
+      global.window = originalWindow
+    })
   })
 
   describe('saveThemeToStorage', () => {
@@ -119,6 +141,16 @@ describe('theme utilities', () => {
       
       expect(mockLocalStorage.setItem).not.toHaveBeenCalled()
     })
+
+    it('should handle SSR environment gracefully', () => {
+      const originalWindow = global.window
+      // @ts-ignore
+      delete global.window
+
+      expect(() => saveThemeToStorage('dark')).not.toThrow()
+
+      global.window = originalWindow
+    })
   })
 
   describe('getSavedTheme', () => {
@@ -136,6 +168,16 @@ describe('theme utilities', () => {
       mockLocalStorage.setItem('theme', 'invalid-theme')
       
       expect(getSavedTheme()).toBeNull()
+    })
+
+    it('should return null in SSR environment', () => {
+      const originalWindow = global.window
+      // @ts-ignore
+      delete global.window
+
+      expect(getSavedTheme()).toBeNull()
+
+      global.window = originalWindow
     })
   })
 
@@ -185,6 +227,16 @@ describe('theme utilities', () => {
     it('should return false when no theme is saved', () => {
       expect(hasUserThemePreference()).toBe(false)
     })
+
+    it('should return false in SSR environment', () => {
+      const originalWindow = global.window
+      // @ts-ignore
+      delete global.window
+
+      expect(hasUserThemePreference()).toBe(false)
+
+      global.window = originalWindow
+    })
   })
 
   describe('clearSavedTheme', () => {
@@ -193,6 +245,16 @@ describe('theme utilities', () => {
       clearSavedTheme()
       
       expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('theme')
+    })
+
+    it('should handle SSR environment gracefully', () => {
+      const originalWindow = global.window
+      // @ts-ignore
+      delete global.window
+
+      expect(() => clearSavedTheme()).not.toThrow()
+
+      global.window = originalWindow
     })
   })
 
@@ -282,6 +344,23 @@ describe('theme utilities', () => {
       changeHandler({ matches: true })
       
       expect(callback).toHaveBeenCalledWith('dark')
+    })
+
+    it('should return no-op cleanup function in SSR environment', () => {
+      // Mock SSR environment by removing window
+      const originalWindow = global.window
+      // @ts-ignore
+      delete global.window
+
+      const callback = vi.fn()
+      const cleanup = createSystemThemeListener(callback)
+      
+      // Should return a function that does nothing
+      expect(typeof cleanup).toBe('function')
+      cleanup() // Should not throw
+
+      // Restore window
+      global.window = originalWindow
     })
   })
 })

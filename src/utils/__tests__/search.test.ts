@@ -328,6 +328,18 @@ describe('search utilities', () => {
       const result = sortByRelevance(items, '', item => item.title)
       expect(result).toEqual(items)
     })
+
+    it('should use alphabetical order as final tiebreaker', () => {
+      // Items with same query match position (both contain 'test' at index 0) should be sorted alphabetically
+      const itemsWithSamePosition = [
+        { id: 1, title: 'test zebra' },
+        { id: 2, title: 'test alpha' }
+      ]
+      
+      const result = sortByRelevance(itemsWithSamePosition, 'test', item => item.title)
+      expect(result[0].id).toBe(2) // 'test alpha' comes before 'test zebra' alphabetically
+      expect(result[1].id).toBe(1)
+    })
   })
 
   describe('paginateResults', () => {

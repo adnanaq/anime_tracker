@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest'
 import {
   getStatusOptions,
   getStatusLabel,
+  getStatusColor,
+  getStatusIcon,
   convertStatusBetweenSources,
   getAllStatusValues,
   isValidStatus
@@ -124,6 +126,60 @@ describe('animeStatus utilities', () => {
     it('should handle jikan as MAL equivalent', () => {
       expect(isValidStatus('watching', 'jikan' as any)).toBe(true)
       expect(isValidStatus('CURRENT', 'jikan' as any)).toBe(false)
+    })
+  })
+
+  describe('getStatusColor', () => {
+    it('should return default color for null status', () => {
+      expect(getStatusColor(null)).toBe('bg-green-500 hover:bg-green-600')
+    })
+
+    it('should return colors for MAL statuses', () => {
+      expect(getStatusColor('watching')).toBe('bg-blue-500 hover:bg-blue-600')
+      expect(getStatusColor('completed')).toBe('bg-green-500 hover:bg-green-600')
+      expect(getStatusColor('plan_to_watch')).toBe('bg-yellow-500 hover:bg-yellow-600')
+      expect(getStatusColor('on_hold')).toBe('bg-orange-500 hover:bg-orange-600')
+      expect(getStatusColor('dropped')).toBe('bg-red-500 hover:bg-red-600')
+    })
+
+    it('should return colors for AniList statuses', () => {
+      expect(getStatusColor('CURRENT')).toBe('bg-blue-500 hover:bg-blue-600')
+      expect(getStatusColor('COMPLETED')).toBe('bg-green-500 hover:bg-green-600')
+      expect(getStatusColor('PLANNING')).toBe('bg-yellow-500 hover:bg-yellow-600')
+      expect(getStatusColor('PAUSED')).toBe('bg-orange-500 hover:bg-orange-600')
+      expect(getStatusColor('DROPPED')).toBe('bg-red-500 hover:bg-red-600')
+      expect(getStatusColor('REPEATING')).toBe('bg-purple-500 hover:bg-purple-600')
+    })
+
+    it('should return default color for unknown status', () => {
+      expect(getStatusColor('unknown')).toBe('bg-gray-500 hover:bg-gray-600')
+    })
+  })
+
+  describe('getStatusIcon', () => {
+    it('should return default icon for null status', () => {
+      expect(getStatusIcon(null)).toBe('➕')
+    })
+
+    it('should return icons for MAL statuses', () => {
+      expect(getStatusIcon('watching')).toBe('👁️')
+      expect(getStatusIcon('completed')).toBe('✅')
+      expect(getStatusIcon('plan_to_watch')).toBe('📋')
+      expect(getStatusIcon('on_hold')).toBe('⏸️')
+      expect(getStatusIcon('dropped')).toBe('❌')
+    })
+
+    it('should return icons for AniList statuses', () => {
+      expect(getStatusIcon('CURRENT')).toBe('👁️')
+      expect(getStatusIcon('COMPLETED')).toBe('✅')
+      expect(getStatusIcon('PLANNING')).toBe('📋')
+      expect(getStatusIcon('PAUSED')).toBe('⏸️')
+      expect(getStatusIcon('DROPPED')).toBe('❌')
+      expect(getStatusIcon('REPEATING')).toBe('🔁')
+    })
+
+    it('should return default icon for unknown status', () => {
+      expect(getStatusIcon('unknown')).toBe('📺')
     })
   })
 })

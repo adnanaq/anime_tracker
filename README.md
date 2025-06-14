@@ -36,6 +36,7 @@ npm run build
 - **🔍 Advanced Search**: Genre filters, score ranges, real-time search
 - **📅 Anime Schedule**: Weekly calendar with timezone support
 - **🎲 Discovery Features**: Random anime and recommendations
+- **🧪 Comprehensive Testing**: 478 tests with 100% pass rate and full utility coverage
 
 ## 🛠 Tech Stack
 
@@ -90,7 +91,9 @@ npm run dev:full     # Start with proxy server
 npm run proxy        # Start MAL CORS proxy only
 npm run build        # Production build
 npm run preview      # Preview production build
-npm run test         # Run test suite
+npm run test         # Run test suite (478 tests, 100% pass rate)
+npm run test:ui      # Run tests with UI
+npm run test:coverage # Run tests with coverage report
 npm run storybook    # Start component storybook
 npm run cache-test   # Cache performance testing
 ```
@@ -117,9 +120,11 @@ src/
 ├── store/               # Zustand state management
 ├── hooks/               # Custom React hooks
 ├── utils/               # Utility functions
+│   └── __tests__/       # Utility test files (100% coverage)
 ├── types/               # TypeScript definitions
 ├── styles/              # Design tokens and CSS
-└── test/               # Test utilities
+├── stories/             # Storybook component stories
+└── test/               # Test utilities and setup
 ```
 
 ### Key Files

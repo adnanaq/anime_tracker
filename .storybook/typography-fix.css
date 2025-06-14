@@ -1,0 +1,47 @@
+/* Storybook Typography Visibility Fix */
+
+/* Ensure Typography components are visible on white backgrounds */
+.at-typography-base {
+  color: #1f2937 !important; /* gray-800 - dark enough to read on white */
+}
+
+/* Override specific color variants for better Storybook visibility */
+.at-typography-base.text-gray-900 {
+  color: #111827 !important; /* Ensure primary text is very dark */
+}
+
+.at-typography-base.text-gray-700 {
+  color: #374151 !important; /* Ensure secondary text is readable */
+}
+
+.at-typography-base.text-gray-500 {
+  color: #6b7280 !important; /* Ensure tertiary text is readable */
+}
+
+.at-typography-base.text-gray-400 {
+  color: #9ca3af !important; /* Ensure muted text is readable */
+}
+
+.at-typography-base.text-white {
+  color: #ffffff !important;
+  background-color: #1f2937;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+/* Ensure semantic colors are visible */
+.at-typography-base.text-green-600 {
+  color: #059669 !important;
+}
+
+.at-typography-base.text-yellow-600 {
+  color: #d97706 !important;
+}
+
+.at-typography-base.text-red-600 {
+  color: #dc2626 !important;
+}
+
+.at-typography-base.text-blue-600 {
+  color: #2563eb !important;
+}

@@ -144,21 +144,25 @@ export const Outline: Story = {
 
 // === SIZE VARIANTS ===
 export const AllSizes: Story = {
-  render: (args) => (
-    <div className="flex items-center gap-4 flex-wrap">
-      <Badge {...args} size="xs">Extra Small</Badge>
-      <Badge {...args} size="sm">Small</Badge>
-      <Badge {...args} size="md">Medium</Badge>
-      <Badge {...args} size="lg">Large</Badge>
-    </div>
-  ),
+  render: (args) => {
+    const { size, ...otherArgs } = args
+    return (
+      <div className="flex items-center gap-4 flex-wrap">
+        <Badge {...otherArgs} size="xs">{args.children || 'Extra Small'}</Badge>
+        <Badge {...otherArgs} size="sm">{args.children || 'Small'}</Badge>
+        <Badge {...otherArgs} size="md">{args.children || 'Medium'}</Badge>
+        <Badge {...otherArgs} size="lg">{args.children || 'Large'}</Badge>
+      </div>
+    )
+  },
   args: {
-    variant: 'primary'
+    variant: 'primary',
+    children: 'Badge'
   },
   parameters: {
     docs: {
       description: {
-        story: 'Different size variants from extra small to large. Use controls to change variant, shape, or interactive properties across all sizes.'
+        story: 'Different size variants from extra small to large. Use controls to change variant, shape, children text, or interactive properties (size is fixed to show all sizes).'
       }
     }
   }
@@ -166,20 +170,24 @@ export const AllSizes: Story = {
 
 // === SHAPE VARIANTS ===
 export const AllShapes: Story = {
-  render: (args) => (
-    <div className="flex items-center gap-4 flex-wrap">
-      <Badge {...args} shape="rounded">Rounded</Badge>
-      <Badge {...args} shape="pill">Pill</Badge>
-      <Badge {...args} shape="square">Square</Badge>
-    </div>
-  ),
+  render: (args) => {
+    const { shape, ...otherArgs } = args
+    return (
+      <div className="flex items-center gap-4 flex-wrap">
+        <Badge {...otherArgs} shape="rounded">{args.children || 'Rounded'}</Badge>
+        <Badge {...otherArgs} shape="pill">{args.children || 'Pill'}</Badge>
+        <Badge {...otherArgs} shape="square">{args.children || 'Square'}</Badge>
+      </div>
+    )
+  },
   args: {
-    variant: 'success'
+    variant: 'success',
+    children: 'Badge'
   },
   parameters: {
     docs: {
       description: {
-        story: 'Different shape variants: rounded corners, pill-shaped, and square corners. Use controls to change variant, size, or interactive properties across all shapes.'
+        story: 'Different shape variants: rounded corners, pill-shaped, and square corners. Use controls to change variant, size, children text, or interactive properties (shape is fixed to show all shapes).'
       }
     }
   }
@@ -187,25 +195,29 @@ export const AllShapes: Story = {
 
 // === COLOR SHOWCASE ===
 export const AllVariants: Story = {
-  render: (args) => (
-    <div className="flex items-center gap-2 flex-wrap">
-      <Badge {...args} variant="primary">Primary</Badge>
-      <Badge {...args} variant="secondary">Secondary</Badge>
-      <Badge {...args} variant="success">Success</Badge>
-      <Badge {...args} variant="warning">Warning</Badge>
-      <Badge {...args} variant="danger">Danger</Badge>
-      <Badge {...args} variant="info">Info</Badge>
-      <Badge {...args} variant="neutral">Neutral</Badge>
-      <Badge {...args} variant="outline">Outline</Badge>
-    </div>
-  ),
+  render: (args) => {
+    const { variant, ...otherArgs } = args
+    return (
+      <div className="flex items-center gap-2 flex-wrap">
+        <Badge {...otherArgs} variant="primary">{args.children || 'Primary'}</Badge>
+        <Badge {...otherArgs} variant="secondary">{args.children || 'Secondary'}</Badge>
+        <Badge {...otherArgs} variant="success">{args.children || 'Success'}</Badge>
+        <Badge {...otherArgs} variant="warning">{args.children || 'Warning'}</Badge>
+        <Badge {...otherArgs} variant="danger">{args.children || 'Danger'}</Badge>
+        <Badge {...otherArgs} variant="info">{args.children || 'Info'}</Badge>
+        <Badge {...otherArgs} variant="neutral">{args.children || 'Neutral'}</Badge>
+        <Badge {...otherArgs} variant="outline">{args.children || 'Outline'}</Badge>
+      </div>
+    )
+  },
   args: {
-    size: 'sm'
+    size: 'sm',
+    children: 'Badge'
   },
   parameters: {
     docs: {
       description: {
-        story: 'All available color variants displayed together. Use controls to change size, shape, or interactive properties across all variants.'
+        story: 'All available color variants displayed together. Use controls to change size, shape, children text, or interactive properties (variant is fixed to show all variants).'
       }
     }
   }

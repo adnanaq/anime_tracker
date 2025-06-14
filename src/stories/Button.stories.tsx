@@ -163,15 +163,18 @@ export const Link: Story = {
 // === SIZE VARIANTS ===
 
 export const AllSizes: Story = {
-  render: (args) => (
-    <div className="flex items-center gap-4 flex-wrap">
-      <Button {...args} size="xs">{args.children || 'Extra Small'}</Button>
-      <Button {...args} size="sm">{args.children || 'Small'}</Button>
-      <Button {...args} size="md">{args.children || 'Medium'}</Button>
-      <Button {...args} size="lg">{args.children || 'Large'}</Button>
-      <Button {...args} size="xl">{args.children || 'Extra Large'}</Button>
-    </div>
-  ),
+  render: (args) => {
+    const { size, ...otherArgs } = args
+    return (
+      <div className="flex items-center gap-4 flex-wrap">
+        <Button {...otherArgs} size="xs">{args.children || 'Extra Small'}</Button>
+        <Button {...otherArgs} size="sm">{args.children || 'Small'}</Button>
+        <Button {...otherArgs} size="md">{args.children || 'Medium'}</Button>
+        <Button {...otherArgs} size="lg">{args.children || 'Large'}</Button>
+        <Button {...otherArgs} size="xl">{args.children || 'Extra Large'}</Button>
+      </div>
+    )
+  },
   args: {
     variant: 'primary',
     children: 'Button Text'
@@ -179,25 +182,28 @@ export const AllSizes: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Demonstrates all available button sizes from xs to xl. Use controls to change variant, animation, children text, or other properties across all sizes.'
+        story: 'Demonstrates all available button sizes from xs to xl. Use controls to change variant, animation, children text, or other properties (size is fixed to show all sizes).'
       }
     }
   }
 }
 
 export const AllVariants: Story = {
-  render: (args) => (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <Button {...args} variant="primary">{args.children || 'Primary'}</Button>
-      <Button {...args} variant="secondary">{args.children || 'Secondary'}</Button>
-      <Button {...args} variant="success">{args.children || 'Success'}</Button>
-      <Button {...args} variant="warning">{args.children || 'Warning'}</Button>
-      <Button {...args} variant="danger">{args.children || 'Danger'}</Button>
-      <Button {...args} variant="ghost">{args.children || 'Ghost'}</Button>
-      <Button {...args} variant="outline">{args.children || 'Outline'}</Button>
-      <Button {...args} variant="link">{args.children || 'Link'}</Button>
-    </div>
-  ),
+  render: (args) => {
+    const { variant, ...otherArgs } = args
+    return (
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Button {...otherArgs} variant="primary">{args.children || 'Primary'}</Button>
+        <Button {...otherArgs} variant="secondary">{args.children || 'Secondary'}</Button>
+        <Button {...otherArgs} variant="success">{args.children || 'Success'}</Button>
+        <Button {...otherArgs} variant="warning">{args.children || 'Warning'}</Button>
+        <Button {...otherArgs} variant="danger">{args.children || 'Danger'}</Button>
+        <Button {...otherArgs} variant="ghost">{args.children || 'Ghost'}</Button>
+        <Button {...otherArgs} variant="outline">{args.children || 'Outline'}</Button>
+        <Button {...otherArgs} variant="link">{args.children || 'Link'}</Button>
+      </div>
+    )
+  },
   args: {
     size: 'md',
     children: 'Button'
@@ -205,7 +211,7 @@ export const AllVariants: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Complete showcase of all button variants with consistent sizing. Use controls to change size, animation, children text, or other properties across all variants.'
+        story: 'Complete showcase of all button variants with consistent sizing. Use controls to change size, animation, children text, or other properties (variant is fixed to show all variants).'
       }
     }
   }
@@ -244,22 +250,25 @@ export const WithIcons: Story = {
 }
 
 export const IconOnly: Story = {
-  render: (args) => (
-    <div className="flex gap-2 items-center">
-      <Button {...args} size="xs" leftIcon={<HeartIcon className="h-3 w-3" />} aria-label="Like" />
-      <Button {...args} size="sm" leftIcon={<BookmarkIcon className="h-4 w-4" />} aria-label="Bookmark" />
-      <Button {...args} size="md" leftIcon={<PlayIcon className="h-5 w-5" />} aria-label="Play" />
-      <Button {...args} size="lg" leftIcon={<EditIcon className="h-6 w-6" />} aria-label="Edit" />
-      <Button {...args} size="xl" leftIcon={<TrashIcon className="h-7 w-7" />} variant="danger" aria-label="Delete" />
-    </div>
-  ),
+  render: (args) => {
+    const { size, ...otherArgs } = args
+    return (
+      <div className="flex gap-2 items-center">
+        <Button {...otherArgs} size="xs" leftIcon={<HeartIcon className="h-3 w-3" />} aria-label="Like" />
+        <Button {...otherArgs} size="sm" leftIcon={<BookmarkIcon className="h-4 w-4" />} aria-label="Bookmark" />
+        <Button {...otherArgs} size="md" leftIcon={<PlayIcon className="h-5 w-5" />} aria-label="Play" />
+        <Button {...otherArgs} size="lg" leftIcon={<EditIcon className="h-6 w-6" />} aria-label="Edit" />
+        <Button {...otherArgs} size="xl" leftIcon={<TrashIcon className="h-7 w-7" />} aria-label="Delete" />
+      </div>
+    )
+  },
   args: {
     variant: 'primary'
   },
   parameters: {
     docs: {
       description: {
-        story: 'Icon-only buttons with proper ARIA labels for accessibility. Use controls to change variant, animation, or other properties across all icon-only buttons.'
+        story: 'Icon-only buttons with proper ARIA labels for accessibility. Use controls to change variant, animation, or other properties (size is fixed to show all sizes).'
       }
     }
   }

@@ -173,25 +173,29 @@ export const Label: Story = {
 
 // Color Variants
 export const ColorVariants: Story = {
-  render: (args) => (
-    <div className="space-y-4">
-      <Typography {...args} color="primary">Primary text color for main content</Typography>
-      <Typography {...args} color="secondary">Secondary text color for supporting content</Typography>
-      <Typography {...args} color="tertiary">Tertiary text color for subtle information</Typography>
-      <Typography {...args} color="muted">Muted text color for disabled or inactive content</Typography>
-      <Typography {...args} color="success">Success text color for positive messages</Typography>
-      <Typography {...args} color="warning">Warning text color for cautionary messages</Typography>
-      <Typography {...args} color="danger">Danger text color for error messages</Typography>
-      <Typography {...args} color="info">Info text color for informational messages</Typography>
-    </div>
-  ),
+  render: (args) => {
+    const { color, children, ...otherArgs } = args
+    return (
+      <div className="space-y-4">
+        <Typography {...otherArgs} color="primary">{children || 'Primary text color for main content'}</Typography>
+        <Typography {...otherArgs} color="secondary">{children || 'Secondary text color for supporting content'}</Typography>
+        <Typography {...otherArgs} color="tertiary">{children || 'Tertiary text color for subtle information'}</Typography>
+        <Typography {...otherArgs} color="muted">{children || 'Muted text color for disabled or inactive content'}</Typography>
+        <Typography {...otherArgs} color="success">{children || 'Success text color for positive messages'}</Typography>
+        <Typography {...otherArgs} color="warning">{children || 'Warning text color for cautionary messages'}</Typography>
+        <Typography {...otherArgs} color="danger">{children || 'Danger text color for error messages'}</Typography>
+        <Typography {...otherArgs} color="info">{children || 'Info text color for informational messages'}</Typography>
+      </div>
+    )
+  },
   args: {
-    variant: 'body'
+    variant: 'body',
+    children: 'Sample text content'
   },
   parameters: {
     docs: {
       description: {
-        story: 'All available color variants with semantic meanings and proper contrast ratios. Use controls to change variant, weight, or alignment across all colors.'
+        story: 'All available color variants with semantic meanings and proper contrast ratios. Use controls to change variant, weight, children text, or alignment (color is fixed to show all colors).'
       }
     }
   }
@@ -199,24 +203,28 @@ export const ColorVariants: Story = {
 
 // Font Weights
 export const FontWeights: Story = {
-  render: (args) => (
-    <div className="space-y-4">
-      <Typography {...args} weight="light">Light weight text (300)</Typography>
-      <Typography {...args} weight="normal">Normal weight text (400)</Typography>
-      <Typography {...args} weight="medium">Medium weight text (500)</Typography>
-      <Typography {...args} weight="semibold">Semibold weight text (600)</Typography>
-      <Typography {...args} weight="bold">Bold weight text (700)</Typography>
-      <Typography {...args} weight="extrabold">Extrabold weight text (800)</Typography>
-    </div>
-  ),
+  render: (args) => {
+    const { weight, children, ...otherArgs } = args
+    return (
+      <div className="space-y-4">
+        <Typography {...otherArgs} weight="light">{children || 'Light weight text (300)'}</Typography>
+        <Typography {...otherArgs} weight="normal">{children || 'Normal weight text (400)'}</Typography>
+        <Typography {...otherArgs} weight="medium">{children || 'Medium weight text (500)'}</Typography>
+        <Typography {...otherArgs} weight="semibold">{children || 'Semibold weight text (600)'}</Typography>
+        <Typography {...otherArgs} weight="bold">{children || 'Bold weight text (700)'}</Typography>
+        <Typography {...otherArgs} weight="extrabold">{children || 'Extrabold weight text (800)'}</Typography>
+      </div>
+    )
+  },
   args: {
     variant: 'body',
-    color: 'primary'
+    color: 'primary',
+    children: 'Sample weight text'
   },
   parameters: {
     docs: {
       description: {
-        story: 'Font weight options for emphasis and hierarchy. Use controls to change variant, color, or alignment across all weights.'
+        story: 'Font weight options for emphasis and hierarchy. Use controls to change variant, color, children text, or alignment (weight is fixed to show all weights).'
       }
     }
   }

@@ -1,1 +1,0 @@
-export { AnimeStatus } from './AnimeStatus'

@@ -3,6 +3,13 @@ import { malService } from '../../services/mal'
 import { AnimeBase } from '../../types/anime'
 import { ExpandableGrid } from '../ExpandableGrid'
 import { Typography, Button, AnimeGridSkeleton, Spinner } from '../ui'
+import { 
+  buildSearchParams,
+  createDefaultSearchParams,
+  validateSearchParams,
+  createSearchSummary,
+  type AdvancedSearchParams
+} from '../../utils/search'
 
 const ANIME_TYPES = [
   { value: '', label: 'All Types' },
@@ -30,26 +37,8 @@ const ANIME_RATINGS = [
   { value: 'r', label: 'R+ - Mild Nudity' },
 ]
 
-interface SearchParams {
-  query: string
-  type: string
-  status: string
-  rating: string
-  genre: string
-  minScore: number
-  maxScore: number
-}
-
 export const AdvancedSearch = () => {
-  const [searchParams, setSearchParams] = useState<SearchParams>({
-    query: '',
-    type: '',
-    status: '',
-    rating: '',
-    genre: '',
-    minScore: 0,
-    maxScore: 10,
-  })
+  const [searchParams, setSearchParams] = useState<AdvancedSearchParams>(() => createDefaultSearchParams())
   const [results, setResults] = useState<AnimeBase[]>([])
   const [genres, setGenres] = useState<Array<{ mal_id: number; name: string }>>([])
   const [loading, setLoading] = useState(false)
@@ -75,18 +64,22 @@ export const AdvancedSearch = () => {
     setHasSearched(true)
 
     try {
-      const params: any = {}
-      
-      if (searchParams.query.trim()) params.query = searchParams.query.trim()
-      if (searchParams.type) params.type = searchParams.type
-      if (searchParams.status) params.status = searchParams.status
-      if (searchParams.rating) params.rating = searchParams.rating
-      if (searchParams.genre) params.genre = searchParams.genre
-      if (searchParams.minScore > 0) params.min_score = searchParams.minScore
-      if (searchParams.maxScore < 10) params.max_score = searchParams.maxScore
-      params.limit = 24
+      // Validate search parameters
+      const validation = validateSearchParams(searchParams)
+      if (!validation.isValid) {
+        setError(validation.errors.join(' '))
+        return
+      }
 
-      const searchResults = await malService.advancedSearchAnime(params)
+      // Build clean search parameters using utility
+      const apiParams = buildSearchParams(searchParams)
+      
+      // Add API-specific mappings
+      const malParams: any = { ...apiParams, limit: 24 }
+      if (apiParams.minScore) malParams.min_score = apiParams.minScore
+      if (apiParams.maxScore) malParams.max_score = apiParams.maxScore
+
+      const searchResults = await malService.advancedSearchAnime(malParams)
       setResults(searchResults)
     } catch (err) {
       setError('Failed to search anime. Please try again.')
@@ -97,15 +90,7 @@ export const AdvancedSearch = () => {
   }
 
   const handleReset = () => {
-    setSearchParams({
-      query: '',
-      type: '',
-      status: '',
-      rating: '',
-      genre: '',
-      minScore: 0,
-      maxScore: 10,
-    })
+    setSearchParams(createDefaultSearchParams())
     setResults([])
     setHasSearched(false)
     setError(null)
@@ -294,7 +279,7 @@ export const AdvancedSearch = () => {
             <>
               <ExpandableGrid 
                 anime={results} 
-                title={`Search Results (${results.length})`} 
+                title={createSearchSummary(results.length, searchParams.query, searchParams)} 
                 maxCards={20} 
               />
             </>

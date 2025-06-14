@@ -5,8 +5,9 @@ A modern, triple-source anime tracking and recommendation platform powered by **
 ## 🎯 **CURRENT STATUS: Phase 1.5 Complete - Enhanced Features + Caching**
 
 ✅ **What's Been Completed:**
+
 - Full triple API integration (MyAnimeList + AniList + Jikan)
-- OAuth authentication for both platforms  
+- OAuth authentication for both platforms
 - User score display on anime cards (personal ratings with green badges)
 - Currently watching section on dashboard
 - Related anime exploration with full hover details and user scores
@@ -40,10 +41,12 @@ A modern, triple-source anime tracking and recommendation platform powered by **
 - **🔥 NEW: Expandable Grid System**: Interactive anime cards that expand horizontally on hover/click with full status management and smooth CSS Grid animations
 
 🚀 **Currently Working On:**
+
 - Documentation updates and code cleanup
 - Performance monitoring and optimization
 
 🔜 **Next Phase Focus:**
+
 - Vector-based recommendations with FAISS
 - Watch status updates and progress tracking
 - Offline caching with IndexedDB
@@ -304,6 +307,7 @@ Convert AnimeTrackr's backend infrastructure into a **Model Context Protocol (MC
 **Target State**: FastAPI-based MCP server with comprehensive anime management tools
 
 #### **Why FastAPI?**
+
 - **Performance**: Async/await support for concurrent API calls to MAL/AniList
 - **Type Safety**: Pydantic models for robust data validation
 - **Documentation**: Auto-generated OpenAPI/Swagger docs
@@ -313,6 +317,7 @@ Convert AnimeTrackr's backend infrastructure into a **Model Context Protocol (MC
 ### 🛠️ **MCP Server Implementation Roadmap**
 
 #### **Phase 1: Backend Migration**
+
 - **FastAPI Setup**: Replace Express.js proxy with FastAPI server
 - **API Integration**: Migrate MAL/AniList API clients to Python
 - **Authentication**: Implement OAuth flows for both platforms
@@ -320,6 +325,7 @@ Convert AnimeTrackr's backend infrastructure into a **Model Context Protocol (MC
 - **CORS Handling**: Maintain existing CORS proxy functionality
 
 #### **Phase 2: MCP Protocol Implementation**
+
 - **MCP Server Framework**: Implement MCP server using `mcp` Python package
 - **Tool Registration**: Define standardized tools for anime operations
 - **Resource Management**: Expose user anime lists and preferences as resources
@@ -328,13 +334,14 @@ Convert AnimeTrackr's backend infrastructure into a **Model Context Protocol (MC
 #### **Phase 3: AI Assistant Tools**
 
 **Core MCP Tools**:
+
 ```python
 # Anime Discovery Tools
 @mcp_tool
 async def search_anime(query: str, source: str = "both") -> List[Anime]:
     """Search for anime across MAL and AniList"""
 
-@mcp_tool  
+@mcp_tool
 async def get_anime_details(anime_id: int, source: str) -> AnimeDetails:
     """Get comprehensive anime information"""
 
@@ -366,13 +373,14 @@ async def get_trending_discussions(timeframe: str = "week") -> List[Discussion]:
 ```
 
 **MCP Resources**:
+
 ```python
 # User's anime data as queryable resources
 @mcp_resource("user_watchlist")
 async def get_user_watchlist(user_id: str) -> str:
     """User's complete anime watchlist with scores and status"""
 
-@mcp_resource("user_preferences") 
+@mcp_resource("user_preferences")
 async def get_user_preferences(user_id: str) -> str:
     """User's anime genre preferences and rating patterns"""
 
@@ -384,11 +392,13 @@ async def get_anime_database() -> str:
 #### **Phase 4: Advanced AI Features**
 
 **Vector Recommendations**:
+
 - **FAISS Integration**: Implement vector similarity search for anime recommendations
 - **User Embeddings**: Create user preference vectors from watch history
 - **Contextual Recommendations**: AI can ask "recommend anime similar to Attack on Titan but more lighthearted"
 
 **Natural Language Interface**:
+
 - **Conversational Updates**: "Mark Demon Slayer as completed with a score of 9"
 - **Complex Queries**: "Show me anime I might like based on my recent 10/10 ratings"
 - **Smart Scheduling**: "What should I watch next for a 2-hour session?"
@@ -406,7 +416,7 @@ async def get_anime_database() -> str:
                     │  Data Sources    │
                     │ ┌──────────────┐ │
                     │ │ MAL API      │ │
-                    │ │ AniList API  │ │  
+                    │ │ AniList API  │ │
                     │ │ User DB      │ │
                     │ │ Vector Store │ │
                     │ └──────────────┘ │
@@ -416,12 +426,14 @@ async def get_anime_database() -> str:
 ### 🔌 **Integration Benefits**
 
 **For Users**:
+
 - **Natural Interaction**: "Hey Claude, update my anime list and recommend something new"
 - **Smart Discovery**: AI-powered recommendations based on conversation context
 - **Cross-Platform Sync**: Unified management across MAL and AniList through AI
 - **Contextual Help**: "What anime should I watch while studying?" gets personalized suggestions
 
 **For Developers**:
+
 - **Standardized API**: MCP protocol provides consistent interface for AI integration
 - **Modular Architecture**: Easy to add new anime sources or AI capabilities
 - **Type Safety**: FastAPI + Pydantic ensures robust data handling
@@ -430,6 +442,7 @@ async def get_anime_database() -> str:
 ### 📋 **Implementation Checklist**
 
 #### **Backend Migration (FastAPI)**
+
 - [ ] Set up FastAPI project structure
 - [ ] Migrate MAL API client to Python (httpx/aiohttp)
 - [ ] Migrate AniList GraphQL client to Python (gql/httpx)
@@ -441,6 +454,7 @@ async def get_anime_database() -> str:
 - [ ] Write comprehensive tests
 
 #### **MCP Server Implementation**
+
 - [ ] Install and configure MCP server framework
 - [ ] Define MCP tools for anime operations
 - [ ] Implement MCP resources for user data
@@ -450,6 +464,7 @@ async def get_anime_database() -> str:
 - [ ] Document MCP tool usage and examples
 
 #### **Vector Recommendations**
+
 - [ ] Set up FAISS vector store
 - [ ] Create anime embedding pipeline
 - [ ] Implement user preference vectors
@@ -458,6 +473,7 @@ async def get_anime_database() -> str:
 - [ ] Integrate with MCP recommendation tools
 
 #### **Frontend Updates**
+
 - [ ] Update API endpoints to FastAPI backend
 - [ ] Add MCP status indicators in UI
 - [ ] Implement AI recommendation display

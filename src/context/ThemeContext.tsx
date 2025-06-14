@@ -1,6 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-
-type Theme = 'light' | 'dark'
+import { 
+  getInitialTheme, 
+  saveThemeToStorage, 
+  toggleTheme as toggleThemeUtil,
+  isDarkTheme,
+  createSystemThemeListener,
+  hasUserThemePreference,
+  type Theme
+} from '../utils/theme'
 
 interface ThemeContextType {
   theme: Theme
@@ -19,54 +26,38 @@ export const useTheme = () => {
 }
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>(() => {
-    // Check localStorage first, then system preference
-    const savedTheme = localStorage.getItem('theme') as Theme
-    if (savedTheme) {
-      return savedTheme
-    }
-    
-    // Check system preference
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark'
-    }
-    
-    return 'light'
-  })
+  const [theme, setTheme] = useState<Theme>(() => getInitialTheme())
 
   const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light')
+    setTheme(prevTheme => toggleThemeUtil(prevTheme))
   }
 
-  const isDark = theme === 'dark'
+  const isDark = isDarkTheme(theme)
 
   useEffect(() => {
     // Save to localStorage
-    localStorage.setItem('theme', theme)
+    saveThemeToStorage(theme)
     
     // Apply theme to document
     const root = document.documentElement
     
-    if (theme === 'dark') {
+    if (isDark) {
       root.classList.add('dark')
     } else {
       root.classList.remove('dark')
     }
-  }, [theme])
+  }, [theme, isDark])
 
   // Listen for system theme changes
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    
-    const handleChange = (e: MediaQueryListEvent) => {
+    const cleanup = createSystemThemeListener((newTheme) => {
       // Only auto-switch if no theme is saved in localStorage
-      if (!localStorage.getItem('theme')) {
-        setTheme(e.matches ? 'dark' : 'light')
+      if (!hasUserThemePreference()) {
+        setTheme(newTheme)
       }
-    }
+    })
 
-    mediaQuery.addEventListener('change', handleChange)
-    return () => mediaQuery.removeEventListener('change', handleChange)
+    return cleanup
   }, [])
 
   const value = {

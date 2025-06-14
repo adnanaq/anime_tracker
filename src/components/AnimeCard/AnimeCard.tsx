@@ -5,6 +5,7 @@ import { AnimeBase } from '../../types/anime'
 // import { HoverCard } from '../HoverCard/HoverCard'
 import { useAnimeAuth } from '../../hooks/useAuth'
 import { Typography, Badge } from '../ui'
+import { createDebouncedFunction } from '../../utils/debounce'
 
 interface AnimeCardProps {
   anime: AnimeBase
@@ -16,18 +17,55 @@ const AnimeCardComponent = ({ anime: animeItem }: AnimeCardProps) => {
   const overlayRef = useRef<HTMLDivElement>(null)
   const badgeRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLDivElement>(null)
-  const hoverTimeoutRef = useRef<number | null>(null)
   
   // Check if user is authenticated for this anime's source
   const { isAuthenticated } = useAnimeAuth(animeItem.source)
 
+  // Create debounced function for mouse leave animation
+  const { debouncedFn: debouncedMouseLeave, cleanup: cleanupHoverDebounce } = createDebouncedFunction(
+    () => {
+      if (imageRef.current) {
+        animate(imageRef.current, {
+          scale: [1.1, 1],
+          duration: 250,
+          easing: 'easeOutQuart'
+        })
+      }
+      
+      if (overlayRef.current) {
+        animate(overlayRef.current, {
+          opacity: [1, 0],
+          duration: 250,
+          easing: 'easeOutQuart'
+        })
+      }
+      
+      if (badgeRef.current) {
+        animate(badgeRef.current, {
+          scale: [1.1, 1],
+          rotateZ: [-5, 0],
+          duration: 250,
+          easing: 'easeOutQuart'
+        })
+      }
+      
+      if (titleRef.current) {
+        animate(titleRef.current, {
+          translateY: [0, 20],
+          opacity: [1, 0],
+          duration: 250,
+          easing: 'easeOutQuart'
+        })
+      }
+    },
+    100
+  )
+
   const handleMouseEnter = () => {
     if (!cardRef.current) return
     
-    if (hoverTimeoutRef.current) {
-      clearTimeout(hoverTimeoutRef.current)
-      hoverTimeoutRef.current = null
-    }
+    // Cancel any pending mouse leave animation
+    cleanupHoverDebounce()
     
     if (imageRef.current) {
       animate(imageRef.current, {
@@ -68,48 +106,13 @@ const AnimeCardComponent = ({ anime: animeItem }: AnimeCardProps) => {
   const handleMouseLeave = () => {
     if (!cardRef.current) return
     
-    hoverTimeoutRef.current = window.setTimeout(() => {
-      if (imageRef.current) {
-        animate(imageRef.current, {
-          scale: [1.1, 1],
-          duration: 250,
-          easing: 'easeOutQuart'
-        })
-      }
-      
-      if (overlayRef.current) {
-        animate(overlayRef.current, {
-          opacity: [1, 0],
-          duration: 250,
-          easing: 'easeOutQuart'
-        })
-      }
-      
-      if (badgeRef.current) {
-        animate(badgeRef.current, {
-          scale: [1.1, 1],
-          rotateZ: [-5, 0],
-          duration: 250,
-          easing: 'easeOutQuart'
-        })
-      }
-      
-      if (titleRef.current) {
-        animate(titleRef.current, {
-          translateY: [0, 20],
-          opacity: [1, 0],
-          duration: 250,
-          easing: 'easeOutQuart'
-        })
-      }
-    }, 100)
+    // Use debounced function for mouse leave animation
+    debouncedMouseLeave()
   }
 
   useEffect(() => {
     return () => {
-      if (hoverTimeoutRef.current) {
-        clearTimeout(hoverTimeoutRef.current)
-      }
+      cleanupHoverDebounce()
     }
   }, [])
 

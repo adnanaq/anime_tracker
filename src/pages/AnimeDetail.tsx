@@ -10,6 +10,7 @@ import { animeStatusService } from '../services/shared/animeStatusService'
 import { malService } from '../services/mal'
 import { anilistService } from '../services/anilist'
 import { getStatusOptions } from '../utils/animeStatus'
+import { createDebouncedFunction } from '../utils/debounce'
 
 export const AnimeDetail = () => {
   const { source, id } = useParams<{ source: string; id: string }>()
@@ -23,8 +24,25 @@ export const AnimeDetail = () => {
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false)
   const [isUpdatingScore, setIsUpdatingScore] = useState(false)
   const [isUpdatingEpisodes, setIsUpdatingEpisodes] = useState(false)
-  const scoreTimeoutRef = useRef<number | null>(null)
-  const episodesTimeoutRef = useRef<number | null>(null)
+  
+  // Create debounced functions for score and episode updates
+  const { debouncedFn: debouncedScoreUpdate, cleanup: cleanupScoreDebounce } = createDebouncedFunction(
+    (newScore: number) => {
+      if (newScore !== userScore) {
+        handleScoreUpdate(newScore)
+      }
+    },
+    1000
+  )
+  
+  const { debouncedFn: debouncedEpisodesUpdate, cleanup: cleanupEpisodesDebounce } = createDebouncedFunction(
+    (newEpisodes: number) => {
+      if (newEpisodes !== userEpisodes) {
+        handleEpisodesUpdate(newEpisodes)
+      }
+    },
+    1000
+  )
   
   const headerRef = useRef<HTMLElement>(null)
   const imageRef = useRef<HTMLDivElement>(null)
@@ -293,42 +311,17 @@ export const AnimeDetail = () => {
     }
   }
 
-  const debouncedScoreUpdate = (newScore: number) => {
-    
-    // Clear existing timeout
-    if (scoreTimeoutRef.current) {
-      clearTimeout(scoreTimeoutRef.current)
-    }
-    
-    // Set new timeout
-    scoreTimeoutRef.current = window.setTimeout(() => {
-      if (newScore !== userScore) {
-        handleScoreUpdate(newScore)
-      }
-    }, 1000) // 1 second delay
-  }
-
-  const debouncedEpisodesUpdate = (newEpisodes: number) => {
+  // Helper function for episode updates that includes temp state
+  const handleDebouncedEpisodesUpdate = (newEpisodes: number) => {
     setTempEpisodes(newEpisodes)
-    
-    // Clear existing timeout
-    if (episodesTimeoutRef.current) {
-      clearTimeout(episodesTimeoutRef.current)
-    }
-    
-    // Set new timeout
-    episodesTimeoutRef.current = window.setTimeout(() => {
-      if (newEpisodes !== userEpisodes) {
-        handleEpisodesUpdate(newEpisodes)
-      }
-    }, 1000) // 1 second delay
+    debouncedEpisodesUpdate(newEpisodes)
   }
 
-  // Cleanup timeouts on unmount
+  // Cleanup debounced functions on unmount
   useEffect(() => {
     return () => {
-      if (scoreTimeoutRef.current) clearTimeout(scoreTimeoutRef.current)
-      if (episodesTimeoutRef.current) clearTimeout(episodesTimeoutRef.current)
+      cleanupScoreDebounce()
+      cleanupEpisodesDebounce()
     }
   }, [])
 
@@ -645,7 +638,7 @@ export const AnimeDetail = () => {
                               const newEpisodes = parseInt(e.target.value) || 0
                               const maxEpisodes = animeData.episodes || Infinity
                               if (newEpisodes >= 0 && newEpisodes <= maxEpisodes) {
-                                debouncedEpisodesUpdate(newEpisodes)
+                                handleDebouncedEpisodesUpdate(newEpisodes)
                               }
                             }}
                             disabled={isUpdatingEpisodes}

@@ -24,7 +24,7 @@ export const ANILIST_STATUS_OPTIONS = [
  * Get status options for the given anime source
  */
 export const getStatusOptions = (source: AnimeSource) => {
-  return source === 'mal' ? MAL_STATUS_OPTIONS : ANILIST_STATUS_OPTIONS
+  return (source === 'mal' || source === 'jikan') ? MAL_STATUS_OPTIONS : ANILIST_STATUS_OPTIONS
 }
 
 /**
@@ -91,7 +91,7 @@ export const convertStatusBetweenSources = (
   // Normalize to common format first
   let normalizedStatus: string
   
-  if (fromSource === 'mal') {
+  if (fromSource === 'mal' || fromSource === 'jikan') {
     switch (status) {
       case 'watching': normalizedStatus = 'watching'; break
       case 'completed': normalizedStatus = 'completed'; break
@@ -113,7 +113,7 @@ export const convertStatusBetweenSources = (
   }
   
   // Convert to target format
-  if (toSource === 'mal') {
+  if (toSource === 'mal' || toSource === 'jikan') {
     return normalizedStatus
   } else {
     switch (normalizedStatus) {

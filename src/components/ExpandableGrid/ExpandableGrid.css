@@ -76,7 +76,6 @@
   pointer-events: auto;
 }
 
-
 .expandable-grid-card .card-image-container {
   position: relative;
   overflow: hidden;
@@ -101,7 +100,9 @@
 }
 
 /* Hide hover overlay when card is expanded or being hovered */
-.expandable-grid-container:has(.expandable-grid-card .card-radio:checked) .expandable-grid-card .card-overlay-hover,
+.expandable-grid-container:has(.expandable-grid-card .card-radio:checked)
+  .expandable-grid-card
+  .card-overlay-hover,
 .expandable-grid-card:hover .card-overlay-hover {
   opacity: 0 !important;
 }
@@ -151,7 +152,6 @@
   transform: scale(1.05);
   filter: brightness(1.1);
 }
-
 
 /* Badge hierarchy styling */
 .expanded-content-inner .episode-status-row {
@@ -203,8 +203,20 @@
 }
 
 .scrolling-synopsis.long-text {
-  mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 15%,
+    black 85%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 15%,
+    black 85%,
+    transparent 100%
+  );
 }
 
 .scrolling-synopsis.long-text p {
@@ -225,9 +237,10 @@
   transform: none;
 }
 
-
 /* Reset animation when card is not expanded or hovered */
-.expandable-grid-card:not(:has(.card-radio:checked)):not(:hover) .scrolling-synopsis.long-text p {
+.expandable-grid-card:not(:has(.card-radio:checked)):not(:hover)
+  .scrolling-synopsis.long-text
+  p {
   animation: none;
   transform: translateY(0);
 }
@@ -240,7 +253,9 @@
 }
 
 /* Grid expansion states using :has() selector - Click */
-.expandable-grid-container:has(.expandable-grid-card:nth-child(1) > .card-radio:checked) {
+.expandable-grid-container:has(
+    .expandable-grid-card:nth-child(1) > .card-radio:checked
+  ) {
   --col-1: 4fr;
   --col-2: 1.5fr;
 }
@@ -251,7 +266,9 @@
   --col-2: 1.5fr;
 }
 
-.expandable-grid-container:has(.expandable-grid-card:nth-child(2) > .card-radio:checked) {
+.expandable-grid-container:has(
+    .expandable-grid-card:nth-child(2) > .card-radio:checked
+  ) {
   --col-1: 1.5fr;
   --col-2: 4fr;
   --col-3: 1.5fr;
@@ -263,7 +280,9 @@
   --col-3: 1.5fr;
 }
 
-.expandable-grid-container:has(.expandable-grid-card:nth-child(3) > .card-radio:checked) {
+.expandable-grid-container:has(
+    .expandable-grid-card:nth-child(3) > .card-radio:checked
+  ) {
   --col-2: 1.5fr;
   --col-3: 4fr;
   --col-4: 1.5fr;
@@ -275,7 +294,9 @@
   --col-4: 1.5fr;
 }
 
-.expandable-grid-container:has(.expandable-grid-card:nth-child(4) > .card-radio:checked) {
+.expandable-grid-container:has(
+    .expandable-grid-card:nth-child(4) > .card-radio:checked
+  ) {
   --col-3: 1.5fr;
   --col-4: 4fr;
   --col-5: 1.5fr;
@@ -287,7 +308,9 @@
   --col-5: 1.5fr;
 }
 
-.expandable-grid-container:has(.expandable-grid-card:nth-child(5) > .card-radio:checked) {
+.expandable-grid-container:has(
+    .expandable-grid-card:nth-child(5) > .card-radio:checked
+  ) {
   --col-4: 1.5fr;
   --col-5: 4fr;
   --col-6: 1.5fr;
@@ -299,31 +322,41 @@
   --col-6: 1.5fr;
 }
 
-.expandable-grid-container:has(.expandable-grid-card:nth-child(6) > .card-radio:checked) {
+.expandable-grid-container:has(
+    .expandable-grid-card:nth-child(6) > .card-radio:checked
+  ) {
   --col-5: 1.5fr;
   --col-6: 4fr;
   --col-7: 1.5fr;
 }
 
-.expandable-grid-container:has(.expandable-grid-card:nth-child(7) > .card-radio:checked) {
+.expandable-grid-container:has(
+    .expandable-grid-card:nth-child(7) > .card-radio:checked
+  ) {
   --col-6: 1.5fr;
   --col-7: 4fr;
   --col-8: 1.5fr;
 }
 
-.expandable-grid-container:has(.expandable-grid-card:nth-child(8) > .card-radio:checked) {
+.expandable-grid-container:has(
+    .expandable-grid-card:nth-child(8) > .card-radio:checked
+  ) {
   --col-7: 1.5fr;
   --col-8: 4fr;
   --col-9: 1.5fr;
 }
 
-.expandable-grid-container:has(.expandable-grid-card:nth-child(9) > .card-radio:checked) {
+.expandable-grid-container:has(
+    .expandable-grid-card:nth-child(9) > .card-radio:checked
+  ) {
   --col-8: 1.5fr;
   --col-9: 4fr;
   --col-10: 1.5fr;
 }
 
-.expandable-grid-container:has(.expandable-grid-card:nth-child(10) > .card-radio:checked) {
+.expandable-grid-container:has(
+    .expandable-grid-card:nth-child(10) > .card-radio:checked
+  ) {
   --col-9: 1.5fr;
   --col-10: 4fr;
 }
@@ -402,14 +435,14 @@
 
 /* Special animation for selected status - takes over the dropdown */
 @keyframes selectedTakeover {
-  0% { 
-    transform: translateY(0px) scale(1); 
-    opacity: 1; 
+  0% {
+    transform: translateY(0px) scale(1);
+    opacity: 1;
     width: calc(50% - 4px);
   }
-  100% { 
-    transform: translateY(50px) scale(1.8); 
-    opacity: 1; 
+  100% {
+    transform: translateY(50px) scale(1.8);
+    opacity: 1;
     width: calc(100% - 8px); /* Grow to match button width */
   }
 }
@@ -484,7 +517,7 @@
   --jump-distance: 50px;
   animation: at-jump-out 0.3s ease-in;
   animation-fill-mode: forwards;
-  animation-delay: 0.0s;
+  animation-delay: 0s;
   pointer-events: none;
   z-index: -1; /* Go behind the dropdown button */
 }
@@ -585,7 +618,7 @@
   user-select: none;
   -webkit-overflow-scrolling: touch; /* iOS smooth scrolling */
   scroll-snap-type: x mandatory; /* Snap to card positions */
-  
+
   /* Subtle fade at edges - keep cards readable */
   mask-image: linear-gradient(
     to right,
@@ -613,10 +646,9 @@
 }
 
 .expandable-grid-container.click-mode {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
-
 
 .expandable-grid-container.click-mode .expandable-grid-card {
   /* Collapsed state - fixed width matching original grid cards */
@@ -634,34 +666,48 @@
 }
 
 /* Disable hover effects in click mode */
-.expandable-grid-container.click-mode .expandable-grid-card:hover .card-overlay-hover {
+.expandable-grid-container.click-mode
+  .expandable-grid-card:hover
+  .card-overlay-hover {
   opacity: 0 !important;
 }
 
-.expandable-grid-container.click-mode .expandable-grid-card:hover .card-score-badge {
+.expandable-grid-container.click-mode
+  .expandable-grid-card:hover
+  .card-score-badge {
   opacity: 1 !important;
 }
 
-.expandable-grid-container.click-mode .expandable-grid-card:hover .card-expanded-overlay {
+.expandable-grid-container.click-mode
+  .expandable-grid-card:hover
+  .card-expanded-overlay {
   opacity: 0 !important;
 }
 
 /* Show expanded content only when active in click mode */
-.expandable-grid-container.click-mode .expandable-grid-card.active .card-expanded-overlay {
+.expandable-grid-container.click-mode
+  .expandable-grid-card.active
+  .card-expanded-overlay {
   opacity: 1 !important;
   pointer-events: auto !important;
 }
 
-.expandable-grid-container.click-mode .expandable-grid-card.active .card-score-badge {
+.expandable-grid-container.click-mode
+  .expandable-grid-card.active
+  .card-score-badge {
   opacity: 0 !important;
 }
 
 /* Hide expanded content for non-active cards in click mode */
-.expandable-grid-container.click-mode .expandable-grid-card:not(.active) .card-expanded-overlay {
+.expandable-grid-container.click-mode
+  .expandable-grid-card:not(.active)
+  .card-expanded-overlay {
   opacity: 0 !important;
 }
 
-.expandable-grid-container.click-mode .expandable-grid-card:not(.active) .card-score-badge {
+.expandable-grid-container.click-mode
+  .expandable-grid-card:not(.active)
+  .card-score-badge {
   opacity: 1 !important;
 }
 
@@ -675,13 +721,17 @@
   .expandable-grid-container {
     grid-template-columns: var(--col-1, 1fr) var(--col-2, 1fr);
   }
-  
-  .expandable-grid-container:has(.expandable-grid-card:nth-child(1) > .card-radio:checked) {
+
+  .expandable-grid-container:has(
+      .expandable-grid-card:nth-child(1) > .card-radio:checked
+    ) {
     --col-1: 2fr;
     --col-2: 1fr;
   }
-  
-  .expandable-grid-container:has(.expandable-grid-card:nth-child(2) > .card-radio:checked) {
+
+  .expandable-grid-container:has(
+      .expandable-grid-card:nth-child(2) > .card-radio:checked
+    ) {
     --col-1: 1fr;
     --col-2: 2fr;
   }
@@ -695,7 +745,10 @@
 
 @media (min-width: 769px) and (max-width: 1024px) {
   .expandable-grid-container {
-    grid-template-columns: var(--col-1, 1fr) var(--col-2, 1fr) var(--col-3, 1fr) var(--col-4, 1fr);
+    grid-template-columns: var(--col-1, 1fr) var(--col-2, 1fr) var(--col-3, 1fr) var(
+        --col-4,
+        1fr
+      );
   }
 }
 
@@ -709,7 +762,3 @@
       var(--col-5, 1fr);
   }
 }
-
-
-
-

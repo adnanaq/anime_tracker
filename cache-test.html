@@ -1,293 +1,308 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cache Performance Test</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background: #f5f5f5;
-        }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .test-section {
-            margin: 20px 0;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border-left: 4px solid #007bff;
-        }
-        button {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            cursor: pointer;
-            margin: 5px;
-            font-size: 14px;
-        }
-        button:hover {
-            background: #0056b3;
-        }
-        button:disabled {
-            background: #6c757d;
-            cursor: not-allowed;
-        }
-        .results {
-            background: #000;
-            color: #00ff00;
-            padding: 15px;
-            border-radius: 6px;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            max-height: 400px;
-            overflow-y: auto;
-            margin-top: 15px;
-            white-space: pre-wrap;
-        }
-        .status {
-            padding: 10px;
-            border-radius: 6px;
-            margin: 10px 0;
-        }
-        .status.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .status.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .status.info {
-            background: #cce7ff;
-            color: #004085;
-            border: 1px solid #b3d7ff;
-        }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .test-section {
+        margin: 20px 0;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #007bff;
+      }
+      button {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin: 5px;
+        font-size: 14px;
+      }
+      button:hover {
+        background: #0056b3;
+      }
+      button:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+      }
+      .results {
+        background: #000;
+        color: #00ff00;
+        padding: 15px;
+        border-radius: 6px;
+        font-family: "Courier New", monospace;
+        font-size: 12px;
+        max-height: 400px;
+        overflow-y: auto;
+        margin-top: 15px;
+        white-space: pre-wrap;
+      }
+      .status {
+        padding: 10px;
+        border-radius: 6px;
+        margin: 10px 0;
+      }
+      .status.success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+      .status.error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+      .status.info {
+        background: #cce7ff;
+        color: #004085;
+        border: 1px solid #b3d7ff;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <h1>🧪 AnimeTracker Cache Performance Test</h1>
-        
-        <div class="status info">
-            <strong>Instructions:</strong> 
-            <ol>
-                <li>Make sure your AnimeTracker app is running on http://localhost:3001</li>
-                <li>Open browser Developer Tools (F12) and check the Console tab</li>
-                <li>Click the test buttons below to run cache performance tests</li>
-                <li>Watch for timing differences between first calls (network) and cached calls</li>
-            </ol>
-        </div>
+      <h1>🧪 AnimeTracker Cache Performance Test</h1>
 
-        <div class="test-section">
-            <h3>🎯 Quick Tests</h3>
-            <button onclick="testBasicCaching()">Test Basic Caching</button>
-            <button onclick="testFallbacks()">Test Fallback System</button>
-            <button onclick="testRandomAnime()">Test Random Anime</button>
-            <button onclick="clearResults()">Clear Results</button>
-        </div>
+      <div class="status info">
+        <strong>Instructions:</strong>
+        <ol>
+          <li>
+            Make sure your AnimeTracker app is running on http://localhost:3001
+          </li>
+          <li>Open browser Developer Tools (F12) and check the Console tab</li>
+          <li>Click the test buttons below to run cache performance tests</li>
+          <li>
+            Watch for timing differences between first calls (network) and
+            cached calls
+          </li>
+        </ol>
+      </div>
 
-        <div class="test-section">
-            <h3>📊 Detailed Performance Tests</h3>
-            <button onclick="runFullCacheTest()" id="fullTestBtn">Run Full Cache Test Suite</button>
-            <button onclick="benchmarkCachePerformance()">Benchmark Cache Performance</button>
-        </div>
+      <div class="test-section">
+        <h3>🎯 Quick Tests</h3>
+        <button onclick="testBasicCaching()">Test Basic Caching</button>
+        <button onclick="testFallbacks()">Test Fallback System</button>
+        <button onclick="testRandomAnime()">Test Random Anime</button>
+        <button onclick="clearResults()">Clear Results</button>
+      </div>
 
-        <div class="results" id="results">
-Click a test button to see results here...
-        </div>
+      <div class="test-section">
+        <h3>📊 Detailed Performance Tests</h3>
+        <button onclick="runFullCacheTest()" id="fullTestBtn">
+          Run Full Cache Test Suite
+        </button>
+        <button onclick="benchmarkCachePerformance()">
+          Benchmark Cache Performance
+        </button>
+      </div>
+
+      <div class="results" id="results">
+        Click a test button to see results here...
+      </div>
     </div>
 
     <script>
-        let resultsDiv = document.getElementById('results');
-        
-        function log(message) {
-            const timestamp = new Date().toLocaleTimeString();
-            resultsDiv.textContent += `[${timestamp}] ${message}\n`;
-            resultsDiv.scrollTop = resultsDiv.scrollHeight;
-            console.log(message);
+      let resultsDiv = document.getElementById("results");
+
+      function log(message) {
+        const timestamp = new Date().toLocaleTimeString();
+        resultsDiv.textContent += `[${timestamp}] ${message}\n`;
+        resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        console.log(message);
+      }
+
+      function clearResults() {
+        resultsDiv.textContent = "";
+      }
+
+      async function testBasicCaching() {
+        log("🚀 Starting basic cache test...");
+
+        try {
+          // Test if we can access the app
+          const response = await fetch("http://localhost:3001/");
+          if (!response.ok) {
+            throw new Error("AnimeTracker app not accessible");
+          }
+          log("✅ AnimeTracker app is accessible");
+
+          // Simple timing test
+          log("⏱️ Testing response times...");
+
+          const start1 = Date.now();
+          const response1 = await fetch("http://localhost:3001/");
+          const time1 = Date.now() - start1;
+          log(`📡 First request: ${time1}ms`);
+
+          const start2 = Date.now();
+          const response2 = await fetch("http://localhost:3001/");
+          const time2 = Date.now() - start2;
+          log(`🚀 Second request: ${time2}ms`);
+
+          if (time2 < time1) {
+            log("✅ Second request was faster (good sign for caching)");
+          } else {
+            log(
+              "📝 Note: Browser caching may already be optimizing these requests",
+            );
+          }
+        } catch (error) {
+          log(`❌ Basic test failed: ${error.message}`);
         }
-        
-        function clearResults() {
-            resultsDiv.textContent = '';
-        }
-        
-        async function testBasicCaching() {
-            log('🚀 Starting basic cache test...');
-            
-            try {
-                // Test if we can access the app
-                const response = await fetch('http://localhost:3001/');
-                if (!response.ok) {
-                    throw new Error('AnimeTracker app not accessible');
-                }
-                log('✅ AnimeTracker app is accessible');
-                
-                // Simple timing test
-                log('⏱️ Testing response times...');
-                
-                const start1 = Date.now();
-                const response1 = await fetch('http://localhost:3001/');
-                const time1 = Date.now() - start1;
-                log(`📡 First request: ${time1}ms`);
-                
-                const start2 = Date.now();
-                const response2 = await fetch('http://localhost:3001/');
-                const time2 = Date.now() - start2;
-                log(`🚀 Second request: ${time2}ms`);
-                
-                if (time2 < time1) {
-                    log('✅ Second request was faster (good sign for caching)');
-                } else {
-                    log('📝 Note: Browser caching may already be optimizing these requests');
-                }
-                
-            } catch (error) {
-                log(`❌ Basic test failed: ${error.message}`);
+      }
+
+      async function testFallbacks() {
+        log("🔄 Testing fallback system...");
+        log("💡 This test checks if our API fallback chain works correctly");
+
+        // Note: Since we're testing from outside the app, we can't directly test
+        // the cache modules, but we can test the overall app responsiveness
+
+        try {
+          const tests = [
+            { name: "Main page load", url: "http://localhost:3001/" },
+            { name: "Source switch test", url: "http://localhost:3001/" },
+          ];
+
+          for (const test of tests) {
+            const start = Date.now();
+            const response = await fetch(test.url);
+            const time = Date.now() - start;
+
+            if (response.ok) {
+              log(`✅ ${test.name}: ${time}ms`);
+            } else {
+              log(`❌ ${test.name}: Failed (${response.status})`);
             }
+          }
+
+          log(
+            "💡 For detailed API fallback testing, check the browser console in the main app",
+          );
+        } catch (error) {
+          log(`❌ Fallback test failed: ${error.message}`);
         }
-        
-        async function testFallbacks() {
-            log('🔄 Testing fallback system...');
-            log('💡 This test checks if our API fallback chain works correctly');
-            
-            // Note: Since we're testing from outside the app, we can't directly test
-            // the cache modules, but we can test the overall app responsiveness
-            
-            try {
-                const tests = [
-                    { name: 'Main page load', url: 'http://localhost:3001/' },
-                    { name: 'Source switch test', url: 'http://localhost:3001/' }
-                ];
-                
-                for (const test of tests) {
-                    const start = Date.now();
-                    const response = await fetch(test.url);
-                    const time = Date.now() - start;
-                    
-                    if (response.ok) {
-                        log(`✅ ${test.name}: ${time}ms`);
-                    } else {
-                        log(`❌ ${test.name}: Failed (${response.status})`);
-                    }
-                }
-                
-                log('💡 For detailed API fallback testing, check the browser console in the main app');
-                
-            } catch (error) {
-                log(`❌ Fallback test failed: ${error.message}`);
-            }
+      }
+
+      async function testRandomAnime() {
+        log("🎲 Testing random anime feature...");
+        log(
+          "💡 This tests the Jikan random anime endpoint through our cache system",
+        );
+
+        try {
+          // We can't directly call the anime service from here, but we can
+          // test the overall app responsiveness and provide guidance
+
+          const response = await fetch("http://localhost:3001/");
+          if (response.ok) {
+            log("✅ App is responsive");
+            log("🎯 To test random anime:");
+            log("   1. Go to http://localhost:3001/");
+            log("   2. Open Developer Tools (F12)");
+            log("   3. In Console, run: animeService.getRandomAnime()");
+            log("   4. Run it multiple times to see caching in action");
+          } else {
+            log("❌ App not accessible");
+          }
+        } catch (error) {
+          log(`❌ Random anime test failed: ${error.message}`);
         }
-        
-        async function testRandomAnime() {
-            log('🎲 Testing random anime feature...');
-            log('💡 This tests the Jikan random anime endpoint through our cache system');
-            
-            try {
-                // We can't directly call the anime service from here, but we can 
-                // test the overall app responsiveness and provide guidance
-                
-                const response = await fetch('http://localhost:3001/');
-                if (response.ok) {
-                    log('✅ App is responsive');
-                    log('🎯 To test random anime:');
-                    log('   1. Go to http://localhost:3001/');
-                    log('   2. Open Developer Tools (F12)');
-                    log('   3. In Console, run: animeService.getRandomAnime()');
-                    log('   4. Run it multiple times to see caching in action');
-                } else {
-                    log('❌ App not accessible');
-                }
-                
-            } catch (error) {
-                log(`❌ Random anime test failed: ${error.message}`);
-            }
+      }
+
+      async function runFullCacheTest() {
+        const btn = document.getElementById("fullTestBtn");
+        btn.disabled = true;
+        btn.textContent = "Running Tests...";
+
+        log("🧪 Starting full cache test suite...");
+        log("=====================================");
+
+        try {
+          await testBasicCaching();
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+
+          await testFallbacks();
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+
+          await testRandomAnime();
+
+          log("=====================================");
+          log("✅ Full test suite completed!");
+          log(
+            "💡 For detailed cache statistics, check the CacheStats component in the main app",
+          );
+        } catch (error) {
+          log(`❌ Full test suite failed: ${error.message}`);
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Run Full Cache Test Suite";
         }
-        
-        async function runFullCacheTest() {
-            const btn = document.getElementById('fullTestBtn');
-            btn.disabled = true;
-            btn.textContent = 'Running Tests...';
-            
-            log('🧪 Starting full cache test suite...');
-            log('=====================================');
-            
-            try {
-                await testBasicCaching();
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                
-                await testFallbacks();
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                
-                await testRandomAnime();
-                
-                log('=====================================');
-                log('✅ Full test suite completed!');
-                log('💡 For detailed cache statistics, check the CacheStats component in the main app');
-                
-            } catch (error) {
-                log(`❌ Full test suite failed: ${error.message}`);
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Run Full Cache Test Suite';
-            }
+      }
+
+      async function benchmarkCachePerformance() {
+        log("⚡ Running cache performance benchmark...");
+
+        try {
+          const iterations = 5;
+          const times = [];
+
+          for (let i = 0; i < iterations; i++) {
+            const start = Date.now();
+            const response = await fetch("http://localhost:3001/");
+            const time = Date.now() - start;
+            times.push(time);
+            log(`📊 Iteration ${i + 1}: ${time}ms`);
+          }
+
+          const avg = times.reduce((a, b) => a + b, 0) / times.length;
+          const min = Math.min(...times);
+          const max = Math.max(...times);
+
+          log(`📈 Benchmark Results:`);
+          log(`   Average: ${avg.toFixed(2)}ms`);
+          log(`   Fastest: ${min}ms`);
+          log(`   Slowest: ${max}ms`);
+
+          if (max - min > 100) {
+            log(
+              "💡 High variance suggests first calls are slower (good caching sign)",
+            );
+          } else {
+            log("💡 Low variance suggests consistent performance");
+          }
+        } catch (error) {
+          log(`❌ Benchmark failed: ${error.message}`);
         }
-        
-        async function benchmarkCachePerformance() {
-            log('⚡ Running cache performance benchmark...');
-            
-            try {
-                const iterations = 5;
-                const times = [];
-                
-                for (let i = 0; i < iterations; i++) {
-                    const start = Date.now();
-                    const response = await fetch('http://localhost:3001/');
-                    const time = Date.now() - start;
-                    times.push(time);
-                    log(`📊 Iteration ${i + 1}: ${time}ms`);
-                }
-                
-                const avg = times.reduce((a, b) => a + b, 0) / times.length;
-                const min = Math.min(...times);
-                const max = Math.max(...times);
-                
-                log(`📈 Benchmark Results:`);
-                log(`   Average: ${avg.toFixed(2)}ms`);
-                log(`   Fastest: ${min}ms`);
-                log(`   Slowest: ${max}ms`);
-                
-                if (max - min > 100) {
-                    log('💡 High variance suggests first calls are slower (good caching sign)');
-                } else {
-                    log('💡 Low variance suggests consistent performance');
-                }
-                
-            } catch (error) {
-                log(`❌ Benchmark failed: ${error.message}`);
-            }
-        }
-        
-        // Auto-run basic connectivity test on page load
-        window.addEventListener('load', () => {
-            setTimeout(testBasicCaching, 1000);
-        });
+      }
+
+      // Auto-run basic connectivity test on page load
+      window.addEventListener("load", () => {
+        setTimeout(testBasicCaching, 1000);
+      });
     </script>
-</body>
+  </body>
 </html>
+

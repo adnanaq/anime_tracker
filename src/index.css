@@ -1,5 +1,5 @@
 /* Import Design System Tokens First */
-@import './styles/design-tokens.css';
+@import "./styles/design-tokens.css";
 
 @tailwind base;
 @tailwind components;
@@ -7,9 +7,11 @@
 
 /* Global smooth theme transitions */
 * {
-  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, filter;
+  transition-property:
+    background-color, border-color, color, fill, stroke, opacity, box-shadow,
+    transform, filter;
   transition-duration: 400ms;
-  transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Smooth scrolling */
@@ -19,7 +21,7 @@ html {
 
 /* Theme-specific body styles */
 body {
-  transition: background-color 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  transition: background-color 400ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Custom scrollbar for dark mode */
@@ -64,15 +66,30 @@ body {
   }
 
   /* Legacy animation classes - Use design-tokens.css at-animate-* classes instead */
-  .animate-fade-in { animation: at-fade-in 0.6s ease-out; }
-  .animate-slide-up { animation: at-slide-up 0.6s ease-out; }
-  .animate-slide-left { animation: at-slide-left 0.6s ease-out; }
-  .animate-slide-right { animation: at-slide-right 0.6s ease-out; }
-  .animate-scale-in { animation: at-scale-in 0.6s ease-out; }
-  .animate-flip-in { animation: at-flip-in 0.6s ease-out; }
-  .animate-fade-in-up { animation: at-slide-up 0.6s ease-out; }
+  .animate-fade-in {
+    animation: at-fade-in 0.6s ease-out;
+  }
+  .animate-slide-up {
+    animation: at-slide-up 0.6s ease-out;
+  }
+  .animate-slide-left {
+    animation: at-slide-left 0.6s ease-out;
+  }
+  .animate-slide-right {
+    animation: at-slide-right 0.6s ease-out;
+  }
+  .animate-scale-in {
+    animation: at-scale-in 0.6s ease-out;
+  }
+  .animate-flip-in {
+    animation: at-flip-in 0.6s ease-out;
+  }
+  .animate-fade-in-up {
+    animation: at-slide-up 0.6s ease-out;
+  }
 }
 
 @layer base {
   /* Base styles - animations moved to design-tokens.css */
 }
+

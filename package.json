@@ -42,8 +42,11 @@
   "devDependencies": {
     "@playwright/test": "^1.53.0",
     "@redux-devtools/extension": "^3.3.0",
-    "@storybook/addon-docs": "^9.0.9",
-    "@storybook/react-vite": "^9.0.9",
+    "@storybook/addon-a11y": "^9.1.0-alpha.6",
+    "@storybook/addon-docs": "^9.1.0-alpha.6",
+    "@storybook/addon-essentials": "^9.0.0-alpha.12",
+    "@storybook/react-vite": "^9.1.0-alpha.6",
+    "@storybook/test": "^9.0.0-alpha.2",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
@@ -62,7 +65,7 @@
     "eslint-plugin-storybook": "^9.0.9",
     "jsdom": "^26.1.0",
     "postcss": "^8.4.32",
-    "storybook": "^9.0.9",
+    "storybook": "^9.1.0-alpha.6",
     "tailwindcss": "^3.3.6",
     "typescript": "^5.2.2",
     "vite": "^5.0.0",
@@ -72,5 +75,8 @@
     "extends": [
       "plugin:storybook/recommended"
     ]
+  },
+  "overrides": {
+    "storybook": "$storybook"
   }
 }

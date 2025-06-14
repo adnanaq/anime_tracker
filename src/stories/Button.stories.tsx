@@ -165,20 +165,21 @@ export const Link: Story = {
 export const AllSizes: Story = {
   render: (args) => (
     <div className="flex items-center gap-4 flex-wrap">
-      <Button {...args} size="xs">Extra Small</Button>
-      <Button {...args} size="sm">Small</Button>
-      <Button {...args} size="md">Medium</Button>
-      <Button {...args} size="lg">Large</Button>
-      <Button {...args} size="xl">Extra Large</Button>
+      <Button {...args} size="xs">{args.children || 'Extra Small'}</Button>
+      <Button {...args} size="sm">{args.children || 'Small'}</Button>
+      <Button {...args} size="md">{args.children || 'Medium'}</Button>
+      <Button {...args} size="lg">{args.children || 'Large'}</Button>
+      <Button {...args} size="xl">{args.children || 'Extra Large'}</Button>
     </div>
   ),
   args: {
-    variant: 'primary'
+    variant: 'primary',
+    children: 'Button Text'
   },
   parameters: {
     docs: {
       description: {
-        story: 'Demonstrates all available button sizes from xs to xl. Use controls to change variant, animation, or other properties across all sizes.'
+        story: 'Demonstrates all available button sizes from xs to xl. Use controls to change variant, animation, children text, or other properties across all sizes.'
       }
     }
   }
@@ -187,23 +188,24 @@ export const AllSizes: Story = {
 export const AllVariants: Story = {
   render: (args) => (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <Button {...args} variant="primary">Primary</Button>
-      <Button {...args} variant="secondary">Secondary</Button>
-      <Button {...args} variant="success">Success</Button>
-      <Button {...args} variant="warning">Warning</Button>
-      <Button {...args} variant="danger">Danger</Button>
-      <Button {...args} variant="ghost">Ghost</Button>
-      <Button {...args} variant="outline">Outline</Button>
-      <Button {...args} variant="link">Link</Button>
+      <Button {...args} variant="primary">{args.children || 'Primary'}</Button>
+      <Button {...args} variant="secondary">{args.children || 'Secondary'}</Button>
+      <Button {...args} variant="success">{args.children || 'Success'}</Button>
+      <Button {...args} variant="warning">{args.children || 'Warning'}</Button>
+      <Button {...args} variant="danger">{args.children || 'Danger'}</Button>
+      <Button {...args} variant="ghost">{args.children || 'Ghost'}</Button>
+      <Button {...args} variant="outline">{args.children || 'Outline'}</Button>
+      <Button {...args} variant="link">{args.children || 'Link'}</Button>
     </div>
   ),
   args: {
-    size: 'md'
+    size: 'md',
+    children: 'Button'
   },
   parameters: {
     docs: {
       description: {
-        story: 'Complete showcase of all button variants with consistent sizing. Use controls to change size, animation, or other properties across all variants.'
+        story: 'Complete showcase of all button variants with consistent sizing. Use controls to change size, animation, children text, or other properties across all variants.'
       }
     }
   }
@@ -215,26 +217,27 @@ export const WithIcons: Story = {
   render: (args) => (
     <div className="flex flex-wrap gap-4">
       <Button {...args} leftIcon={<StarIcon className="h-4 w-4" />}>
-        Add to Favorites
+        {args.children || 'Add to Favorites'}
       </Button>
       <Button {...args} variant="success" rightIcon={<ChevronRightIcon className="h-4 w-4" />}>
-        Continue
+        {args.children || 'Continue'}
       </Button>
       <Button {...args} variant="outline" leftIcon={<DownloadIcon className="h-4 w-4" />} rightIcon={<ChevronDownIcon className="h-4 w-4" />}>
-        Download
+        {args.children || 'Download'}
       </Button>
       <Button {...args} variant="ghost" leftIcon={<ShareIcon className="h-4 w-4" />}>
-        Share
+        {args.children || 'Share'}
       </Button>
     </div>
   ),
   args: {
-    size: 'md'
+    size: 'md',
+    children: 'Button with Icon'
   },
   parameters: {
     docs: {
       description: {
-        story: 'Buttons with left icons, right icons, and both icons combined. Use controls to change size, animation, or other properties across all icon buttons.'
+        story: 'Buttons with left icons, right icons, and both icons combined. Use controls to change size, animation, children text, or other properties across all icon buttons.'
       }
     }
   }

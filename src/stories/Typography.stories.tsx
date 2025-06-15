@@ -88,86 +88,206 @@ export const Default: Story = {
 }
 
 export const Heading1: Story = {
+  render: (args) => {
+    const { variant, ...otherArgs } = args
+    return <Typography {...otherArgs} variant="h1">{args.children || 'Page Title (H1)'}</Typography>
+  },
   args: {
-    variant: 'h1',
     children: 'Page Title (H1)'
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'H1 heading variant. Variant is fixed to h1, but you can control color, weight, align, children, and other properties.'
+      }
+    }
   }
 }
 
 export const Heading2: Story = {
+  render: (args) => {
+    const { variant, ...otherArgs } = args
+    return <Typography {...otherArgs} variant="h2">{args.children || 'Section Title (H2)'}</Typography>
+  },
   args: {
-    variant: 'h2',
     children: 'Section Title (H2)'
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'H2 heading variant. Variant is fixed to h2, but you can control color, weight, align, children, and other properties.'
+      }
+    }
   }
 }
 
 export const Heading3: Story = {
+  render: (args) => {
+    const { variant, ...otherArgs } = args
+    return <Typography {...otherArgs} variant="h3">{args.children || 'Subsection Title (H3)'}</Typography>
+  },
   args: {
-    variant: 'h3',
     children: 'Subsection Title (H3)'
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'H3 heading variant. Variant is fixed to h3, but you can control color, weight, align, children, and other properties.'
+      }
+    }
   }
 }
 
 export const Heading4: Story = {
+  render: (args) => {
+    const { variant, ...otherArgs } = args
+    return <Typography {...otherArgs} variant="h4">{args.children || 'Content Title (H4)'}</Typography>
+  },
   args: {
-    variant: 'h4',
     children: 'Content Title (H4)'
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'H4 heading variant. Variant is fixed to h4, but you can control color, weight, align, children, and other properties.'
+      }
+    }
   }
 }
 
 export const Heading5: Story = {
+  render: (args) => {
+    const { variant, ...otherArgs } = args
+    return <Typography {...otherArgs} variant="h5">{args.children || 'Small Title (H5)'}</Typography>
+  },
   args: {
-    variant: 'h5',
     children: 'Small Title (H5)'
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'H5 heading variant. Variant is fixed to h5, but you can control color, weight, align, children, and other properties.'
+      }
+    }
   }
 }
 
 export const Heading6: Story = {
+  render: (args) => {
+    const { variant, ...otherArgs } = args
+    return <Typography {...otherArgs} variant="h6">{args.children || 'Smallest Title (H6)'}</Typography>
+  },
   args: {
-    variant: 'h6',
     children: 'Smallest Title (H6)'
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'H6 heading variant. Variant is fixed to h6, but you can control color, weight, align, children, and other properties.'
+      }
+    }
   }
 }
 
 export const Body: Story = {
+  render: (args) => {
+    const { variant, ...otherArgs } = args
+    return <Typography {...otherArgs} variant="body">{args.children || 'Regular body text for paragraphs and general content. Provides optimal readability with proper line height and spacing.'}</Typography>
+  },
   args: {
-    variant: 'body',
     children: 'Regular body text for paragraphs and general content. Provides optimal readability with proper line height and spacing.'
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Body text variant. Variant is fixed to body, but you can control color, weight, align, children, and other properties.'
+      }
+    }
   }
 }
 
 export const BodyLarge: Story = {
+  render: (args) => {
+    const { variant, ...otherArgs } = args
+    return <Typography {...otherArgs} variant="bodyLarge">{args.children || 'Large body text for important content, introductions, or emphasis. Slightly larger than regular body text.'}</Typography>
+  },
   args: {
-    variant: 'bodyLarge',
     children: 'Large body text for important content, introductions, or emphasis. Slightly larger than regular body text.'
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Body large variant. Variant is fixed to bodyLarge, but you can control color, weight, align, children, and other properties.'
+      }
+    }
   }
 }
 
 export const BodySmall: Story = {
+  render: (args) => {
+    const { variant, ...otherArgs } = args
+    return <Typography {...otherArgs} variant="bodySmall">{args.children || 'Small body text for secondary information, disclaimers, or supplementary content.'}</Typography>
+  },
   args: {
-    variant: 'bodySmall',
     children: 'Small body text for secondary information, disclaimers, or supplementary content.'
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Body small variant. Variant is fixed to bodySmall, but you can control color, weight, align, children, and other properties.'
+      }
+    }
   }
 }
 
 export const Caption: Story = {
+  render: (args) => {
+    const { variant, ...otherArgs } = args
+    return <Typography {...otherArgs} variant="caption">{args.children || 'Caption text for images, captions, or very small supplementary information.'}</Typography>
+  },
   args: {
-    variant: 'caption',
     children: 'Caption text for images, captions, or very small supplementary information.'
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Caption variant. Variant is fixed to caption, but you can control color, weight, align, children, and other properties.'
+      }
+    }
   }
 }
 
 export const Overline: Story = {
+  render: (args) => {
+    const { variant, ...otherArgs } = args
+    return <Typography {...otherArgs} variant="overline">{args.children || 'Overline text'}</Typography>
+  },
   args: {
-    variant: 'overline',
     children: 'Overline text'
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Overline variant. Variant is fixed to overline, but you can control color, weight, align, children, and other properties.'
+      }
+    }
   }
 }
 
 export const Label: Story = {
+  render: (args) => {
+    const { variant, ...otherArgs } = args
+    return <Typography {...otherArgs} variant="label">{args.children || 'Form Label'}</Typography>
+  },
   args: {
-    variant: 'label',
     children: 'Form Label'
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Label variant. Variant is fixed to label, but you can control color, weight, align, children, and other properties.'
+      }
+    }
   }
 }
 
@@ -541,6 +661,48 @@ export const AllVariants: Story = {
     docs: {
       description: {
         story: 'Complete showcase of all typography variants in the design system.'
+      }
+    }
+  }
+}
+
+// === PLAYGROUND ===
+
+export const Playground: Story = {
+  args: {
+    children: 'Playground Typography',
+    variant: 'body',
+    color: 'primary',
+    weight: 'normal',
+    align: 'left',
+    truncate: false,
+    lineClamp: 'none',
+    as: undefined
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+**Full Control Playground**
+
+This story gives you complete control over every Typography property. Perfect for:
+- Testing different combinations of properties
+- Experimenting with edge cases
+- Interactive development and debugging
+- Checking behavior with custom configurations
+
+**Available Controls:**
+- \`children\`: Text content to display
+- \`variant\`: Typography variant (h1, h2, h3, h4, h5, h6, body, bodyLarge, bodySmall, caption, overline, label)
+- \`color\`: Text color (primary, secondary, tertiary, inverse, muted, success, warning, danger, info)
+- \`weight\`: Font weight (light, normal, medium, semibold, bold, extrabold)
+- \`align\`: Text alignment (left, center, right, justify)
+- \`truncate\`: Truncate text with ellipsis
+- \`lineClamp\`: Limit text to specific number of lines (none, 1, 2, 3, 4)
+- \`as\`: HTML element to render (h1, h2, h3, h4, h5, h6, p, span, div, label)
+
+**Usage:** Change any control to see immediate effects. Unlike showcase stories that demonstrate specific features, this playground lets you test any combination of properties.
+        `
       }
     }
   }

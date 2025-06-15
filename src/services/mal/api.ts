@@ -22,31 +22,47 @@ const rateLimitedJikanFetch = async (url: string): Promise<Response> => {
 }
 
 // Enhanced types for Jikan integration
-export interface JikanScheduleEntry {
-  mal_id: number
-  title: string
-  images: {
-    jpg: {
-      image_url: string
-      small_image_url: string
-      large_image_url: string
-    }
-    webp: {
-      image_url: string
-      small_image_url: string
-      large_image_url: string
-    }
-  }
-  synopsis?: string
-  score?: number
-  episodes?: number
+export interface JikanGenre {
+  mal_id: number;
+  name: string;
+}
+
+export interface JikanImages {
+  jpg: {
+    image_url: string;
+    small_image_url: string;
+    large_image_url: string;
+  };
+  webp: {
+    image_url: string;
+    small_image_url: string;
+    large_image_url: string;
+  };
+}
+
+export interface JikanAnime {
+  mal_id: number;
+  title: string;
+  images: JikanImages;
+  synopsis?: string;
+  score?: number;
+  episodes?: number;
+  status?: string;
+  type?: string;
+  year?: number;
+  aired?: {
+    from?: string;
+  };
+  genres?: JikanGenre[];
+}
+
+export interface JikanScheduleEntry extends JikanAnime {
   broadcast: {
-    day?: string
-    time?: string
-    timezone?: string
-    string?: string
-  }
-  genres?: Array<{ mal_id: number; name: string }>
+    day?: string;
+    time?: string;
+    timezone?: string;
+    string?: string;
+  };
 }
 
 // Use proxy in development to avoid CORS issues
@@ -94,12 +110,17 @@ malApi.interceptors.response.use(
   }
 );
 
+export interface MALUserListStatus {
+  status?: string;
+  score?: number;
+  num_episodes_watched?: number;
+  start_date?: string;
+  finish_date?: string;
+  comments?: string;
+}
+
 interface MALAnimeWithUserData extends MALAnime {
-  my_list_status?: {
-    score?: number;
-    status?: string;
-    num_episodes_watched?: number;
-  };
+  my_list_status?: MALUserListStatus;
 }
 
 export const normalizeMALAnime = (
@@ -367,7 +388,7 @@ export const malService = {
       }
 
       return response.data.data.map(
-        (item: { list_status: any; node: MALAnime }) => {
+        (item: { list_status: MALUserListStatus; node: MALAnime }) => {
           const normalizedAnime = normalizeMALAnime(item.node);
           // Add user data from list_status
           if (item.list_status) {
@@ -475,7 +496,7 @@ export const malService = {
       console.error("MAL updateAnimeStatus error:", error);
       if (error && typeof error === 'object' && 'response' in error) {
         const axiosError = error as { 
-          response?: { status?: number; statusText?: string; data?: any };
+          response?: { status?: number; statusText?: string; data?: unknown };
           config?: { url?: string; method?: string };
         };
         console.error("Error details:", {
@@ -640,7 +661,7 @@ export const malService = {
       const data = await response.json()
       const animeList = data.data || []
       
-      return animeList.map((anime: any) => ({
+      return animeList.map((anime: JikanAnime) => ({
         id: anime.mal_id,
         title: anime.title,
         synopsis: anime.synopsis,
@@ -649,7 +670,7 @@ export const malService = {
         score: anime.score,
         episodes: anime.episodes,
         status: anime.status,
-        genres: anime.genres?.map((g: any) => g.name) || [],
+        genres: anime.genres?.map((g: JikanGenre) => g.name) || [],
         year: anime.year || (anime.aired?.from ? new Date(anime.aired.from).getFullYear() : undefined),
         format: anime.type,
         source: 'mal' as const
@@ -685,7 +706,7 @@ export const malService = {
       }
       
       const data = await response.json()
-      const anime = data.data
+      const anime: JikanAnime = data.data
       
       return {
         id: anime.mal_id,
@@ -696,7 +717,7 @@ export const malService = {
         score: anime.score,
         episodes: anime.episodes,
         status: anime.status,
-        genres: anime.genres?.map((g: any) => g.name) || [],
+        genres: anime.genres?.map((g: JikanGenre) => g.name) || [],
         year: anime.year || (anime.aired?.from ? new Date(anime.aired.from).getFullYear() : undefined),
         format: anime.type,
         source: 'mal' as const
@@ -719,7 +740,7 @@ export const malService = {
       const data = await response.json()
       const animeList = data.data || []
       
-      return animeList.map((anime: any) => ({
+      return animeList.map((anime: JikanAnime) => ({
         id: anime.mal_id,
         title: anime.title,
         synopsis: anime.synopsis,
@@ -728,7 +749,7 @@ export const malService = {
         score: anime.score,
         episodes: anime.episodes,
         status: anime.status,
-        genres: anime.genres?.map((g: any) => g.name) || [],
+        genres: anime.genres?.map((g: JikanGenre) => g.name) || [],
         year: anime.year || (anime.aired?.from ? new Date(anime.aired.from).getFullYear() : undefined),
         season: anime.season,
         format: anime.type,

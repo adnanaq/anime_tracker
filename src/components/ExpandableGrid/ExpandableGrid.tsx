@@ -160,8 +160,8 @@ const ExpandedContent = ({
           <div className="mb-4">
             <Typography
               variant="h4"
-              color="inverse"
-              className="mb-2 line-clamp-2"
+              color="primary"
+              className="mb-2 line-clamp-2 text-white"
             >
               {animeItem.title}
             </Typography>
@@ -695,7 +695,8 @@ export const ExpandableGrid = ({
     if (!interactive) return;
 
     // Don't navigate if clicking on expanded content
-    if ((event.target as HTMLElement).closest(".expanded-content")) {
+    const target = event.target as HTMLElement | null;
+    if (target?.closest(".expanded-content")) {
       return;
     }
 
@@ -732,7 +733,7 @@ export const ExpandableGrid = ({
       // Check if any card is currently expanded (clicked)
       const expandedRadio = containerRef.current.querySelector(
         ".card-radio:checked"
-      ) as HTMLInputElement;
+      ) as HTMLInputElement | null;
       if (expandedRadio) {
         const expandedIndex = parseInt(
           expandedRadio.getAttribute("data-index") || "0"
@@ -751,9 +752,11 @@ export const ExpandableGrid = ({
     const handleClickOutside = (event: MouseEvent) => {
       if (variant === "click") return; // Skip outside click logic in click mode
 
+      const target = event.target as Node | null;
       if (
         containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
+        target &&
+        !containerRef.current.contains(target)
       ) {
         // Reset status options first
         setStatusResetTrigger((prev) => prev + 1);
@@ -763,7 +766,10 @@ export const ExpandableGrid = ({
           ".card-radio:checked"
         );
         radioButtons.forEach((radio) => {
-          (radio as HTMLInputElement).checked = false;
+          const radioInput = radio as HTMLInputElement;
+          if (radioInput) {
+            radioInput.checked = false;
+          }
         });
       }
     };
@@ -998,7 +1004,7 @@ export const ExpandableGrid = ({
                     const radioButton =
                       e.currentTarget.parentElement?.querySelector(
                         ".card-radio"
-                      ) as HTMLInputElement;
+                      ) as HTMLInputElement | null;
                     if (radioButton) {
                       radioButton.checked = false;
                       setStatusResetTrigger((prev) => prev + 1);

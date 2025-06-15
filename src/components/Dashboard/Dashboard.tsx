@@ -15,18 +15,21 @@ import { CacheTest } from '../CacheTest'
 import { ExpandingAnimeCards } from '../ExpandingAnimeCards'
 import { ExpandableGrid } from '../ExpandableGrid'
 import { Typography, AnimeGridSkeleton } from '../ui'
+import type { AnimeBase } from '../../types/anime'
+
+interface AnimeSectionProps {
+  title: string
+  anime: AnimeBase[]
+  isLoading: boolean
+  LoadingGrid: () => JSX.Element
+}
 
 const AnimeSection = memo(({
   title,
   anime,
   isLoading,
   LoadingGrid,
-}: {
-  title: string
-  anime: any[]
-  isLoading: boolean
-  LoadingGrid: () => JSX.Element
-}) => {
+}: AnimeSectionProps) => {
   return (
     <section className="mb-12">
       {isLoading ? (

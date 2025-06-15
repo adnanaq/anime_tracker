@@ -7,10 +7,24 @@ import { LoadingSpinner } from '../components/LoadingSpinner'
 import { ExpandableGrid } from '../components/ExpandableGrid'
 import { getAuthService } from '../services/shared'
 import { animeStatusService } from '../services/shared/animeStatusService'
-import { malService } from '../services/mal'
+import { malService, MALUserListStatus } from '../services/mal'
 import { anilistService } from '../services/anilist'
 import { getStatusOptions } from '../utils/animeStatus'
 import { createDebouncedFunction } from '../utils/debounce'
+
+interface MALUpdateData {
+  status?: string;
+  score?: number;
+  num_watched_episodes?: number;
+}
+
+interface AniListUpdateData {
+  status?: string;
+  score?: number;
+  progress?: number;
+}
+
+type AnimeUpdateData = MALUpdateData | AniListUpdateData
 
 export const AnimeDetail = () => {
   const { source, id } = useParams<{ source: string; id: string }>()
@@ -83,13 +97,13 @@ export const AnimeDetail = () => {
               const token = tokenObj.access_token
               if (source === 'mal' || source === 'jikan') {
                 // For MAL, fetch detailed anime info which includes my_list_status
-                const detailResponse: any = await malService.getAnimeDetails(parseInt(id))
+                const detailResponse = await malService.getAnimeDetails(parseInt(id))
                 if (detailResponse.userScore) {
                   animeData.userScore = detailResponse.userScore
                 }
                 // For MAL, we need to make a separate API call to get user status
                 try {
-                  const userAnimeResponse = await malService.getUserAnimeDetails(parseInt(id), token)
+                  const userAnimeResponse: MALUserListStatus | null = await malService.getUserAnimeDetails(parseInt(id), token)
                   if (userAnimeResponse) {
                     setUserStatus(userAnimeResponse.status || null)
                     const score = userAnimeResponse.score || 0
@@ -178,7 +192,7 @@ export const AnimeDetail = () => {
     setIsUpdatingStatus(true)
     try {
       // Prepare update data with automatic episode adjustment
-      const updateData: any = { status: newStatus }
+      const updateData: AnimeUpdateData = { status: newStatus }
       
       // Auto-logic: When status becomes "completed", set episodes to max
       const isCompletedStatus = newStatus === 'completed' || newStatus === 'COMPLETED'
@@ -228,7 +242,7 @@ export const AnimeDetail = () => {
       }
 
       // Prepare update data
-      const updateData: any = { score: newScore }
+      const updateData: AnimeUpdateData = { score: newScore }
       if (newStatus !== currentStatus) {
         updateData.status = newStatus
       }
@@ -281,7 +295,7 @@ export const AnimeDetail = () => {
       }
 
       // Update both episodes and status if needed
-      const updateData: any = source === 'mal' 
+      const updateData: AnimeUpdateData = source === 'mal' 
         ? { num_watched_episodes: newEpisodes }
         : { progress: newEpisodes }
       

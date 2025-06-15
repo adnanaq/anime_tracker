@@ -24,6 +24,50 @@ interface AniListAnimeWithUserData extends AniListAnime {
   progress?: number;
 }
 
+interface AniListMediaListEntry {
+  id: number;
+  score?: number;
+  status?: string;
+  progress?: number;
+  media: {
+    id: number;
+    title?: {
+      romaji?: string;
+      english?: string;
+      native?: string;
+    };
+    description?: string;
+    coverImage?: {
+      large?: string;
+      medium?: string;
+    };
+    averageScore?: number;
+    episodes?: number;
+    status?: string;
+    genres?: string[];
+    startDate?: {
+      year?: number;
+    };
+    format?: string;
+  };
+}
+
+interface AniListMediaList {
+  entries: AniListMediaListEntry[];
+}
+
+interface AniListMediaListCollection {
+  lists: AniListMediaList[];
+}
+
+interface AniListUpdateVariables {
+  mediaId: number;
+  status?: string;
+  score?: number;
+  progress?: number;
+  notes?: string;
+}
+
 export const normalizeAniListAnime = (anime: AniListAnime, includeRelated: boolean = false): AnimeBase => {
   // Handle user data if available (for anime from user's list)
   const animeWithUserData = anime as AniListAnimeWithUserData;
@@ -62,7 +106,7 @@ export const normalizeAniListAnime = (anime: AniListAnime, includeRelated: boole
 }
 
 // Helper function to make GraphQL requests with rate limiting
-const makeGraphQLRequest = async (query: string, variables?: any) => {
+const makeGraphQLRequest = async (query: string, variables?: Record<string, unknown>) => {
   try {
     const response = await fetch(ANILIST_BASE_URL, {
       method: 'POST',
@@ -220,8 +264,9 @@ export const anilistService = {
       const userAnimeMap = new Map<number, number>()
       
       // Flatten all lists and create a map of anime ID to user score
-      data.MediaListCollection.lists.forEach((list: any) => {
-        list.entries.forEach((entry: any) => {
+      const collection = data.MediaListCollection as AniListMediaListCollection
+      collection.lists.forEach((list: AniListMediaList) => {
+        list.entries.forEach((entry: AniListMediaListEntry) => {
           if (entry.score && entry.score > 0) {
             userAnimeMap.set(entry.media.id, entry.score)
           }
@@ -345,8 +390,9 @@ export const anilistService = {
       // Check if MediaListCollection exists and has lists
       if (data.data?.MediaListCollection?.lists) {
         // Flatten all lists and create normalized anime objects
-        data.data.MediaListCollection.lists.forEach((list: any) => {
-          list.entries?.forEach((entry: any) => {
+        const collection = data.data.MediaListCollection as AniListMediaListCollection
+        collection.lists.forEach((list: AniListMediaList) => {
+          list.entries?.forEach((entry: AniListMediaListEntry) => {
             const normalizedAnime = normalizeAniListAnime(entry.media)
             // Add user data from the entry
             normalizedAnime.userScore = entry.score && entry.score > 0 ? entry.score : undefined
@@ -411,9 +457,10 @@ export const anilistService = {
 
       // Process all lists (watching, completed, planning, etc.)
       if (data.data.MediaListCollection?.lists) {
-        data.data.MediaListCollection.lists.forEach((list: any) => {
+        const collection = data.data.MediaListCollection as AniListMediaListCollection
+        collection.lists.forEach((list: AniListMediaList) => {
           if (list.entries) {
-            list.entries.forEach((entry: any) => {
+            list.entries.forEach((entry: AniListMediaListEntry) => {
               if (entry.status && entry.media?.id) {
                 statusMap.set(entry.media.id, entry.status);
               }
@@ -452,7 +499,7 @@ export const anilistService = {
       `
 
       // Clean up variables - remove undefined values
-      const variables: any = {
+      const variables: AniListUpdateVariables = {
         mediaId: animeId
       }
       
@@ -610,8 +657,9 @@ export const anilistService = {
       // Create user list lookup
       const userListMap = new Map()
       if (data.data.MediaListCollection?.lists) {
-        data.data.MediaListCollection.lists.forEach((list: any) => {
-          list.entries?.forEach((entry: any) => {
+        const collection = data.data.MediaListCollection as AniListMediaListCollection
+        collection.lists.forEach((list: AniListMediaList) => {
+          list.entries?.forEach((entry: AniListMediaListEntry) => {
             userListMap.set(entry.media.id, {
               status: entry.status,
               score: entry.score,
@@ -695,8 +743,9 @@ export const anilistService = {
       }
 
       // Find the specific anime entry
-      const allEntries = data.data.MediaListCollection?.lists?.flatMap((list: any) => list.entries) || []
-      const entry = allEntries.find((entry: any) => entry.media.id === animeId)
+      const collection = data.data.MediaListCollection as AniListMediaListCollection | undefined
+      const allEntries = collection?.lists?.flatMap((list: AniListMediaList) => list.entries) || []
+      const entry = allEntries.find((entry: AniListMediaListEntry) => entry.media.id === animeId)
 
       return entry || null
     } catch (error) {
@@ -749,8 +798,9 @@ export const anilistService = {
         throw new Error(listData.errors[0]?.message || 'GraphQL error')
       }
 
-      const allEntries = listData.data.MediaListCollection?.lists?.flatMap((list: any) => list.entries) || []
-      const entry = allEntries.find((entry: any) => entry.media.id === animeId)
+      const collection = listData.data.MediaListCollection as AniListMediaListCollection | undefined
+      const allEntries = collection?.lists?.flatMap((list: AniListMediaList) => list.entries) || []
+      const entry = allEntries.find((entry: AniListMediaListEntry) => entry.media.id === animeId)
 
       if (!entry) {
         throw new Error('Anime not found in user list')

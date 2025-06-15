@@ -9,7 +9,7 @@ export interface CacheConfig {
   persistent?: boolean // Whether to persist in IndexedDB
 }
 
-export interface CacheEntry<T = any> {
+export interface CacheEntry<T = unknown> {
   data: T
   timestamp: number
   ttl: number

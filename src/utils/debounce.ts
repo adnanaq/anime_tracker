@@ -68,9 +68,9 @@ export const createDebouncedFunction = <T extends (...args: any[]) => any>(
 export const createTimeoutManager = () => {
   const timeouts = new Map<string, ReturnType<typeof setTimeout>>()
   
-  const setTimeout = (key: string, callback: () => void, delay: number) => {
+  const setTimeoutForKey = (key: string, callback: () => void, delay: number) => {
     // Clear existing timeout for this key
-    clearTimeout(key)
+    clearTimeoutForKey(key)
     
     // Set new timeout
     const timeoutId = window.setTimeout(() => {
@@ -81,7 +81,7 @@ export const createTimeoutManager = () => {
     timeouts.set(key, timeoutId)
   }
   
-  const clearTimeout = (key: string) => {
+  const clearTimeoutForKey = (key: string) => {
     const timeoutId = timeouts.get(key)
     if (timeoutId) {
       window.clearTimeout(timeoutId)
@@ -99,8 +99,8 @@ export const createTimeoutManager = () => {
   const pending = () => timeouts.size > 0
   
   return {
-    setTimeout,
-    clearTimeout,
+    setTimeout: setTimeoutForKey,
+    clearTimeout: clearTimeoutForKey,
     clearAll,
     has,
     pending,

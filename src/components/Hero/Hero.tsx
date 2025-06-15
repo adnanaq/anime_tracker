@@ -81,11 +81,11 @@ export const Hero = ({ anime }: HeroProps) => {
             </Badge>
           </div>
           
-          <Typography variant="h1" color="inverse" className="mb-4 leading-tight">
+          <Typography variant="h1" className="mb-4 leading-tight text-white">
             {currentAnime?.title || 'Loading...'}
           </Typography>
           
-          <Typography variant="bodyLarge" color="inverse" className="mb-6 line-clamp-3 leading-relaxed opacity-90">
+          <Typography variant="bodyLarge" className="mb-6 line-clamp-3 leading-relaxed opacity-90 text-white">
             {currentAnime?.synopsis 
               ? (currentAnime.synopsis.length > 200 
                   ? currentAnime.synopsis.slice(0, 200) + '...'

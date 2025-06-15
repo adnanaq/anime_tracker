@@ -3,9 +3,9 @@
 /* === BASE STYLES === */
 .at-typography-base {
   font-family: var(--font-primary);
-  color: var(--color-text-primary);
   margin: 0;
   line-height: var(--leading-normal);
+  /* Color is handled by Tailwind classes in TypeScript component */
 }
 
 /* === HEADING VARIANTS === */
@@ -71,7 +71,7 @@
 .at-typography-caption {
   font-size: var(--text-xs);
   line-height: var(--leading-normal);
-  color: var(--color-text-tertiary);
+  /* Color handled by Tailwind classes */
 }
 
 .at-typography-overline {
@@ -79,14 +79,14 @@
   line-height: var(--leading-normal);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--color-text-secondary);
+  /* Color handled by Tailwind classes */
 }
 
 .at-typography-label {
   font-size: var(--text-sm);
   line-height: var(--leading-normal);
-  color: var(--color-text-secondary);
   margin-bottom: var(--space-1);
+  /* Color handled by Tailwind classes */
 }
 
 /* === RESPONSIVE ADJUSTMENTS === */
@@ -117,21 +117,7 @@
 }
 
 /* === DARK MODE OVERRIDES === */
-.dark .at-typography-base {
-  color: var(--color-dark-text-primary);
-}
-
-.dark .at-typography-caption {
-  color: var(--color-dark-text-tertiary);
-}
-
-.dark .at-typography-overline {
-  color: var(--color-dark-text-secondary);
-}
-
-.dark .at-typography-label {
-  color: var(--color-dark-text-secondary);
-}
+/* Dark mode colors are handled by Tailwind classes in TypeScript component */
 
 /* === UTILITY CLASSES === */
 

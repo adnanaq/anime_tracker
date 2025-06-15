@@ -568,27 +568,29 @@ export const useAnimeStore = create<AnimeStore>()(
                    state.searchResults.find(anime => anime.id === animeId && anime.source === source)
     }
     
-    if (targetAnime) {
-      if (isWatchingStatus && currentlyWatchingIndex === -1) {
-        // Add to currently watching
-        const currentWatchingArray = updates.currentlyWatching || state.currentlyWatching
-        updates.currentlyWatching = [...currentWatchingArray, targetAnime]
-        anyChanges = true
-      } else if ((!isWatchingStatus || isRemovingFromList) && currentlyWatchingIndex !== -1) {
-        // Remove from currently watching (either changing to non-watching status or removing from list entirely)
-        const currentWatchingArray = updates.currentlyWatching || [...state.currentlyWatching]
-        if (updates.currentlyWatching) {
-          // Already have a new array, find the index again
-          const newIndex = currentWatchingArray.findIndex((anime: AnimeBase) => anime.id === animeId && anime.source === source)
-          if (newIndex !== -1) {
-            currentWatchingArray.splice(newIndex, 1)
-          }
-        } else {
-          currentWatchingArray.splice(currentlyWatchingIndex, 1)
-          updates.currentlyWatching = currentWatchingArray
+    // Handle adding to currently watching (only if anime exists in other arrays)
+    if (targetAnime && isWatchingStatus && currentlyWatchingIndex === -1) {
+      // Add to currently watching
+      const currentWatchingArray = updates.currentlyWatching || state.currentlyWatching
+      updates.currentlyWatching = [...currentWatchingArray, targetAnime]
+      anyChanges = true
+    }
+    
+    // Handle removing from currently watching (works regardless of whether anime exists elsewhere)
+    if ((!isWatchingStatus || isRemovingFromList) && currentlyWatchingIndex !== -1) {
+      // Remove from currently watching (either changing to non-watching status or removing from list entirely)
+      const currentWatchingArray = updates.currentlyWatching || [...state.currentlyWatching]
+      if (updates.currentlyWatching) {
+        // Already have a new array, find the index again
+        const newIndex = currentWatchingArray.findIndex((anime: AnimeBase) => anime.id === animeId && anime.source === source)
+        if (newIndex !== -1) {
+          currentWatchingArray.splice(newIndex, 1)
         }
-        anyChanges = true
+      } else {
+        currentWatchingArray.splice(currentlyWatchingIndex, 1)
+        updates.currentlyWatching = currentWatchingArray
       }
+      anyChanges = true
     }
     
     // Update the userAnimeStatus map

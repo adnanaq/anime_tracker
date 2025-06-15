@@ -67,6 +67,7 @@ A modern, triple-source anime tracking and recommendation platform powered by **
 - 🔄 Vector Recommendations using FAISS (infrastructure ready, integration pending)
 - 🔄 Anime-to-anime similarity using cosine similarity on watch vectors
 - 🔄 Component Architecture Refinement (ExpandableGrid splitting - high priority)
+- 🚨 **TypeScript Type Safety Audit** (multiple `any` types and unsafe assertions identified)
 
 ### 🎨 Phase 1.6 - Storybook Implementation (IN PROGRESS)
 **Status**: Phase 1 Active Development  

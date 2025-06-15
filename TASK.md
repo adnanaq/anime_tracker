@@ -230,12 +230,72 @@ This document tracks all tasks identified from comprehensive project audit, orga
 - 🔄 **Storybook Implementation Phase 1**: Spinner, Skeleton, AnimeGridSkeleton stories (remaining UI System)
 - 🔄 **Simple Component Stories**: AnimatedButton, LoadingSpinner, ThemeToggle, SourceToggle (next priority)
 - ✅ **Documentation Updates**: Syncing docs with actual implementation ✅ **COMPLETED**
+- 🚨 **TypeScript Type Safety Audit**: Eliminate remaining `any` types and unsafe assertions
 
 ---
 
 ## 🚨 HIGH PRIORITY PENDING TASKS
 
-### **Critical: Storybook Implementation** 🎨 **NEW PRIORITY**
+### **Critical: TypeScript Type Safety Audit** 🚨 **URGENT PRIORITY**
+
+#### **Task 9: Complete TypeScript Type Safety Implementation** 🚨 **URGENT**
+**Status**: Identified - **Immediate Action Required**  
+**Current State**: Multiple `any` types and unsafe assertions found throughout codebase  
+**Impact**: Type safety violations, potential runtime errors, reduced developer experience  
+
+**Priority Issues Identified**:
+
+**High Priority (Fix Immediately)**:
+1. **Dashboard.tsx line 26**: `anime: any[]` → `anime: AnimeBase[]`
+2. **AnimeDetail.tsx lines 86, 181, 231**: Multiple `any` types in API response handling
+3. **API Services (mal/api.ts, jikan/api.ts, anilist/api.ts)**: API responses using `any` instead of proper interfaces
+4. **ExpandableGrid.tsx lines 698, 756**: Unsafe type assertions without null checks
+5. **CacheManager.ts line 12**: Generic `any` usage in cache operations
+
+**Implementation Plan**:
+```typescript
+// 1. Create comprehensive API response interfaces
+interface MALAnimeResponse {
+  data: MALAnime[];
+  paging?: { next?: string; previous?: string; };
+}
+
+interface AniListResponse<T> {
+  data: T;
+  errors?: Array<{ message: string; }>;
+}
+
+// 2. Replace unsafe assertions with proper type guards
+const target = event.target as HTMLElement | null;
+if (target?.closest(".expanded-content")) {
+  // Safe to use target
+}
+
+// 3. Add proper event handler typing
+interface FormEventHandlers {
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+```
+
+**Sub-tasks**:
+- [ ] **API Response Interface Creation**: Define proper types for all API responses
+- [ ] **Component Prop Type Fixes**: Replace `any` props with specific interfaces
+- [ ] **Event Handler Type Safety**: Add proper React event types
+- [ ] **Type Assertion Safety**: Add null checks before unsafe casts
+- [ ] **Generic Type Constraints**: Improve utility function type safety
+- [ ] **Error Handling Types**: Implement proper error type definitions
+- [ ] **Store Type Enhancement**: Strengthen Zustand store typing
+
+**Success Criteria**:
+- [ ] Zero `any` types in production code (100% elimination)
+- [ ] All type assertions include null safety checks
+- [ ] Comprehensive API response interfaces implemented
+- [ ] All event handlers properly typed
+- [ ] TypeScript strict mode fully enabled
+- [ ] No TypeScript compiler warnings or errors
+
+### **Critical: Storybook Implementation** 🎨 **HIGH PRIORITY**
 
 #### **Phase 1: UI System & Simple Components** 🔄 **IN PROGRESS**
 **Status**: Active development - **Immediate Priority**  
@@ -540,9 +600,10 @@ interface UnifiedAnimeCardProps {
 ## 🚦 TASK PRIORITIZATION MATRIX
 
 ### **🚨 URGENT (This Week)**
-1. **Split ExpandableGrid Component** - Technical debt and maintainability critical
-2. **Create Unified AnimeCard Component** - Eliminate duplication risk
-3. **Complete Documentation Sync** - Align docs with implementation
+1. **Complete TypeScript Type Safety Audit** - Eliminate `any` types and unsafe assertions (NEW PRIORITY)
+2. **Split ExpandableGrid Component** - Technical debt and maintainability critical
+3. **Create Unified AnimeCard Component** - Eliminate duplication risk
+4. **Complete Documentation Sync** - Align docs with implementation
 
 ### **🔥 HIGH PRIORITY (Next 2 Weeks)**
 1. **FAISS Vector Recommendations** - Complete Phase 1 MVP

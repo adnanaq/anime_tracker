@@ -77,20 +77,26 @@ describe('Typography Component', () => {
         render(<Typography color={color}>{color} Text</Typography>)
         const element = screen.getByText(`${color} Text`)
         
-        if (['success', 'warning', 'danger', 'info'].includes(color)) {
-          // Semantic colors use Tailwind classes
-          expect(element).toHaveClass(`text-${color === 'danger' ? 'red' : color === 'warning' ? 'yellow' : color === 'info' ? 'blue' : 'green'}-600`)
-        } else {
-          // Design token colors
-          expect(element).toHaveClass(`at-text-${color}`)
+        // All colors now use Tailwind classes
+        const colorMap = {
+          primary: 'text-gray-900',
+          secondary: 'text-gray-700', 
+          tertiary: 'text-gray-500',
+          inverse: 'text-white',
+          muted: 'text-gray-400',
+          success: 'text-green-600',
+          warning: 'text-yellow-600',
+          danger: 'text-red-600',
+          info: 'text-blue-600'
         }
+        expect(element).toHaveClass(colorMap[color])
       })
     })
 
     it('should use primary as default color', () => {
       render(<Typography>Default Color</Typography>)
       const element = screen.getByText('Default Color')
-      expect(element).toHaveClass('at-text-primary')
+      expect(element).toHaveClass('text-gray-900')
     })
   })
 

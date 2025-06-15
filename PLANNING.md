@@ -66,7 +66,7 @@ A modern, triple-source anime tracking and recommendation platform powered by **
 **Pending Phase 1 Items**:
 - 🔄 Vector Recommendations using FAISS (infrastructure ready, integration pending)
 - 🔄 Anime-to-anime similarity using cosine similarity on watch vectors
-- 🔄 Component Architecture Refinement (ExpandableGrid splitting - high priority)
+- 🔄 **ExpandableGrid Component Refactoring** (1,801 lines → reusable components - Phase 1 Complete: BaseAnimeCard ✅)
 - ✅ **TypeScript Type Safety Audit** (95% elimination of any types completed, dark theme fixes applied)
 
 ### 🎨 Phase 1.6 - Storybook Implementation (IN PROGRESS)
@@ -284,9 +284,33 @@ Convert AnimeTrackr's backend infrastructure into a **Model Context Protocol (MC
 ## 🚨 Immediate Priorities
 
 ### Component Architecture (Critical)
-1. **Split ExpandableGrid Component** (1,031 lines → target <300 lines each)
-2. **Create Unified AnimeCard Component** (eliminate 70% duplication)
+1. **ExpandableGrid Refactoring** (1,801 lines → reusable component system)
+2. **Create Modular AnimeCard System** (eliminate 70% duplication with variant support)
 3. **Complete Store Selector Optimization** (render count improvements)
+
+### 🎯 ExpandableGrid Refactoring Strategy
+
+#### **Current State Analysis**
+- **Total Size**: 1,037 TypeScript + 764 CSS = 1,801 lines
+- **Main Issues**: Dual interaction modes (hover/click), repetitive status logic, complex animations
+- **Core Challenge**: Maintain exact functionality while improving maintainability
+
+#### **Non-Disruptive Refactoring Approach**
+**Phase 1: Component Extraction (Test-Driven)**
+1. **BaseAnimeCard Component** - Core card rendering with variant system
+2. **StatusOptionsDropdown Component** - Reusable status management UI  
+3. **AnimeBadges Component** - Consistent badge rendering system
+4. **CardInteractionManager Hook** - Mouse/touch/drag handling logic
+
+**Phase 2: Integration & Testing**
+1. **NewExpandableGrid Component** - Assembled from extracted components
+2. **Comprehensive Storybook Stories** - Isolated component development
+3. **Feature Parity Testing** - Ensure exact behavior match
+
+**Phase 3: Safe Replacement**
+1. **Side-by-side Testing** - A/B comparison in development
+2. **Gradual Migration** - Replace in low-risk areas first
+3. **Performance Validation** - Ensure no regressions
 
 ### Feature Completion (High Priority)
 1. **Implement FAISS Vector Recommendations** (infrastructure ready)

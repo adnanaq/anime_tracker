@@ -340,33 +340,88 @@ interface FormEventHandlers {
 - [ ] **AnimeCard Stories**: Core business component with all states
 - [ ] **ExpandingAnimeCards Stories**: Animation and variant showcases
 
-### **Critical: Component Architecture Refinement**
+### **Critical: ExpandableGrid Component Refactoring** 🚨 **URGENT**
 
-#### **Task 2: Split ExpandableGrid Component** 🚨 **URGENT**
-**Status**: Pending - **Highest Priority**  
-**Current State**: 1,031 lines (target: <300 lines per component)  
-**Complexity**: High - Core functionality component  
+#### **ExpandableGrid Analysis & Refactoring Plan** 🚨 **HIGHEST PRIORITY**
+**Status**: Analysis Complete - **Ready for Implementation**  
+**Current State**: 1,037 TypeScript + 764 CSS = 1,801 total lines  
+**Approach**: Non-disruptive, test-driven component extraction  
 
-**Breakdown Strategy**:
-- [ ] **AnimeCard Component**: Extract individual card rendering logic (~200 lines)
-- [ ] **StatusDropdown Component**: Isolate status management UI (~150 lines)
-- [ ] **GridContainer Component**: Core grid layout and animation logic (~250 lines)
-- [ ] **GridControls Component**: Filter and sort controls (~100 lines)
-- [ ] **GridState Management**: Extract state logic to custom hook (~150 lines)
+**Detailed Component Analysis**:
+- **ExpandedContent Component**: 651 lines (status management + content display)
+- **Main ExpandableGrid Component**: 365 lines (grid layout + interactions)
+- **CSS Animation System**: 764 lines (complex grid expansion animations)
+- **Interaction Modes**: Hover (CSS-driven) vs Click (state-driven) with auto-cycling
+- **Code Duplication**: ~200 lines of repetitive status mapping logic
 
-**Technical Considerations**:
-- Preserve all existing functionality (critical)
-- Maintain visual aesthetics and animations
-- Ensure no performance regression
-- Keep test coverage intact
-- Consider component communication patterns
+**Key Refactoring Targets**:
+
+**1. StatusOptionsDropdown Component** (~200 lines extraction)
+- **Location**: Lines 19-670 in ExpandedContent  
+- **Functionality**: Status button rendering, animation states, async updates
+- **Duplication**: Status mapping repeated 5+ times for different statuses
+- **Reusability**: Can be used across AnimeCard, DetailPage, hover cards
+
+**2. BaseAnimeCard Component** (~150 lines extraction)  
+- **Location**: Lines 937-1034 in main grid rendering
+- **Functionality**: Card container, image display, overlay management
+- **Variants**: Support hover/click modes, expanded/collapsed states
+- **Reusability**: Foundation for SeasonalAnime cards and other grid systems
+
+**3. AnimeBadges Component** (~80 lines extraction)
+- **Location**: Lines 171-236, 291-306 in ExpandedContent
+- **Functionality**: Status badges, format badges, genre badges  
+- **Duplication**: Badge rendering pattern repeated 3+ times
+- **Reusability**: Consistent badge styling across entire app
+
+**4. CardInteractionManager Hook** (~150 lines extraction)
+- **Location**: Lines 728-910 in ExpandableGrid
+- **Functionality**: Mouse/touch events, drag scrolling, auto-cycling
+- **Complexity**: Platform-specific touch handling, snap scrolling
+- **Reusability**: Can be used for any draggable card interface
+
+**Implementation Strategy**:
+
+**Phase 1: Component Extraction (Test-Driven Development)**
+- ✅ **BaseAnimeCard Component**: Create foundational card component with variant system ✅ **COMPLETED**
+  - ✅ Empty card foundation with exact ExpandableGrid dimensions (200px × 370px)
+  - ✅ Expandable state support (480px × 370px) with smooth CSS transitions
+  - ✅ Radio button mutual exclusion behavior (matches ExpandableGrid pattern)
+  - ✅ Mobile-friendly `expandable={false}` prop for constrained layouts
+  - ✅ Comprehensive test suite (23 tests) with 100% pass rate
+  - ✅ Complete Storybook stories demonstrating all functionality
+- [ ] **StatusOptionsDropdown Component**: Extract status management UI with comprehensive tests
+- [ ] **AnimeBadges Component**: Extract badge rendering logic for reusability
+- [ ] **CardInteractionManager Hook**: Extract mouse/touch/drag handling logic
+
+**Phase 2: Storybook Development**
+- ✅ **BaseAnimeCard Stories**: Card variants (hover/click/expanded states) ✅ **COMPLETED**
+  - ✅ 9 comprehensive stories covering all functionality
+  - ✅ Default, Expanded, Multiple, Group Behavior, Non-Expandable, Mobile Layout stories
+  - ✅ Interactive demonstrations with proper documentation
+- [ ] **StatusOptionsDropdown Stories**: Isolated status management testing
+- [ ] **AnimeBadges Stories**: Badge variant showcase and documentation
+- [ ] **CardInteractionManager Stories**: Interaction pattern demonstrations
+
+**Phase 3: Integration & Testing**
+- [ ] **NewExpandableGrid Component**: Assemble using extracted components
+- [ ] **Feature Parity Testing**: Comprehensive comparison with original
+- [ ] **Performance Validation**: Ensure no regressions in animation/interaction
+- [ ] **Cross-browser Testing**: Verify touch/drag functionality across devices
+
+**Phase 4: Safe Migration**
+- [ ] **Side-by-side Development**: Test new implementation alongside original
+- [ ] **Gradual Replacement**: Replace in low-risk areas first (e.g., secondary pages)
+- [ ] **Production Validation**: Monitor for issues after deployment
 
 **Success Criteria**:
 - [ ] No single component over 300 lines
 - [ ] All existing tests pass
-- [ ] No visual changes to user interface
+- [ ] No visual changes to user interface  
 - [ ] Performance maintained or improved
 - [ ] TypeScript strict mode compliance
+- [ ] 100% feature parity with original implementation
+- [ ] Reusable components available for SeasonalAnime and future features
 
 #### **Task 4: Create Unified AnimeCard Component** 🔥 **HIGH PRIORITY**
 **Status**: Pending  

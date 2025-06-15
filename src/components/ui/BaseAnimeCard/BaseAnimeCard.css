@@ -1,0 +1,31 @@
+/* BaseAnimeCard CSS - matches ExpandableGrid radio button pattern */
+
+/* Card expands to 480px when its radio button is checked AND expandable */
+.base-anime-card:has(input[type="radio"]:checked):not(.non-expandable) {
+  width: 480px !important;
+}
+
+/* Non-expandable cards stay at 200px even when radio is checked */
+.base-anime-card.non-expandable {
+  width: 200px !important;
+}
+
+/* Card collapses to 200px when any other radio in the same group is checked */
+.base-anime-card:has(input[type="radio"]:not(:checked)) {
+  width: 200px !important;
+}
+
+/* Smooth transition for width changes */
+.base-anime-card {
+  transition: width 0.7s ease-in;
+}
+
+/* Hide the radio button completely */
+.base-anime-card input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}

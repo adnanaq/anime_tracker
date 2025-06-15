@@ -105,59 +105,139 @@ export const Default: Story = {
 }
 
 export const Primary: Story = {
+  render: (args) => {
+    const { variant, ...otherArgs } = args
+    return <Button {...otherArgs} variant="primary">{args.children || 'Primary'}</Button>
+  },
   args: {
-    variant: 'primary',
     children: 'Primary',
   },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Primary variant button. Variant is fixed to primary, but you can control size, animation, children, loading, disabled, and other properties.'
+      }
+    }
+  }
 }
 
 export const Secondary: Story = {
+  render: (args) => {
+    const { variant, ...otherArgs } = args
+    return <Button {...otherArgs} variant="secondary">{args.children || 'Secondary'}</Button>
+  },
   args: {
-    variant: 'secondary',
     children: 'Secondary',
   },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Secondary variant button. Variant is fixed to secondary, but you can control size, animation, children, loading, disabled, and other properties.'
+      }
+    }
+  }
 }
 
 export const Success: Story = {
+  render: (args) => {
+    const { variant, ...otherArgs } = args
+    return <Button {...otherArgs} variant="success">{args.children || 'Success'}</Button>
+  },
   args: {
-    variant: 'success',
     children: 'Success',
   },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Success variant button. Variant is fixed to success, but you can control size, animation, children, loading, disabled, and other properties.'
+      }
+    }
+  }
 }
 
 export const Warning: Story = {
+  render: (args) => {
+    const { variant, ...otherArgs } = args
+    return <Button {...otherArgs} variant="warning">{args.children || 'Warning'}</Button>
+  },
   args: {
-    variant: 'warning',
     children: 'Warning',
   },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Warning variant button. Variant is fixed to warning, but you can control size, animation, children, loading, disabled, and other properties.'
+      }
+    }
+  }
 }
 
 export const Danger: Story = {
+  render: (args) => {
+    const { variant, ...otherArgs } = args
+    return <Button {...otherArgs} variant="danger">{args.children || 'Danger'}</Button>
+  },
   args: {
-    variant: 'danger',
     children: 'Danger',
   },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Danger variant button. Variant is fixed to danger, but you can control size, animation, children, loading, disabled, and other properties.'
+      }
+    }
+  }
 }
 
 export const Ghost: Story = {
+  render: (args) => {
+    const { variant, ...otherArgs } = args
+    return <Button {...otherArgs} variant="ghost">{args.children || 'Ghost'}</Button>
+  },
   args: {
-    variant: 'ghost',
     children: 'Ghost',
   },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Ghost variant button. Variant is fixed to ghost, but you can control size, animation, children, loading, disabled, and other properties.'
+      }
+    }
+  }
 }
 
 export const Outline: Story = {
+  render: (args) => {
+    const { variant, ...otherArgs } = args
+    return <Button {...otherArgs} variant="outline">{args.children || 'Outline'}</Button>
+  },
   args: {
-    variant: 'outline',
     children: 'Outline',
   },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Outline variant button. Variant is fixed to outline, but you can control size, animation, children, loading, disabled, and other properties.'
+      }
+    }
+  }
 }
 
 export const Link: Story = {
+  render: (args) => {
+    const { variant, ...otherArgs } = args
+    return <Button {...otherArgs} variant="link">{args.children || 'Link Button'}</Button>
+  },
   args: {
-    variant: 'link',
     children: 'Link Button',
   },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Link variant button. Variant is fixed to link, but you can control size, animation, children, loading, disabled, and other properties.'
+      }
+    }
+  }
 }
 
 // === SIZE VARIANTS ===
@@ -592,6 +672,50 @@ export const ResponsiveExample: Story = {
     docs: {
       description: {
         story: 'Responsive button layouts that adapt to different screen sizes.'
+      }
+    }
+  }
+}
+
+// === PLAYGROUND ===
+
+export const Playground: Story = {
+  args: {
+    children: 'Playground Button',
+    variant: 'primary',
+    size: 'md',
+    animated: false,
+    loading: false,
+    disabled: false,
+    fullWidth: false,
+    leftIcon: undefined,
+    rightIcon: undefined
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+**Full Control Playground**
+
+This story gives you complete control over every Button property. Perfect for:
+- Testing different combinations of properties
+- Experimenting with edge cases
+- Interactive development and debugging
+- Checking behavior with custom configurations
+
+**Available Controls:**
+- \`children\`: Button text content
+- \`variant\`: Visual variant (primary, secondary, success, warning, danger, ghost, outline, link)
+- \`size\`: Size variant (xs, sm, md, lg, xl)
+- \`animated\`: Enable animation effects
+- \`loading\`: Show loading state with spinner
+- \`disabled\`: Disable button interaction
+- \`fullWidth\`: Make button full width
+- \`leftIcon\`: Add left icon (Note: Use icon stories for icon examples)
+- \`rightIcon\`: Add right icon (Note: Use icon stories for icon examples)
+
+**Usage:** Change any control to see immediate effects. Unlike showcase stories that demonstrate specific features, this playground lets you test any combination of properties.
+        `
       }
     }
   }

@@ -1,5 +1,8 @@
 import React from 'react';
 import { AnimeBase } from '../../../types/anime';
+import { useDimensions } from '../../../hooks/useDimensions';
+import { useAutoCycling } from '../../../hooks/useAutoCycling';
+import { Card } from '../Card';
 import './BaseAnimeCard.css';
 
 export interface BaseAnimeCardProps {
@@ -42,207 +45,39 @@ export const BaseAnimeCard: React.FC<BaseAnimeCardProps> = ({
   pauseDuration = 10000,
   onAutoLoop,
 }) => {
-  const radioRef = React.useRef<HTMLInputElement>(null);
-  const timerRef = React.useRef<number | null>(null);
-  
-  // Use a global pause state shared across all cards in the group
-  const pauseStateKey = `${groupName}-pause`;
-  const [isPaused, setIsPaused] = React.useState(false);
-  
-  // Initialize global pause state
-  React.useEffect(() => {
-    if (!(window as any)[pauseStateKey]) {
-      (window as any)[pauseStateKey] = { isPaused: false, subscribers: new Set() };
-    }
-    
-    const globalState = (window as any)[pauseStateKey];
-    globalState.subscribers.add(setIsPaused);
-    setIsPaused(globalState.isPaused);
-    
-    return () => {
-      globalState.subscribers.delete(setIsPaused);
-    };
-  }, [pauseStateKey]);
+  // Use the useDimensions hook for all dimension validation and formatting
+  const { cardStyles } = useDimensions({ width, height, expandedWidth });
 
-  // Helper function to validate and format dimension values
-  const validateAndFormatDimension = (value: number | string, fallback: number): string => {
-    if (typeof value === 'number') {
-      // Ensure no negative values
-      const validValue = Math.max(0, value);
-      return `${validValue}px`;
-    }
-    return value; // Allow string values (e.g., "10rem", "50%") - assume they're valid
-  };
-
-  // Validate dimensions
-  const validatedWidth = typeof width === 'number' ? Math.max(0, width) : width;
-  const validatedHeight = typeof height === 'number' ? Math.max(0, height) : height;
-  const validatedExpandedWidth = typeof expandedWidth === 'number' ? Math.max(0, expandedWidth) : expandedWidth;
-
-  // Ensure expandedWidth is greater than width (only for numeric values)
-  const finalExpandedWidth = (() => {
-    if (typeof validatedWidth === 'number' && typeof validatedExpandedWidth === 'number') {
-      return Math.max(validatedExpandedWidth, validatedWidth + 1); // At least 1px bigger than width
-    }
-    return validatedExpandedWidth;
-  })();
-
-  // Calculate dynamic styles - height is always fixed for horizontal-only expansion
-  const cardStyles: React.CSSProperties = {
-    width: validateAndFormatDimension(validatedWidth, 200),
-    height: validateAndFormatDimension(validatedHeight, 370),
-    '--expanded-width': validateAndFormatDimension(finalExpandedWidth, 480),
-    '--original-width': validateAndFormatDimension(validatedWidth, 200),
-  } as React.CSSProperties;
+  // Use the useAutoCycling hook for auto-cycling functionality
+  const { handleInteraction } = useAutoCycling({
+    autoLoop,
+    loopInterval,
+    pauseOnInteraction,
+    pauseDuration,
+    onAutoLoop,
+    groupName,
+    cardIndex,
+    expandable,
+  });
 
   const handleClick = () => {
-    // If not expandable, only call onClick callback but don't toggle expansion
-    if (!expandable) {
-      onClick && onClick();
-      return;
-    }
-
-    // Handle auto-loop pause on interaction (set global pause state)
-    if (autoLoop && pauseOnInteraction) {
-      const globalState = (window as any)[pauseStateKey];
-      if (globalState) {
-        globalState.isPaused = true;
-        globalState.subscribers.forEach((subscriber: (value: boolean) => void) => {
-          subscriber(true);
-        });
-      }
-      
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-      // Resume auto-cycling after pause duration
-      timerRef.current = setTimeout(() => {
-        const globalState = (window as any)[pauseStateKey];
-        if (globalState) {
-          globalState.isPaused = false;
-          globalState.subscribers.forEach((subscriber: (value: boolean) => void) => {
-            subscriber(false);
-          });
-        }
-      }, pauseDuration);
-    }
-
-    if (radioRef.current) {
-      // Always use radio button for mutual exclusion
-      if (radioRef.current.checked) {
-        // If already expanded, collapse by unchecking
-        radioRef.current.checked = false;
-      } else {
-        // Expand this card (automatically collapses others due to radio group)
-        radioRef.current.checked = true;
-      }
-    }
+    // Handle auto-cycling pause on interaction
+    handleInteraction();
+    // Call the provided onClick callback
     onClick && onClick();
   };
 
-  // Auto-cycling effect (similar to ExpandableGrid click mode)
-  // Only the first card (cardIndex 0) manages the auto-cycling for the entire group
-  React.useEffect(() => {
-    if (!autoLoop || !expandable || cardIndex !== 0) return;
-
-    let interval: number | null = null;
-
-    const startInterval = () => {
-      if (interval) clearInterval(interval);
-      
-      interval = setInterval(() => {
-        // Check if paused before each cycle
-        const globalState = (window as any)[pauseStateKey];
-        if (globalState?.isPaused) return;
-
-        // Find all cards in the same group to cycle through
-        const allRadios = document.querySelectorAll(`input[name="${groupName}"]`);
-        if (allRadios.length === 0) return;
-
-        const currentIndex = Array.from(allRadios).findIndex((radio) => 
-          (radio as HTMLInputElement).checked
-        );
-        
-        let nextIndex;
-        if (currentIndex === -1) {
-          // No card is currently selected, start with first card
-          nextIndex = 0;
-        } else {
-          // Move to next card
-          nextIndex = currentIndex + 1;
-          if (nextIndex >= allRadios.length) {
-            nextIndex = 0; // Loop back to first card
-          }
-        }
-
-        // Uncheck all cards and check next card
-        allRadios.forEach((radio, index) => {
-          (radio as HTMLInputElement).checked = index === nextIndex;
-        });
-
-        // Call onAutoLoop callback if provided
-        if (onAutoLoop) {
-          const nextRadio = allRadios[nextIndex] as HTMLInputElement;
-          const nextCardIndex = parseInt(nextRadio.getAttribute('data-index') || '0');
-          onAutoLoop(nextCardIndex);
-        }
-      }, loopInterval);
-    };
-
-    // Start the interval
-    startInterval();
-
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [autoLoop, expandable, groupName, loopInterval, onAutoLoop, cardIndex, pauseStateKey]);
-
-  // Cleanup timer on unmount
-  React.useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, []);
-
   return (
-    <div
-      className={`
-        base-anime-card
-        rounded-xl 
-        overflow-hidden 
-        bg-gray-200 
-        border 
-        border-gray-300
-        cursor-pointer
-        hover:border-gray-400
-        relative
-        ${!expandable ? 'non-expandable' : ''}
-        ${className}
-      `.trim()}
-      style={cardStyles}
+    <Card
+      expanded={expanded}
+      expandable={expandable}
+      groupName={groupName}
+      cardIndex={cardIndex}
       onClick={handleClick}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          handleClick();
-        }
-      }}
+      className={`base-anime-card ${className}`}
+      style={cardStyles}
     >
-      {/* Hidden radio button for mutual exclusion (like ExpandableGrid) */}
-      <input
-        ref={radioRef}
-        type="radio"
-        name={groupName}
-        className="absolute opacity-0 pointer-events-none"
-        data-index={cardIndex}
-        defaultChecked={expanded}
-      />
-      
       {children}
-    </div>
+    </Card>
   );
 };

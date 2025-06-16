@@ -1,0 +1,38 @@
+/* Core Card Component Styles */
+
+.card {
+  transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  font-family: var(--font-primary);
+}
+
+/* Expansion behavior using CSS - cards expand when their radio is checked */
+.card:has(input[type="radio"]:checked) {
+  width: var(--expanded-width) !important;
+}
+
+/* Non-expandable state - cards never expand even if radio is checked */
+.card.non-expandable {
+  width: var(--original-width) !important;
+}
+
+/* Hover effects */
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.card:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Focus styles for accessibility */
+.card:focus {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+/* Remove focus outline when using mouse */
+.card:focus:not(:focus-visible) {
+  outline: none;
+}

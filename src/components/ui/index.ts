@@ -23,3 +23,6 @@ export type { AnimeInfoCardProps } from './AnimeInfoCard'
 
 export { BaseAnimeCard } from './BaseAnimeCard'
 export type { BaseAnimeCardProps } from './BaseAnimeCard'
+
+export { StatusBadgeDropdown } from './StatusBadgeDropdown'
+export type { StatusBadgeDropdownProps, AnimeStatus } from './StatusBadgeDropdown'

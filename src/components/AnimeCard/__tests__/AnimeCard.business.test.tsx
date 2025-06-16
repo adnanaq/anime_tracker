@@ -9,7 +9,7 @@ vi.mock('../../../hooks/useAuth', () => ({
 }))
 
 const mockAnime: AnimeBase = {
-  id: '1',
+  id: 1,
   title: 'Attack on Titan',
   source: 'mal',
   image: 'https://example.com/aot.jpg',
@@ -23,7 +23,7 @@ const mockAnime: AnimeBase = {
   synopsis: 'Humanity fights for survival against giant humanoid Titans.',
   userStatus: 'watching',
   userScore: 9,
-  duration: 24,
+  duration: "24min",
   studios: ['Studio WIT', 'Studio MAPPA'],
   popularity: 100
 }

@@ -22,8 +22,118 @@ describe('BaseAnimeCard', () => {
   it('renders with correct normal dimensions', () => {
     const { container } = render(<BaseAnimeCard anime={mockAnime} />);
     const card = container.firstChild as HTMLElement;
-    expect(card.style.width).toBe('200px');
-    expect(card.style.height).toBe('370px');
+    expect(card.style.width).toBe('13rem');
+    expect(card.style.height).toBe('23rem');
+  });
+
+  describe('Title and Metadata Display', () => {
+    it('displays anime title in gradient overlay', () => {
+      const { getByText } = render(<BaseAnimeCard anime={mockAnime} />);
+      const title = getByText('Test Anime');
+      expect(title).toBeInTheDocument();
+      expect(title.tagName).toBe('H6');
+      expect(title).toHaveClass('text-white', 'text-sm', 'font-semibold', 'mb-1', 'line-clamp-2');
+    });
+
+    it('displays year with calendar emoji when year is provided', () => {
+      const { getByText } = render(<BaseAnimeCard anime={mockAnime} />);
+      const year = getByText('📅 2023');
+      expect(year).toBeInTheDocument();
+      expect(year.parentElement).toHaveClass('flex', 'items-center', 'gap-2', 'text-xs', 'text-white/90');
+    });
+
+    it('displays episodes with TV emoji when episodes is provided', () => {
+      const { getByText } = render(<BaseAnimeCard anime={mockAnime} />);
+      const episodes = getByText('📺 12 eps');
+      expect(episodes).toBeInTheDocument();
+      expect(episodes.parentElement).toHaveClass('flex', 'items-center', 'gap-2', 'text-xs', 'text-white/90');
+    });
+
+    it('does not display year when year is null', () => {
+      const animeWithoutYear = { ...mockAnime, year: null };
+      const { queryByText } = render(<BaseAnimeCard anime={animeWithoutYear} />);
+      expect(queryByText(/📅/)).not.toBeInTheDocument();
+    });
+
+    it('does not display episodes when episodes is null', () => {
+      const animeWithoutEpisodes = { ...mockAnime, episodes: null };
+      const { queryByText } = render(<BaseAnimeCard anime={animeWithoutEpisodes} />);
+      expect(queryByText(/📺/)).not.toBeInTheDocument();
+    });
+
+    it('displays both year and episodes when both are provided', () => {
+      const { getByText } = render(<BaseAnimeCard anime={mockAnime} />);
+      expect(getByText('📅 2023')).toBeInTheDocument();
+      expect(getByText('📺 12 eps')).toBeInTheDocument();
+    });
+
+    it('renders gradient overlay with correct classes', () => {
+      const { container } = render(<BaseAnimeCard anime={mockAnime} />);
+      const gradientOverlay = container.querySelector('.bg-gradient-to-t');
+      expect(gradientOverlay).toBeInTheDocument();
+      expect(gradientOverlay).toHaveClass(
+        'absolute', 'inset-0', 'bg-gradient-to-t', 
+        'from-black/70', 'via-transparent', 'to-transparent', 'rounded-xl'
+      );
+    });
+
+    it('positions bottom info correctly', () => {
+      const { container } = render(<BaseAnimeCard anime={mockAnime} />);
+      const bottomInfo = container.querySelector('.absolute.bottom-0.left-0.right-0.p-3');
+      expect(bottomInfo).toBeInTheDocument();
+      expect(bottomInfo).toHaveClass('absolute', 'bottom-0', 'left-0', 'right-0', 'p-3');
+    });
+  });
+
+  describe('Image Display', () => {
+    it('displays image when coverImage is provided', () => {
+      const { container } = render(<BaseAnimeCard anime={mockAnime} />);
+      const image = container.querySelector('img');
+      expect(image).toBeInTheDocument();
+      expect(image).toHaveAttribute('src', 'https://example.com/test.jpg');
+      expect(image).toHaveAttribute('alt', 'Test Anime');
+      expect(image).toHaveClass('w-full', 'h-full', 'object-cover', 'rounded-xl');
+      expect(image).toHaveStyle('object-position: top center');
+    });
+
+    it('displays fallback when coverImage is null', () => {
+      const animeWithoutImage = { ...mockAnime, coverImage: null };
+      const { getByText, container } = render(<BaseAnimeCard anime={animeWithoutImage} />);
+      const fallback = getByText('No Image');
+      expect(fallback).toBeInTheDocument();
+      expect(fallback.parentElement).toHaveClass(
+        'w-full', 'h-full', 'bg-gray-200', 'dark:bg-gray-700', 
+        'flex', 'items-center', 'justify-center', 'rounded-xl'
+      );
+      expect(container.querySelector('img')).not.toBeInTheDocument();
+    });
+
+    it('displays fallback when image fails to load', () => {
+      const { container, getByText } = render(<BaseAnimeCard anime={mockAnime} />);
+      const image = container.querySelector('img');
+      
+      // Simulate image load error
+      fireEvent.error(image!);
+      
+      const fallback = getByText('No Image');
+      expect(fallback).toBeInTheDocument();
+    });
+
+    it('resets image error state when anime changes', () => {
+      const { container, rerender } = render(<BaseAnimeCard anime={mockAnime} />);
+      const image = container.querySelector('img');
+      
+      // Simulate image load error
+      fireEvent.error(image!);
+      
+      // Change anime (should reset error state)
+      const newAnime = { ...mockAnime, id: 2, coverImage: 'https://example.com/new.jpg' };
+      rerender(<BaseAnimeCard anime={newAnime} />);
+      
+      const newImage = container.querySelector('img');
+      expect(newImage).toBeInTheDocument();
+      expect(newImage).toHaveAttribute('src', 'https://example.com/new.jpg');
+    });
   });
 
   it('starts with radio checked when expanded prop is true', () => {
@@ -31,7 +141,7 @@ describe('BaseAnimeCard', () => {
     const radio = container.querySelector('input[type="radio"]') as HTMLInputElement;
     const card = container.firstChild as HTMLElement;
     expect(radio.checked).toBe(true);
-    expect(card.style.height).toBe('370px');
+    expect(card.style.height).toBe('23rem');
   });
 
   it('renders with rounded corners and overflow hidden', () => {
@@ -66,8 +176,8 @@ describe('BaseAnimeCard', () => {
   it('defaults to non-expanded state', () => {
     const { container } = render(<BaseAnimeCard anime={mockAnime} />);
     const card = container.firstChild as HTMLElement;
-    expect(card.style.width).toBe('200px');
-    expect(card.style.getPropertyValue('--expanded-width')).toBe('480px');
+    expect(card.style.width).toBe('13rem');
+    expect(card.style.getPropertyValue('--expanded-width')).toBe('30rem');
   });
 
   it('applies interactive styles', () => {
@@ -83,7 +193,7 @@ describe('BaseAnimeCard', () => {
     const radio = container.querySelector('input[type="radio"]') as HTMLInputElement;
     
     // Initially not expanded
-    expect(card.style.width).toBe('200px');
+    expect(card.style.width).toBe('13rem');
     expect(radio.checked).toBe(false);
     
     // Click to expand
@@ -170,9 +280,9 @@ describe('BaseAnimeCard', () => {
       const radio3 = radios[2] as HTMLInputElement;
 
       // Initially all cards are collapsed
-      expect(card1.style.width).toBe('200px');
-      expect(card2.style.width).toBe('200px');
-      expect(card3.style.width).toBe('200px');
+      expect(card1.style.width).toBe('13rem');
+      expect(card2.style.width).toBe('13rem');
+      expect(card3.style.width).toBe('13rem');
       expect(radio1.checked).toBe(false);
       expect(radio2.checked).toBe(false);
       expect(radio3.checked).toBe(false);
@@ -298,7 +408,7 @@ describe('BaseAnimeCard', () => {
       expect(onClickMock).toHaveBeenCalledTimes(1);
     });
 
-    it('non-expandable cards stay at 200px width even when radio is checked', () => {
+    it('non-expandable cards stay at 13rem width even when radio is checked', () => {
       const { container } = render(<BaseAnimeCard anime={mockAnime} expandable={false} expanded />);
       const card = container.firstChild as HTMLElement;
       const radio = container.querySelector('input[type="radio"]') as HTMLInputElement;
@@ -360,9 +470,9 @@ describe('BaseAnimeCard', () => {
       const { container } = render(<BaseAnimeCard anime={mockAnime} />);
       const card = container.firstChild as HTMLElement;
       
-      expect(card.style.width).toBe('200px');
-      expect(card.style.height).toBe('370px');
-      expect(card.style.getPropertyValue('--expanded-width')).toBe('480px');
+      expect(card.style.width).toBe('13rem');
+      expect(card.style.height).toBe('23rem');
+      expect(card.style.getPropertyValue('--expanded-width')).toBe('30rem');
     });
 
     it('applies fixed height regardless of width changes', () => {

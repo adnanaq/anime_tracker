@@ -258,9 +258,16 @@
   justify-content: center;
 }
 
+/* Better centering when both icon and content are present */
+.at-badge-base:has(.at-badge-icon) {
+  justify-content: center;
+  padding-left: 2px; /* Slight adjustment to visually center the group */
+}
+
 /* Adjust spacing when icon is present */
+/* Remove margin-left to fix off-center appearance - gap from base class handles spacing */
 .at-badge-base:has(.at-badge-icon) .at-badge-content:not(:empty) {
-  margin-left: var(--space-1);
+  /* margin-left: var(--space-1); */
 }
 
 /* === REMOVE BUTTON STYLES === */

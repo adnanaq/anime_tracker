@@ -18,5 +18,8 @@ export type { SpinnerProps } from './Spinner'
 export { AnimeGridSkeleton } from './AnimeGridSkeleton'
 export type { AnimeGridSkeletonProps } from './AnimeGridSkeleton'
 
+export { AnimeInfoCard } from './AnimeInfoCard'
+export type { AnimeInfoCardProps } from './AnimeInfoCard'
+
 export { BaseAnimeCard } from './BaseAnimeCard'
 export type { BaseAnimeCardProps } from './BaseAnimeCard'

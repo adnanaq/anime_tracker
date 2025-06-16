@@ -84,7 +84,7 @@ const ExpandedContent = ({
 
   const handleStatusChange = async (
     event: React.MouseEvent,
-    status: string
+    status: string,
   ) => {
     event.preventDefault();
     event.stopPropagation();
@@ -112,7 +112,7 @@ const ExpandedContent = ({
       await animeStatusService.updateAnimeStatus(
         animeItem.id,
         animeItem.source,
-        updateData
+        updateData,
       );
       updateAnimeStatus(animeItem.id, animeItem.source, status);
 
@@ -141,7 +141,7 @@ const ExpandedContent = ({
     try {
       await animeStatusService.removeAnimeFromList(
         animeItem.id,
-        animeItem.source
+        animeItem.source,
       );
       updateAnimeStatus(animeItem.id, animeItem.source, "");
       toggleStatusOptions();
@@ -175,12 +175,12 @@ const ExpandedContent = ({
                     animeItem.status === "RELEASING"
                       ? "success"
                       : animeItem.status.toLowerCase().includes("completed") ||
-                        animeItem.status === "FINISHED"
-                      ? "info"
-                      : animeItem.status.toLowerCase().includes("upcoming") ||
-                        animeItem.status === "NOT_YET_RELEASED"
-                      ? "warning"
-                      : "neutral"
+                          animeItem.status === "FINISHED"
+                        ? "info"
+                        : animeItem.status.toLowerCase().includes("upcoming") ||
+                            animeItem.status === "NOT_YET_RELEASED"
+                          ? "warning"
+                          : "neutral"
                   }
                   shape="pill"
                   size="sm"
@@ -189,12 +189,12 @@ const ExpandedContent = ({
                     animeItem.status === "RELEASING"
                       ? "🔴"
                       : animeItem.status.toLowerCase().includes("completed") ||
-                        animeItem.status === "FINISHED"
-                      ? "✅"
-                      : animeItem.status.toLowerCase().includes("upcoming") ||
-                        animeItem.status === "NOT_YET_RELEASED"
-                      ? "⏳"
-                      : "📺"
+                          animeItem.status === "FINISHED"
+                        ? "✅"
+                        : animeItem.status.toLowerCase().includes("upcoming") ||
+                            animeItem.status === "NOT_YET_RELEASED"
+                          ? "⏳"
+                          : "📺"
                   }
                 >
                   {animeItem.status
@@ -210,12 +210,13 @@ const ExpandedContent = ({
                     animeItem.format === "TV"
                       ? "secondary"
                       : animeItem.format === "MOVIE"
-                      ? "danger"
-                      : animeItem.format === "OVA" || animeItem.format === "ONA"
-                      ? "primary"
-                      : animeItem.format === "SPECIAL"
-                      ? "warning"
-                      : "neutral"
+                        ? "danger"
+                        : animeItem.format === "OVA" ||
+                            animeItem.format === "ONA"
+                          ? "primary"
+                          : animeItem.format === "SPECIAL"
+                            ? "warning"
+                            : "neutral"
                   }
                   shape="rounded"
                   size="sm"
@@ -223,12 +224,13 @@ const ExpandedContent = ({
                     animeItem.format === "TV"
                       ? "📺"
                       : animeItem.format === "MOVIE"
-                      ? "🎬"
-                      : animeItem.format === "OVA" || animeItem.format === "ONA"
-                      ? "💿"
-                      : animeItem.format === "SPECIAL"
-                      ? "⭐"
-                      : "📼"
+                        ? "🎬"
+                        : animeItem.format === "OVA" ||
+                            animeItem.format === "ONA"
+                          ? "💿"
+                          : animeItem.format === "SPECIAL"
+                            ? "⭐"
+                            : "📼"
                   }
                 >
                   {animeItem.format}
@@ -371,8 +373,8 @@ const ExpandedContent = ({
                       animationState === "open"
                         ? "status-options-animate"
                         : animationState === "closing"
-                        ? "status-options-closing"
-                        : ""
+                          ? "status-options-closing"
+                          : ""
                     }`}
                   >
                     {/* Only show status options that aren't currently selected */}
@@ -404,7 +406,7 @@ const ExpandedContent = ({
                               e,
                               animeItem.source === "mal"
                                 ? "watching"
-                                : "CURRENT"
+                                : "CURRENT",
                             )
                           }
                           disabled={isUpdating}
@@ -447,7 +449,7 @@ const ExpandedContent = ({
                               e,
                               animeItem.source === "mal"
                                 ? "completed"
-                                : "COMPLETED"
+                                : "COMPLETED",
                             )
                           }
                           disabled={isUpdating}
@@ -489,7 +491,7 @@ const ExpandedContent = ({
                               e,
                               animeItem.source === "mal"
                                 ? "plan_to_watch"
-                                : "PLANNING"
+                                : "PLANNING",
                             )
                           }
                           disabled={isUpdating}
@@ -525,7 +527,7 @@ const ExpandedContent = ({
                           onClick={(e: React.MouseEvent) =>
                             handleStatusChange(
                               e,
-                              animeItem.source === "mal" ? "on_hold" : "PAUSED"
+                              animeItem.source === "mal" ? "on_hold" : "PAUSED",
                             )
                           }
                           disabled={isUpdating}
@@ -562,7 +564,9 @@ const ExpandedContent = ({
                           onClick={(e: React.MouseEvent) =>
                             handleStatusChange(
                               e,
-                              animeItem.source === "mal" ? "dropped" : "DROPPED"
+                              animeItem.source === "mal"
+                                ? "dropped"
+                                : "DROPPED",
                             )
                           }
                           disabled={isUpdating}
@@ -689,7 +693,7 @@ export const ExpandableGrid = ({
   const handleCardClick = (
     animeItem: AnimeBase,
     event: React.MouseEvent,
-    cardIndex?: number
+    cardIndex?: number,
   ) => {
     // Skip all click interactions if not interactive
     if (!interactive) return;
@@ -732,11 +736,11 @@ export const ExpandableGrid = ({
     if (containerRef.current) {
       // Check if any card is currently expanded (clicked)
       const expandedRadio = containerRef.current.querySelector(
-        ".card-radio:checked"
+        ".card-radio:checked",
       ) as HTMLInputElement | null;
       if (expandedRadio) {
         const expandedIndex = parseInt(
-          expandedRadio.getAttribute("data-index") || "0"
+          expandedRadio.getAttribute("data-index") || "0",
         );
         // If hovering over a different card than the expanded one, close the expanded card
         if (expandedIndex !== cardIndex) {
@@ -763,7 +767,7 @@ export const ExpandableGrid = ({
 
         // Then close expanded cards
         const radioButtons = containerRef.current.querySelectorAll(
-          ".card-radio:checked"
+          ".card-radio:checked",
         );
         radioButtons.forEach((radio) => {
           const radioInput = radio as HTMLInputElement;
@@ -822,7 +826,7 @@ export const ExpandableGrid = ({
     // Ensure we don't scroll past the beginning or end
     scrollPosition = Math.max(
       0,
-      Math.min(scrollPosition, container.scrollWidth - containerWidth)
+      Math.min(scrollPosition, container.scrollWidth - containerWidth),
     );
 
     container.scrollTo({
@@ -1003,7 +1007,7 @@ export const ExpandableGrid = ({
                   if (e.target === e.currentTarget) {
                     const radioButton =
                       e.currentTarget.parentElement?.querySelector(
-                        ".card-radio"
+                        ".card-radio",
                       ) as HTMLInputElement | null;
                     if (radioButton) {
                       radioButton.checked = false;

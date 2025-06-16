@@ -17,7 +17,7 @@
     var(--col-8, 1fr)
     var(--col-9, 1fr)
     var(--col-10, 1fr);
-  grid-template-rows: 370px;
+  grid-template-rows: 23rem;
   transition: grid-template-columns 2s
     linear(
       0,
@@ -608,7 +608,7 @@
 .expandable-grid-container.click-mode {
   display: flex;
   width: 100%;
-  height: 370px;
+  height: 23rem;
   gap: 16px;
   transition: none;
   overflow-x: auto;

@@ -1,13 +1,13 @@
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { BaseAnimeCard } from "../components/ui/BaseAnimeCard";
+import { AnimeInfoCard } from "../components/ui/AnimeInfoCard";
 import { AnimeBase } from "../types/anime";
 
 const mockAnime: AnimeBase = {
   id: 1,
   title: "Attack on Titan",
-  coverImage:
-    "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx16498-73IhOXOQOoS9.jpg",
+  coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg", // Using Demon Slayer image
   score: 9.0,
   format: "TV",
   year: 2013,
@@ -18,6 +18,52 @@ const mockAnime: AnimeBase = {
     "Humanity fights for survival against the giant humanoid Titans who have brought humanity to the brink of extinction.",
   season: "SPRING",
   userStatus: "COMPLETED",
+};
+
+// Additional anime data for testing various scenarios
+const animeWithImage: AnimeBase = {
+  id: 2,
+  title: "Your Name",
+  coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-YCDoj1EkAxFn.jpg", // Using One Piece image
+  score: 8.4,
+  format: "MOVIE",
+  year: 2016,
+  status: "FINISHED",
+  episodes: 1,
+  genres: ["Romance", "Drama", "Supernatural"],
+  description: "Two teenagers share a profound, magical connection upon discovering they are swapping bodies.",
+  season: undefined,
+  userStatus: "COMPLETED",
+};
+
+const animeWithoutImage: AnimeBase = {
+  id: 3,
+  title: "Test Anime Without Cover Image",
+  coverImage: undefined, // Test fallback scenario
+  score: 7.5,
+  format: "TV",
+  year: 2024,
+  status: "ONGOING",
+  episodes: 12,
+  genres: ["Action", "Adventure"],
+  description: "Test anime for demonstrating fallback image behavior.",
+  season: "WINTER",
+  userStatus: "WATCHING",
+};
+
+const animeWithBrokenImage: AnimeBase = {
+  id: 4,
+  title: "Test Anime With Broken Image",
+  coverImage: "https://invalid-url-that-will-fail.jpg", // Test image loading failure
+  score: 6.8,
+  format: "OVA",
+  year: 2023,
+  status: "FINISHED",
+  episodes: 3,
+  genres: ["Comedy"],
+  description: "Test anime for demonstrating broken image handling.",
+  season: undefined,
+  userStatus: "PLAN_TO_WATCH",
 };
 
 const meta: Meta<typeof BaseAnimeCard> = {
@@ -32,7 +78,7 @@ const meta: Meta<typeof BaseAnimeCard> = {
 
 ## Current Implementation
 This is a **minimal empty card** with exact ExpandableGrid dimensions:
-- Fixed size: 200px × 370px  
+- Fixed size: 13rem × 23.125rem  
 - Gray background (\`bg-gray-200\`) for visibility
 - Border (\`border border-gray-300\`)
 - Rounded corners (\`rounded-xl\`)
@@ -47,12 +93,12 @@ This is a **minimal empty card** with exact ExpandableGrid dimensions:
 - \`className\`: string - Additional CSS classes  
 - \`children\`: ReactNode - Content to render inside the empty card
 - \`expandable\`: boolean - Whether card can expand to larger size (default: true)
-- \`width\`: number | string - Custom width (default: 200px)
-- \`height\`: number | string - Custom height (default: 370px) - **remains constant during expansion**
-- \`expandedWidth\`: number | string - Custom expanded width (default: 480px) - **horizontal expansion only**
+- \`width\`: number | string - Custom width (default: 13rem)
+- \`height\`: number | string - Custom height (default: 23.125rem) - **remains constant during expansion**
+- \`expandedWidth\`: number | string - Custom expanded width (default: 30rem) - **horizontal expansion only**
 
 ## What It Does
-- Renders a customizable rectangle with default 200px × 370px (normal) or 480px × 370px (expanded)
+- Renders a customizable rectangle with default 13rem × 23.125rem (normal) or 30rem × 23.125rem (expanded)
 - **Horizontal Expansion Only**: Width changes during expansion, height remains constant
 - **Interactive**: Click to toggle between normal and expanded states
 - **Mutual Exclusion**: Only one card can be expanded at a time (uses radio buttons like ExpandableGrid)
@@ -115,17 +161,17 @@ This is intentionally minimal - a starting foundation to build upon.
     },
     width: {
       description:
-        "Custom width (default: 200px). Accepts numbers (px) or strings with units. Must be non-negative. Changes during expansion.",
+        "Custom width (default: 13rem). Accepts numbers (px) or strings with units. Must be non-negative. Changes during expansion.",
       control: "text",
     },
     height: {
       description:
-        "Custom height (default: 370px). Accepts numbers (px) or strings with units. Must be non-negative. REMAINS CONSTANT during expansion.",
+        "Custom height (default: 23.125rem). Accepts numbers (px) or strings with units. Must be non-negative. REMAINS CONSTANT during expansion.",
       control: "text",
     },
     expandedWidth: {
       description:
-        "Custom expanded width (default: 480px). Accepts numbers (px) or strings with units. Must be greater than width when both are numbers. HORIZONTAL EXPANSION ONLY.",
+        "Custom expanded width (default: 30rem). Accepts numbers (px) or strings with units. Must be greater than width when both are numbers. HORIZONTAL EXPANSION ONLY.",
       control: "text",
     },
     autoLoop: {
@@ -164,7 +210,7 @@ export const Default: Story = {
     docs: {
       description: {
         story:
-          "Interactive empty card that starts at 200px × 370px. Click to expand to 480px × 370px. Click again to collapse back.",
+          "Interactive empty card that starts at 13rem × 23.125rem. Click to expand to 30rem × 23.125rem. Click again to collapse back.",
       },
     },
   },
@@ -179,7 +225,7 @@ export const Expanded: Story = {
     docs: {
       description: {
         story:
-          "Card that starts in expanded state (480px × 370px). Click to collapse to 200px × 370px. Click again to expand.",
+          "Card that starts in expanded state (30rem × 23.125rem). Click to collapse to 13rem × 23.125rem. Click again to expand.",
       },
     },
   },
@@ -250,11 +296,11 @@ export const StateComparison: Story = {
     <div className="flex gap-8 items-start">
       <div className="text-center">
         <BaseAnimeCard anime={mockAnime} />
-        <p className="mt-2 text-sm text-gray-600">Normal (200px)</p>
+        <p className="mt-2 text-sm text-gray-600">Normal (13rem)</p>
       </div>
       <div className="text-center">
         <BaseAnimeCard anime={mockAnime} expanded />
-        <p className="mt-2 text-sm text-gray-600">Expanded (480px)</p>
+        <p className="mt-2 text-sm text-gray-600">Expanded (30rem)</p>
       </div>
     </div>
   ),
@@ -262,7 +308,7 @@ export const StateComparison: Story = {
     docs: {
       description: {
         story:
-          "Side-by-side comparison of normal and expanded states, showing the exact dimension difference (200px vs 480px).",
+          "Side-by-side comparison of normal and expanded states, showing the exact dimension difference (13rem vs 30rem).",
       },
     },
   },
@@ -379,7 +425,7 @@ export const NonExpandable: Story = {
     docs: {
       description: {
         story:
-          "Card with expansion disabled - stays at 200px width even when clicked. Useful for mobile devices or constrained layouts.",
+          "Card with expansion disabled - stays at 13rem width even when clicked. Useful for mobile devices or constrained layouts.",
       },
     },
   },
@@ -468,7 +514,7 @@ export const DifferentHeights: Story = {
           Different Heights Comparison
         </h3>
         <p className="text-sm text-gray-600">
-          Same width (200px → 400px) with different fixed heights
+          Same width (13rem → 400px) with different fixed heights
         </p>
       </div>
 
@@ -524,7 +570,7 @@ export const DifferentHeights: Story = {
     docs: {
       description: {
         story:
-          "Comparison of different fixed heights with the same width settings. All cards expand from 200px to 400px while maintaining their individual heights.",
+          "Comparison of different fixed heights with the same width settings. All cards expand from 13rem to 400px while maintaining their individual heights.",
       },
     },
   },
@@ -574,14 +620,14 @@ export const ResponsiveUnits: Story = {
         <div className="text-center">
           <BaseAnimeCard
             anime={{ ...mockAnime, id: 3 }}
-            width="200px"
+            width="13rem"
             height="250px"
             expandedWidth="320px"
             groupName="responsive-group"
             cardIndex={2}
           />
           <p className="mt-2 text-sm text-gray-600">
-            fixed units: 200px → 320px, 250px height
+            fixed units: 13rem → 320px, 250px height
           </p>
           <p className="text-xs text-gray-500">Fixed dimensions</p>
         </div>
@@ -629,7 +675,7 @@ export const HorizontalExpansionDemo: Story = {
             <div className="flex items-center justify-center h-full text-sm text-gray-600">
               150px → 300px
               <br />
-              Height: 200px (constant)
+              Height: 13rem (constant)
             </div>
           </BaseAnimeCard>
           <p className="mt-2 text-sm text-gray-600">
@@ -692,9 +738,9 @@ export const CustomizableGrid: Story = {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
         <BaseAnimeCard
           anime={mockAnime}
-          width={args.width}
-          height={args.height}
-          expandedWidth={args.expandedWidth}
+          width={`${args.width}rem`}
+          height={`${args.height}rem`}
+          expandedWidth={`${args.expandedWidth}rem`}
           groupName="customizable-grid"
           cardIndex={0}
         >
@@ -707,9 +753,9 @@ export const CustomizableGrid: Story = {
 
         <BaseAnimeCard
           anime={{ ...mockAnime, id: 2, title: "One Piece" }}
-          width={args.width}
-          height={args.height}
-          expandedWidth={args.expandedWidth}
+          width={`${args.width}rem`}
+          height={`${args.height}rem`}
+          expandedWidth={`${args.expandedWidth}rem`}
           groupName="customizable-grid"
           cardIndex={1}
         >
@@ -722,9 +768,9 @@ export const CustomizableGrid: Story = {
 
         <BaseAnimeCard
           anime={{ ...mockAnime, id: 3, title: "Naruto" }}
-          width={args.width}
-          height={args.height}
-          expandedWidth={args.expandedWidth}
+          width={`${args.width}rem`}
+          height={`${args.height}rem`}
+          expandedWidth={`${args.expandedWidth}rem`}
           groupName="customizable-grid"
           cardIndex={2}
         >
@@ -737,9 +783,9 @@ export const CustomizableGrid: Story = {
 
         <BaseAnimeCard
           anime={{ ...mockAnime, id: 4, title: "Demon Slayer" }}
-          width={args.width}
-          height={args.height}
-          expandedWidth={args.expandedWidth}
+          width={`${args.width}rem`}
+          height={`${args.height}rem`}
+          expandedWidth={`${args.expandedWidth}rem`}
           groupName="customizable-grid"
           cardIndex={3}
         >
@@ -752,9 +798,9 @@ export const CustomizableGrid: Story = {
 
         <BaseAnimeCard
           anime={{ ...mockAnime, id: 5, title: "Your Name" }}
-          width={args.width}
-          height={args.height}
-          expandedWidth={args.expandedWidth}
+          width={`${args.width}rem`}
+          height={`${args.height}rem`}
+          expandedWidth={`${args.expandedWidth}rem`}
           groupName="customizable-grid"
           cardIndex={4}
         >
@@ -767,9 +813,9 @@ export const CustomizableGrid: Story = {
 
         <BaseAnimeCard
           anime={{ ...mockAnime, id: 6, title: "Spirited Away" }}
-          width={args.width}
-          height={args.height}
-          expandedWidth={args.expandedWidth}
+          width={`${args.width}rem`}
+          height={`${args.height}rem`}
+          expandedWidth={`${args.expandedWidth}rem`}
           groupName="customizable-grid"
           cardIndex={5}
         >
@@ -782,9 +828,9 @@ export const CustomizableGrid: Story = {
 
         <BaseAnimeCard
           anime={{ ...mockAnime, id: 7, title: "Princess Mononoke" }}
-          width={args.width}
-          height={args.height}
-          expandedWidth={args.expandedWidth}
+          width={`${args.width}rem`}
+          height={`${args.height}rem`}
+          expandedWidth={`${args.expandedWidth}rem`}
           groupName="customizable-grid"
           cardIndex={6}
         >
@@ -797,9 +843,9 @@ export const CustomizableGrid: Story = {
 
         <BaseAnimeCard
           anime={{ ...mockAnime, id: 8, title: "Death Note" }}
-          width={args.width}
-          height={args.height}
-          expandedWidth={args.expandedWidth}
+          width={`${args.width}rem`}
+          height={`${args.height}rem`}
+          expandedWidth={`${args.expandedWidth}rem`}
           groupName="customizable-grid"
           cardIndex={7}
         >
@@ -887,7 +933,7 @@ export const ExpandableGridDefaults: Story = {
               <div>
                 <div className="font-semibold mb-1">Attack on Titan</div>
                 <div className="text-xs opacity-75">
-                  200px × 370px → 480px × 370px
+                  13rem × 23.125rem → 30rem × 23.125rem
                 </div>
               </div>
             </div>
@@ -974,7 +1020,7 @@ export const ExpandableGridDefaults: Story = {
           <strong>ExpandableGrid Click Mode Settings:</strong>
           <br />
           Auto-cycles every 4 seconds • Click any card to pause for 10 seconds •
-          200px → 480px expansion
+          13rem → 30rem expansion
         </div>
       </div>
     );
@@ -983,7 +1029,7 @@ export const ExpandableGridDefaults: Story = {
     docs: {
       description: {
         story:
-          "BaseAnimeCard configured with the exact same defaults as ExpandableGrid click mode: 4-second auto-cycling, 10-second pause on interaction, and identical card dimensions (200px × 370px expanding to 480px × 370px). This demonstrates perfect feature parity with the original ExpandableGrid behavior.",
+          "BaseAnimeCard configured with the exact same defaults as ExpandableGrid click mode: 4-second auto-cycling, 10-second pause on interaction, and identical card dimensions (13rem × 23.125rem expanding to 30rem × 23.125rem). This demonstrates perfect feature parity with the original ExpandableGrid behavior.",
       },
     },
   },
@@ -1188,6 +1234,398 @@ export const AutoLoopingCards: Story = {
       control: { type: "range", min: 0, max: 400, step: 10 },
       description:
         "Width of cards when expanded (auto-corrected to be > width when both are numbers)",
+    },
+  },
+};
+
+// === IMAGE DISPLAY TESTING ===
+
+export const WithImage: Story = {
+  args: {
+    anime: animeWithImage,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Card displaying anime with cover image. The image uses object-position: top center for proper cropping and fills the entire card area.',
+      },
+    },
+  },
+};
+
+export const WithoutImage: Story = {
+  args: {
+    anime: animeWithoutImage,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Card showing fallback behavior when anime has no cover image. Displays a gray background with "No Image" text, with proper dark mode support.',
+      },
+    },
+  },
+};
+
+export const ImageComparison: Story = {
+  render: () => (
+    <div className="space-y-6">
+      <div className="text-center">
+        <h3 className="text-lg font-semibold mb-2">Image Display Comparison</h3>
+        <p className="text-sm text-gray-600">Testing image display vs fallback behavior</p>
+      </div>
+      
+      <div className="flex gap-8 justify-center items-start">
+        <div>
+          <BaseAnimeCard anime={animeWithImage} groupName="image-comparison" cardIndex={0} />
+          <p className="mt-2 text-sm text-gray-600 text-center">With Cover Image</p>
+        </div>
+        
+        <div>
+          <BaseAnimeCard anime={animeWithoutImage} groupName="image-comparison" cardIndex={1} />
+          <p className="mt-2 text-sm text-gray-600 text-center">No Cover Image</p>
+        </div>
+
+        <div>
+          <BaseAnimeCard anime={animeWithBrokenImage} groupName="image-comparison" cardIndex={2} />
+          <p className="mt-2 text-sm text-gray-600 text-center">Broken Image URL</p>
+        </div>
+      </div>
+      
+      <div className="text-center text-sm text-gray-500">
+        Click any card to test expansion behavior with different image states
+      </div>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Side-by-side comparison of different image scenarios: valid image, no image, and broken image URL. All cards maintain the same expansion behavior regardless of image state.',
+      },
+    },
+  },
+};
+
+export const AllWithImages: Story = {
+  args: {
+    width: 13, // rem units - equivalent to ~208px
+    height: 23.125, // rem units - equivalent to 23.125rem
+    expandedWidth: 30, // rem units - equivalent to 30rem
+  },
+  render: (args) => (
+    <div className="space-y-6">
+      <div className="text-center">
+        <h3 className="text-lg font-semibold mb-2">Cards with Images</h3>
+        <p className="text-sm text-gray-600">All cards showing real anime cover images - customize dimensions below</p>
+      </div>
+      
+      <div className="flex gap-4 overflow-x-auto p-4 max-w-6xl mx-auto">
+        <BaseAnimeCard 
+          anime={mockAnime} 
+          groupName="image-cards" 
+          cardIndex={0}
+          width={`${args.width}rem`}
+          height={`${args.height}rem`}
+          expandedWidth={`${args.expandedWidth}rem`}
+        />
+        <BaseAnimeCard 
+          anime={animeWithImage} 
+          groupName="image-cards" 
+          cardIndex={1}
+          width={`${args.width}rem`}
+          height={`${args.height}rem`}
+          expandedWidth={`${args.expandedWidth}rem`}
+        />
+        <BaseAnimeCard 
+          anime={{
+            ...mockAnime,
+            id: 5,
+            title: "One Piece",
+            coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-YCDoj1EkAxFn.jpg",
+            score: 9.2,
+            year: 1999,
+            episodes: 1000,
+          }} 
+          groupName="image-cards" 
+          cardIndex={2}
+          width={`${args.width}rem`}
+          height={`${args.height}rem`}
+          expandedWidth={`${args.expandedWidth}rem`}
+        />
+        <BaseAnimeCard 
+          anime={{
+            ...mockAnime,
+            id: 6,
+            title: "Spirited Away",
+            coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg", // Using Demon Slayer image
+            score: 9.3,
+            year: 2001,
+            episodes: 1,
+            format: "MOVIE",
+          }} 
+          groupName="image-cards" 
+          cardIndex={3}
+          width={`${args.width}rem`}
+          height={`${args.height}rem`}
+          expandedWidth={`${args.expandedWidth}rem`}
+        />
+        <BaseAnimeCard 
+          anime={{
+            ...mockAnime,
+            id: 7,
+            title: "Demon Slayer",
+            coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg", // Using Demon Slayer image
+            score: 8.7,
+            year: 2019,
+            episodes: 26,
+          }} 
+          groupName="image-cards" 
+          cardIndex={4}
+          width={`${args.width}rem`}
+          height={`${args.height}rem`}
+          expandedWidth={`${args.expandedWidth}rem`}
+        />
+        <BaseAnimeCard 
+          anime={{
+            ...mockAnime,
+            id: 8,
+            title: "My Hero Academia",
+            coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-YCDoj1EkAxFn.jpg", // Using One Piece image
+            score: 8.5,
+            year: 2016,
+            episodes: 13,
+          }} 
+          groupName="image-cards" 
+          cardIndex={5}
+          width={`${args.width}rem`}
+          height={`${args.height}rem`}
+          expandedWidth={`${args.expandedWidth}rem`}
+        />
+      </div>
+      
+      <div className="text-center text-sm text-gray-500">
+        All cards have valid cover images - use controls to adjust dimensions
+      </div>
+    </div>
+  ),
+  argTypes: {
+    width: {
+      control: { type: 'range', min: 6, max: 25, step: 0.5 },
+      description: 'Width of cards in normal state (in rem units)'
+    },
+    height: {
+      control: { type: 'range', min: 9, max: 31, step: 0.5 },
+      description: 'Height of cards (remains constant during expansion, in rem units)'
+    },
+    expandedWidth: {
+      control: { type: 'range', min: 12, max: 50, step: 0.5 },
+      description: 'Width of cards when expanded (in rem units)'
+    }
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Customizable gallery showing cards with valid cover images. Use the controls below to adjust width, height, and expanded width for all cards simultaneously.',
+      },
+    },
+  },
+};
+
+export const PopulatedCards: Story = {
+  render: () => (
+    <div className="space-y-6">
+      <div className="text-center">
+        <h3 className="text-lg font-semibold mb-2">Mixed Image States</h3>
+        <p className="text-sm text-gray-600">Cards demonstrating all image scenarios: working images, no image, and broken URLs</p>
+      </div>
+      
+      <div className="flex gap-4 overflow-x-auto p-4 max-w-6xl mx-auto">
+        <div className="text-center">
+          <BaseAnimeCard anime={mockAnime} groupName="populated-cards" cardIndex={0} />
+          <p className="mt-2 text-xs text-gray-500">Valid Image</p>
+        </div>
+        <div className="text-center">
+          <BaseAnimeCard anime={animeWithImage} groupName="populated-cards" cardIndex={1} />
+          <p className="mt-2 text-xs text-gray-500">Valid Image</p>
+        </div>
+        <div className="text-center">
+          <BaseAnimeCard anime={animeWithoutImage} groupName="populated-cards" cardIndex={2} />
+          <p className="mt-2 text-xs text-gray-500">No Image (null)</p>
+        </div>
+        <div className="text-center">
+          <BaseAnimeCard anime={animeWithBrokenImage} groupName="populated-cards" cardIndex={3} />
+          <p className="mt-2 text-xs text-gray-500">Broken URL</p>
+        </div>
+        <div className="text-center">
+          <BaseAnimeCard 
+            anime={{
+              ...mockAnime,
+              id: 5,
+              title: "One Piece",
+              coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-YCDoj1EkAxFn.jpg", // Using One Piece image
+              score: 9.2,
+              year: 1999,
+              episodes: 1000,
+            }} 
+            groupName="populated-cards" 
+            cardIndex={4} 
+          />
+          <p className="mt-2 text-xs text-gray-500">Valid Image</p>
+        </div>
+        <div className="text-center">
+          <BaseAnimeCard 
+            anime={{
+              ...mockAnime,
+              id: 6,
+              title: "Spirited Away",
+              coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg", // Using Demon Slayer image
+              score: 9.3,
+              year: 2001,
+              episodes: 1,
+              format: "MOVIE",
+            }} 
+            groupName="populated-cards" 
+            cardIndex={5} 
+          />
+          <p className="mt-2 text-xs text-gray-500">Valid Image</p>
+        </div>
+      </div>
+      
+      <div className="text-center text-sm text-gray-500">
+        Mixed scenarios: 4 cards with images, 2 with fallback states - scroll to see all
+      </div>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Comprehensive testing gallery showing all image scenarios: valid images, missing images (null), and broken URLs. Labels below each card indicate the expected behavior.',
+      },
+    },
+  },
+};
+
+// Use the same data as AnimeInfoCard DarkBackground story for consistency
+const attackOnTitan: AnimeBase = {
+  id: 16498,
+  title: 'Attack on Titan',
+  synopsis: 'Humanity fights for survival against giant humanoid Titans that have brought civilization to the brink of extinction. When the Titans breach Wall Maria, Eren Yeager vows to exterminate every last Titan to avenge his mother and reclaim humanity\'s territory. With his childhood friends Mikasa and Armin, Eren joins the Survey Corps, an elite group of soldiers who fight Titans outside the walls.',
+  score: 9.0,
+  userScore: 10,
+  episodes: 25,
+  year: 2013,
+  season: 'SPRING',
+  status: 'FINISHED',
+  format: 'TV',
+  genres: ['Action', 'Drama', 'Fantasy', 'Military', 'Shounen', 'Super Power'],
+  duration: '24',
+  studios: ['Madhouse', 'Studio Pierrot'],
+  popularity: 1,
+  source: 'anilist',
+  coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg",
+};
+
+const spiritedAway: AnimeBase = {
+  id: 199,
+  title: 'Spirited Away',
+  synopsis: 'Stubborn, spoiled, and naïve, 10-year-old Chihiro Ogino is less than pleased when she and her parents are moving to a new home. While driving to their new house, Chihiro\'s father makes a wrong turn and drives down a lonely one-lane road which dead-ends in front of a tunnel. Her parents decide to stop the car and explore the area. They go through the tunnel and find an abandoned amusement park on the other side, with its own little town.',
+  score: 9.3,
+  userScore: 10,
+  episodes: 1,
+  year: 2001,
+  season: 'SUMMER',
+  status: 'FINISHED',
+  format: 'MOVIE',
+  genres: ['Adventure', 'Family', 'Supernatural', 'Drama'],
+  duration: '125',
+  studios: ['Studio Ghibli'],
+  popularity: 15,
+  source: 'mal',
+  coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg",
+};
+
+const demonSlayer: AnimeBase = {
+  id: 101922,
+  title: 'Demon Slayer: Kimetsu no Yaiba',
+  synopsis: 'It is the Taisho Period in Japan. Tanjiro, a kindhearted boy who sells charcoal for a living, finds his family slaughtered by a demon. To make matters worse, his younger sister Nezuko, the sole survivor, has been transformed into a demon herself. Though devastated by this grim reality, Tanjiro resolves to become a demon slayer so that he can turn his sister back into a human and kill the demon that massacred his family.',
+  score: 8.7,
+  userScore: 9,
+  episodes: 26,
+  year: 2019,
+  season: 'SPRING',
+  status: 'FINISHED',
+  format: 'TV',
+  genres: ['Action', 'Supernatural', 'Historical', 'Shounen'],
+  duration: '24',
+  studios: ['Ufotable'],
+  popularity: 2,
+  source: 'anilist',
+  coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg",
+};
+
+export const WithAnimeInfoCard: Story = {
+  render: () => (
+    <div className="space-y-6">
+      <div className="text-center">
+        <h3 className="text-lg font-semibold mb-2">BaseAnimeCard + AnimeInfoCard Integration</h3>
+        <p className="text-sm text-gray-600 mb-4">
+          Complete integration testing showing expanded content with AnimeInfoCard component
+        </p>
+        <p className="text-xs text-gray-500">
+          Click any card to see the expansion with detailed anime information
+        </p>
+      </div>
+      
+      <div className="flex gap-4 overflow-x-auto p-4 max-w-6xl mx-auto">
+        <BaseAnimeCard 
+          anime={attackOnTitan} 
+          groupName="integration-cards" 
+          cardIndex={0}
+          width="13rem"
+          height="23rem"
+          expandedWidth="30rem"
+        >
+          <div className="card-expanded-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-800 pointer-events-none rounded-xl p-4">
+            <AnimeInfoCard anime={attackOnTitan} />
+          </div>
+        </BaseAnimeCard>
+        
+        <BaseAnimeCard 
+          anime={spiritedAway}
+          groupName="integration-cards" 
+          cardIndex={1}
+          width="13rem"
+          height="23rem"
+          expandedWidth="30rem"
+        >
+          <div className="card-expanded-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-800 pointer-events-none rounded-xl p-4">
+            <AnimeInfoCard anime={spiritedAway} />
+          </div>
+        </BaseAnimeCard>
+        
+        <BaseAnimeCard 
+          anime={demonSlayer} 
+          groupName="integration-cards" 
+          cardIndex={2}
+          width="13rem"
+          height="23rem"
+          expandedWidth="30rem"
+        >
+          <div className="card-expanded-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-800 pointer-events-none rounded-xl p-4">
+            <AnimeInfoCard anime={demonSlayer} />
+          </div>
+        </BaseAnimeCard>
+      </div>
+      
+      <div className="text-center text-sm text-gray-500">
+        Integration test with AnimeInfoCard - click cards to see expanded content with detailed information
+      </div>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Complete integration testing of BaseAnimeCard with AnimeInfoCard component. The AnimeInfoCard appears when cards are expanded, showing detailed anime information including badges, metadata, and synopsis. Features proper opacity transitions and dark background support.',
+      },
     },
   },
 };

@@ -18,9 +18,9 @@ export interface DimensionOutput {
  * Handles validation logic ensuring no negative values and expandedWidth > width
  */
 export const useDimensions = ({
-  width = 200,
-  height = 370,
-  expandedWidth = 480,
+  width = "13rem", // ~208px equivalent
+  height = "23.125rem", // 370px equivalent  
+  expandedWidth = "30rem", // 480px equivalent
 }: DimensionInput): DimensionOutput => {
   return useMemo(() => {
     // Helper function to validate and format dimension values

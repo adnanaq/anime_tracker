@@ -13,6 +13,21 @@ const preview: Preview = {
     docs: {
       toc: true, // 👈 Enables the table of contents
     },
+    themes: {
+      default: 'light',
+      list: [
+        {
+          name: 'light',
+          class: '',
+          color: '#ffffff',
+        },
+        {
+          name: 'dark',
+          class: 'dark',
+          color: '#1a1a1a',
+        },
+      ],
+    },
     backgrounds: {
       default: 'light',
       values: [

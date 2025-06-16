@@ -6,13 +6,13 @@ describe('useDimensions', () => {
     it('returns default dimensions when no props provided', () => {
       const { result } = renderHook(() => useDimensions({}));
       
-      expect(result.current.validatedWidth).toBe(200);
-      expect(result.current.validatedHeight).toBe(370);
-      expect(result.current.validatedExpandedWidth).toBe(480);
-      expect(result.current.cardStyles.width).toBe('200px');
-      expect(result.current.cardStyles.height).toBe('370px');
-      expect(result.current.cardStyles['--expanded-width']).toBe('480px');
-      expect(result.current.cardStyles['--original-width']).toBe('200px');
+      expect(result.current.validatedWidth).toBe('13rem');
+      expect(result.current.validatedHeight).toBe('23.125rem');
+      expect(result.current.validatedExpandedWidth).toBe('30rem');
+      expect(result.current.cardStyles.width).toBe('13rem');
+      expect(result.current.cardStyles.height).toBe('23.125rem');
+      expect(result.current.cardStyles['--expanded-width']).toBe('30rem');
+      expect(result.current.cardStyles['--original-width']).toBe('13rem');
     });
 
     it('uses fallback values for undefined dimensions', () => {
@@ -22,9 +22,9 @@ describe('useDimensions', () => {
         expandedWidth: undefined,
       }));
       
-      expect(result.current.validatedWidth).toBe(200);
-      expect(result.current.validatedHeight).toBe(370);
-      expect(result.current.validatedExpandedWidth).toBe(480);
+      expect(result.current.validatedWidth).toBe('13rem');
+      expect(result.current.validatedHeight).toBe('23.125rem');
+      expect(result.current.validatedExpandedWidth).toBe('30rem');
     });
   });
 

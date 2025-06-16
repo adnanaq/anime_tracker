@@ -37,3 +37,52 @@
   height: 1px;
   overflow: hidden;
 }
+
+/* Image positioning to match ExpandableGrid */
+.base-anime-card .card-image-container img {
+  object-position: top center;
+}
+
+/* Text truncation utility for title */
+.base-anime-card .line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Override Storybook typography fix for BaseAnimeCard context */
+/* The Typography component gets a dark background in Storybook for visibility, */
+/* but we want transparent background since we have our own gradient overlay */
+.base-anime-card .at-typography-base.text-white {
+  background-color: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
+
+/* Expanded content overlay - hidden by default */
+.base-anime-card .card-expanded-overlay {
+  opacity: 0;
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+/* Show expanded content when card radio is checked */
+.base-anime-card:has(input[type="radio"]:checked) .card-expanded-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Base state content (score badge and bottom info) - visible by default */
+.base-anime-card .card-score-badge,
+.base-anime-card .absolute.bottom-0 {
+  opacity: 1;
+  transition: opacity 0.4s ease-out;
+}
+
+/* Hide base content when card is expanded */
+.base-anime-card:has(input[type="radio"]:checked) .card-score-badge,
+.base-anime-card:has(input[type="radio"]:checked) .absolute.bottom-0 {
+  opacity: 0;
+}
+

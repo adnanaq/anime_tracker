@@ -1,4 +1,4 @@
-import React from 'react';
+import { useMemo } from "react";
 
 export interface DimensionInput {
   width?: number | string;
@@ -22,10 +22,13 @@ export const useDimensions = ({
   height = 370,
   expandedWidth = 480,
 }: DimensionInput): DimensionOutput => {
-  return React.useMemo(() => {
+  return useMemo(() => {
     // Helper function to validate and format dimension values
-    const validateAndFormatDimension = (value: number | string, fallback: number): string => {
-      if (typeof value === 'number') {
+    const validateAndFormatDimension = (
+      value: number | string,
+      fallback: number
+    ): string => {
+      if (typeof value === "number") {
         // Ensure no negative values
         const validValue = Math.max(0, value);
         return `${validValue}px`;
@@ -34,13 +37,21 @@ export const useDimensions = ({
     };
 
     // Validate dimensions
-    const validatedWidth = typeof width === 'number' ? Math.max(0, width) : width;
-    const validatedHeight = typeof height === 'number' ? Math.max(0, height) : height;
-    const validatedExpandedWidth = typeof expandedWidth === 'number' ? Math.max(0, expandedWidth) : expandedWidth;
+    const validatedWidth =
+      typeof width === "number" ? Math.max(0, width) : width;
+    const validatedHeight =
+      typeof height === "number" ? Math.max(0, height) : height;
+    const validatedExpandedWidth =
+      typeof expandedWidth === "number"
+        ? Math.max(0, expandedWidth)
+        : expandedWidth;
 
     // Ensure expandedWidth is greater than width (only for numeric values)
     const finalExpandedWidth = (() => {
-      if (typeof validatedWidth === 'number' && typeof validatedExpandedWidth === 'number') {
+      if (
+        typeof validatedWidth === "number" &&
+        typeof validatedExpandedWidth === "number"
+      ) {
         return Math.max(validatedExpandedWidth, validatedWidth + 1); // At least 1px bigger than width
       }
       return validatedExpandedWidth;
@@ -50,8 +61,8 @@ export const useDimensions = ({
     const cardStyles: React.CSSProperties = {
       width: validateAndFormatDimension(validatedWidth, 200),
       height: validateAndFormatDimension(validatedHeight, 370),
-      '--expanded-width': validateAndFormatDimension(finalExpandedWidth, 480),
-      '--original-width': validateAndFormatDimension(validatedWidth, 200),
+      "--expanded-width": validateAndFormatDimension(finalExpandedWidth, 480),
+      "--original-width": validateAndFormatDimension(validatedWidth, 200),
     } as React.CSSProperties;
 
     return {

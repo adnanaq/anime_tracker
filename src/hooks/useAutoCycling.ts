@@ -1,4 +1,4 @@
-import React from 'react';
+import { useRef, useState, useEffect, useCallback } from "react";
 
 export interface AutoCyclingOptions {
   autoLoop?: boolean;
@@ -31,39 +31,44 @@ export const useAutoCycling = ({
   cardIndex,
   expandable = true,
 }: AutoCyclingOptions): AutoCyclingOutput => {
-  const timerRef = React.useRef<number | null>(null);
-  
+  const timerRef = useRef<number | null>(null);
+
   // Use a global pause state shared across all cards in the group
   const pauseStateKey = `${groupName}-pause`;
-  const [isPaused, setIsPaused] = React.useState(false);
-  
+  const [isPaused, setIsPaused] = useState(false);
+
   // Initialize global pause state
-  React.useEffect(() => {
+  useEffect(() => {
     if (!(window as any)[pauseStateKey]) {
-      (window as any)[pauseStateKey] = { isPaused: false, subscribers: new Set() };
+      (window as any)[pauseStateKey] = {
+        isPaused: false,
+        subscribers: new Set(),
+      };
     }
-    
+
     const globalState = (window as any)[pauseStateKey];
     globalState.subscribers.add(setIsPaused);
     setIsPaused(globalState.isPaused);
-    
+
     return () => {
       globalState.subscribers.delete(setIsPaused);
     };
   }, [pauseStateKey]);
 
   // Function to trigger pause state
-  const triggerPause = React.useCallback(() => {
+  const triggerPause = useCallback(() => {
     if (!pauseOnInteraction) return;
 
     const globalState = (window as any)[pauseStateKey];
     if (globalState) {
       globalState.isPaused = true;
-      globalState.subscribers.forEach((subscriber: (value: boolean) => void) => {
-        subscriber(true);
-      });
+      globalState.subscribers.forEach(
+        (subscriber: (value: boolean) => void) => {
+          subscriber(true);
+        }
+      );
     }
-    
+
     if (timerRef.current) {
       clearTimeout(timerRef.current);
     }
@@ -72,15 +77,17 @@ export const useAutoCycling = ({
       const globalState = (window as any)[pauseStateKey];
       if (globalState) {
         globalState.isPaused = false;
-        globalState.subscribers.forEach((subscriber: (value: boolean) => void) => {
-          subscriber(false);
-        });
+        globalState.subscribers.forEach(
+          (subscriber: (value: boolean) => void) => {
+            subscriber(false);
+          }
+        );
       }
     }, pauseDuration);
   }, [pauseOnInteraction, pauseStateKey, pauseDuration]);
 
   // Handle user interaction (to be called from component)
-  const handleInteraction = React.useCallback(() => {
+  const handleInteraction = useCallback(() => {
     if (autoLoop && pauseOnInteraction) {
       triggerPause();
     }
@@ -88,27 +95,29 @@ export const useAutoCycling = ({
 
   // Auto-cycling effect (similar to ExpandableGrid click mode)
   // Only the first card (cardIndex 0) manages the auto-cycling for the entire group
-  React.useEffect(() => {
+  useEffect(() => {
     if (!autoLoop || !expandable || cardIndex !== 0) return;
 
     let interval: number | null = null;
 
     const startInterval = () => {
       if (interval) clearInterval(interval);
-      
+
       interval = setInterval(() => {
         // Check if paused before each cycle
         const globalState = (window as any)[pauseStateKey];
         if (globalState?.isPaused) return;
 
         // Find all cards in the same group to cycle through
-        const allRadios = document.querySelectorAll(`input[name="${groupName}"]`);
+        const allRadios = document.querySelectorAll(
+          `input[name="${groupName}"]`
+        );
         if (allRadios.length === 0) return;
 
-        const currentIndex = Array.from(allRadios).findIndex((radio) => 
-          (radio as HTMLInputElement).checked
+        const currentIndex = Array.from(allRadios).findIndex(
+          (radio) => (radio as HTMLInputElement).checked
         );
-        
+
         let nextIndex;
         if (currentIndex === -1) {
           // No card is currently selected, start with first card
@@ -129,7 +138,9 @@ export const useAutoCycling = ({
         // Call onAutoLoop callback if provided
         if (onAutoLoop) {
           const nextRadio = allRadios[nextIndex] as HTMLInputElement;
-          const nextCardIndex = parseInt(nextRadio.getAttribute('data-index') || '0');
+          const nextCardIndex = parseInt(
+            nextRadio.getAttribute("data-index") || "0"
+          );
           onAutoLoop(nextCardIndex);
         }
       }, loopInterval);
@@ -141,10 +152,18 @@ export const useAutoCycling = ({
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [autoLoop, expandable, groupName, loopInterval, onAutoLoop, cardIndex, pauseStateKey]);
+  }, [
+    autoLoop,
+    expandable,
+    groupName,
+    loopInterval,
+    onAutoLoop,
+    cardIndex,
+    pauseStateKey,
+  ]);
 
   // Cleanup timer on unmount
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       if (timerRef.current) {
         clearTimeout(timerRef.current);

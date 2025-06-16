@@ -236,6 +236,62 @@ This document tracks all tasks identified from comprehensive project audit, orga
 
 ## 🚨 HIGH PRIORITY PENDING TASKS
 
+### **Critical: BaseAnimeCard Modularity Enhancement** 🔧 **ACTIVE**
+
+#### **BaseAnimeCard Modular Refactoring** 🔧 **HIGHEST PRIORITY**
+**Status**: Active Development - **Immediate Priority**  
+**Goal**: Improve modularity while maintaining all existing functionality  
+**Timeline**: 2-3 days  
+
+**Current Challenge**: BaseAnimeCard (248 lines) combines multiple responsibilities  
+**Solution**: Extract focused, reusable pieces using composition pattern  
+
+**Modular Architecture Plan**:
+
+**1. useDimensions Hook** (~50 lines extraction)
+- **Functionality**: Dimension validation, CSS formatting, expandedWidth > width logic  
+- **Benefits**: Reusable across card components, testable in isolation  
+- **Input**: `(width, height, expandedWidth)` → **Output**: `{ validatedDimensions, cssStyles }`  
+
+**2. useAutoCycling Hook** (~80 lines extraction)  
+- **Functionality**: Global pause state, interval management, card cycling logic  
+- **Benefits**: Reusable for any auto-cycling UI, improved testability  
+- **Input**: `(groupName, options)` → **Output**: `{ isPaused, triggerPause, cyclingProps }`  
+
+**3. Core Card Component** (~60 lines extraction)  
+- **Functionality**: Pure UI card with expansion, radio groups, click handling  
+- **Benefits**: Single responsibility, highly reusable across project  
+- **Input**: Standard card props → **Output**: Interactive card container  
+
+**4. BaseAnimeCard Composition** (~50 lines remaining)  
+- **Functionality**: Orchestrates hooks and core card for anime-specific features  
+- **Benefits**: Maintains exact API, cleaner architecture, easier maintenance  
+- **Approach**: Uses all extracted pieces to deliver same functionality  
+
+**Implementation Strategy**:
+- [ ] **Step 1**: Extract `useDimensions` hook with comprehensive tests
+- [ ] **Step 2**: Extract `useAutoCycling` hook with global state management  
+- [ ] **Step 3**: Create core `Card` component for pure UI concerns
+- [ ] **Step 4**: Refactor `BaseAnimeCard` to use composition pattern
+- [ ] **Step 5**: Update existing tests to cover new architecture
+- [ ] **Step 6**: Validate API compatibility and performance
+
+**Success Criteria**:
+- ✅ **API Compatibility**: Existing BaseAnimeCard props interface unchanged
+- ✅ **Functionality Preservation**: All features work exactly as before  
+- ✅ **Test Coverage**: New hooks/components have isolated tests  
+- ✅ **Reusability**: Extracted pieces usable in other components  
+- ✅ **Performance**: No regression in animation or interaction performance  
+- ✅ **Type Safety**: Full TypeScript support maintained  
+
+**Benefits Achieved**:
+- **Single Responsibility**: Each piece has one clear purpose
+- **Testability**: Logic can be tested independently of UI
+- **Reusability**: Hooks and core card available for other components
+- **Maintainability**: Changes to one aspect don't affect others
+- **Consistency**: Follows same patterns as other UI components
+
+
 ### **Critical: TypeScript Type Safety Audit** ✅ **COMPLETED**
 
 #### **Task 9: Complete TypeScript Type Safety Implementation** ✅ **COMPLETED**
@@ -340,12 +396,12 @@ interface FormEventHandlers {
 - [ ] **AnimeCard Stories**: Core business component with all states
 - [ ] **ExpandingAnimeCards Stories**: Animation and variant showcases
 
-### **Critical: ExpandableGrid Component Refactoring** 🚨 **URGENT**
+### **Critical: ExpandableGrid Component Refactoring** 🚨 **HIGH PRIORITY**
 
-#### **ExpandableGrid Analysis & Refactoring Plan** 🚨 **HIGHEST PRIORITY**
-**Status**: Analysis Complete - **Ready for Implementation**  
+#### **ExpandableGrid Analysis & Refactoring Plan** 🚨 **HIGH PRIORITY**
+**Status**: Phase 1 Complete, Phase 1.5 Modularity Enhancement Active  
 **Current State**: 1,037 TypeScript + 764 CSS = 1,801 total lines  
-**Approach**: Non-disruptive, test-driven component extraction  
+**Approach**: Non-disruptive, test-driven component extraction with modularity focus  
 
 **Detailed Component Analysis**:
 - **ExpandedContent Component**: 651 lines (status management + content display)
@@ -388,11 +444,22 @@ interface FormEventHandlers {
   - ✅ Expandable state support (480px × 370px) with smooth CSS transitions
   - ✅ Radio button mutual exclusion behavior (matches ExpandableGrid pattern)
   - ✅ Mobile-friendly `expandable={false}` prop for constrained layouts
-  - ✅ Comprehensive test suite (23 tests) with 100% pass rate
+  - ✅ Comprehensive test suite (49 tests) with 100% pass rate including dimension validation
   - ✅ Complete Storybook stories demonstrating all functionality
+  - ✅ Auto-cycling functionality with global pause state management
+  - 🔄 **Modularity Enhancement**: Refactor for better composability (IN PROGRESS)
 - [ ] **StatusOptionsDropdown Component**: Extract status management UI with comprehensive tests
 - [ ] **AnimeBadges Component**: Extract badge rendering logic for reusability
 - [ ] **CardInteractionManager Hook**: Extract mouse/touch/drag handling logic
+
+**Phase 1.5: BaseAnimeCard Modularity Enhancement (NEW)**
+- [ ] **Extract useDimensions Hook**: Dimension validation and CSS formatting logic
+- [ ] **Extract useAutoCycling Hook**: Auto-cycling behavior and global pause management
+- [ ] **Create Core Card Component**: Pure UI card component without business logic
+- [ ] **Refactor BaseAnimeCard**: Composition-based approach using extracted pieces
+- [ ] **Maintain API Compatibility**: Ensure existing BaseAnimeCard props interface unchanged
+- [ ] **Update Tests**: Test new hooks and components in isolation
+- [ ] **Performance Validation**: Ensure no regression in functionality or performance
 
 **Phase 2: Storybook Development**
 - ✅ **BaseAnimeCard Stories**: Card variants (hover/click/expanded states) ✅ **COMPLETED**
@@ -655,10 +722,10 @@ interface UnifiedAnimeCardProps {
 ## 🚦 TASK PRIORITIZATION MATRIX
 
 ### **🚨 URGENT (This Week)**
-1. **Split ExpandableGrid Component** - Technical debt and maintainability critical
-2. **Create Unified AnimeCard Component** - Eliminate duplication risk
-3. **Complete Storybook Phase 1** - UI System component stories
-4. **Documentation Sync** - Align docs with implementation (IN PROGRESS)
+1. **BaseAnimeCard Modularity Enhancement** - Extract hooks and core components for better reusability
+2. **Complete Storybook Phase 1** - UI System component stories  
+3. **Split ExpandableGrid Component** - Technical debt and maintainability critical
+4. **Create Unified AnimeCard Component** - Eliminate duplication risk
 
 ### **🔥 HIGH PRIORITY (Next 2 Weeks)**
 1. **FAISS Vector Recommendations** - Complete Phase 1 MVP

@@ -697,19 +697,19 @@ This story gives you complete control over every Badge property. Perfect for:
 export const ResponsiveExample: Story = {
   render: () => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-2xl">
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 items-center">
         <h4 className="text-sm font-medium text-gray-600">Small Screen</h4>
         <Badge variant="primary" size="sm">
           Responsive Badge
         </Badge>
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 items-center">
         <h4 className="text-sm font-medium text-gray-600">Medium Screen</h4>
         <Badge variant="success" size="md">
           Responsive Badge
         </Badge>
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 items-center">
         <h4 className="text-sm font-medium text-gray-600">Large Screen</h4>
         <Badge variant="info" size="lg">
           Responsive Badge

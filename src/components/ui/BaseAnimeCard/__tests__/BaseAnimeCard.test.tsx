@@ -21,14 +21,17 @@ const mockAnime: AnimeBase = {
 describe('BaseAnimeCard', () => {
   it('renders with correct normal dimensions', () => {
     const { container } = render(<BaseAnimeCard anime={mockAnime} />);
-    expect(container.firstChild).toHaveClass('w-[200px]', 'h-[370px]');
+    const card = container.firstChild as HTMLElement;
+    expect(card.style.width).toBe('200px');
+    expect(card.style.height).toBe('370px');
   });
 
   it('starts with radio checked when expanded prop is true', () => {
     const { container } = render(<BaseAnimeCard anime={mockAnime} expanded />);
     const radio = container.querySelector('input[type="radio"]') as HTMLInputElement;
+    const card = container.firstChild as HTMLElement;
     expect(radio.checked).toBe(true);
-    expect(container.firstChild).toHaveClass('h-[370px]');
+    expect(card.style.height).toBe('370px');
   });
 
   it('renders with rounded corners and overflow hidden', () => {
@@ -62,8 +65,9 @@ describe('BaseAnimeCard', () => {
 
   it('defaults to non-expanded state', () => {
     const { container } = render(<BaseAnimeCard anime={mockAnime} />);
-    expect(container.firstChild).toHaveClass('w-[200px]');
-    expect(container.firstChild).not.toHaveClass('w-[480px]');
+    const card = container.firstChild as HTMLElement;
+    expect(card.style.width).toBe('200px');
+    expect(card.style.getPropertyValue('--expanded-width')).toBe('480px');
   });
 
   it('applies interactive styles', () => {
@@ -79,7 +83,7 @@ describe('BaseAnimeCard', () => {
     const radio = container.querySelector('input[type="radio"]') as HTMLInputElement;
     
     // Initially not expanded
-    expect(card).toHaveClass('w-[200px]');
+    expect(card.style.width).toBe('200px');
     expect(radio.checked).toBe(false);
     
     // Click to expand
@@ -166,9 +170,9 @@ describe('BaseAnimeCard', () => {
       const radio3 = radios[2] as HTMLInputElement;
 
       // Initially all cards are collapsed
-      expect(card1).toHaveClass('w-[200px]');
-      expect(card2).toHaveClass('w-[200px]');
-      expect(card3).toHaveClass('w-[200px]');
+      expect(card1.style.width).toBe('200px');
+      expect(card2.style.width).toBe('200px');
+      expect(card3.style.width).toBe('200px');
       expect(radio1.checked).toBe(false);
       expect(radio2.checked).toBe(false);
       expect(radio3.checked).toBe(false);
@@ -317,6 +321,500 @@ describe('BaseAnimeCard', () => {
       
       fireEvent.keyDown(card, { key: ' ' });
       expect(radio.checked).toBe(false); // Should not change
+    });
+  });
+
+  describe('Custom dimensions', () => {
+    it('applies custom width and height', () => {
+      const { container } = render(
+        <BaseAnimeCard anime={mockAnime} width={300} height={450} />
+      );
+      const card = container.firstChild as HTMLElement;
+      
+      expect(card.style.width).toBe('300px');
+      expect(card.style.height).toBe('450px');
+    });
+
+    it('applies custom expanded width', () => {
+      const { container } = render(
+        <BaseAnimeCard anime={mockAnime} width={250} expandedWidth={600} />
+      );
+      const card = container.firstChild as HTMLElement;
+      
+      expect(card.style.getPropertyValue('--expanded-width')).toBe('600px');
+      expect(card.style.getPropertyValue('--original-width')).toBe('250px');
+    });
+
+    it('supports string dimensions with units', () => {
+      const { container } = render(
+        <BaseAnimeCard anime={mockAnime} width="20rem" height="30rem" expandedWidth="40rem" />
+      );
+      const card = container.firstChild as HTMLElement;
+      
+      expect(card.style.width).toBe('20rem');
+      expect(card.style.height).toBe('30rem');
+      expect(card.style.getPropertyValue('--expanded-width')).toBe('40rem');
+    });
+
+    it('uses default dimensions when no custom dimensions provided', () => {
+      const { container } = render(<BaseAnimeCard anime={mockAnime} />);
+      const card = container.firstChild as HTMLElement;
+      
+      expect(card.style.width).toBe('200px');
+      expect(card.style.height).toBe('370px');
+      expect(card.style.getPropertyValue('--expanded-width')).toBe('480px');
+    });
+
+    it('applies fixed height regardless of width changes', () => {
+      const { container } = render(
+        <BaseAnimeCard anime={mockAnime} width={300} height={400} expandedWidth={600} />
+      );
+      const card = container.firstChild as HTMLElement;
+      
+      expect(card.style.width).toBe('300px');
+      expect(card.style.height).toBe('400px'); // Fixed height
+      expect(card.style.getPropertyValue('--expanded-width')).toBe('600px');
+    });
+
+    it('works with percentage and viewport units', () => {
+      const { container } = render(
+        <BaseAnimeCard anime={mockAnime} width="50%" height="50vh" expandedWidth="80%" />
+      );
+      const card = container.firstChild as HTMLElement;
+      
+      expect(card.style.width).toBe('50%');
+      expect(card.style.height).toBe('50vh');
+      expect(card.style.getPropertyValue('--expanded-width')).toBe('80%');
+    });
+  });
+
+  describe('Horizontal expansion only', () => {
+    it('height remains constant during expansion', () => {
+      const { container } = render(
+        <BaseAnimeCard anime={mockAnime} width={200} height={300} expandedWidth={400} />
+      );
+      const card = container.firstChild as HTMLElement;
+      const radio = container.querySelector('input[type="radio"]') as HTMLInputElement;
+      
+      // Initial state
+      expect(card.style.width).toBe('200px');
+      expect(card.style.height).toBe('300px');
+      
+      // Click to expand - height should not change
+      fireEvent.click(card);
+      expect(radio.checked).toBe(true);
+      expect(card.style.height).toBe('300px'); // Height stays the same
+      expect(card.style.getPropertyValue('--expanded-width')).toBe('400px');
+      
+      // Click to collapse - height should still not change
+      fireEvent.click(card);
+      expect(radio.checked).toBe(false);
+      expect(card.style.height).toBe('300px'); // Height stays the same
+    });
+
+    it('height remains constant with different width values', () => {
+      const { container } = render(
+        <BaseAnimeCard anime={mockAnime} width={200} height={250} expandedWidth={400} />
+      );
+      const card = container.firstChild as HTMLElement;
+      const radio = container.querySelector('input[type="radio"]') as HTMLInputElement;
+      
+      // Initial state
+      expect(card.style.width).toBe('200px');
+      expect(card.style.height).toBe('250px');
+      
+      // Click to expand - height should not change
+      fireEvent.click(card);
+      expect(radio.checked).toBe(true);
+      expect(card.style.height).toBe('250px'); // Height stays the same
+      expect(card.style.getPropertyValue('--expanded-width')).toBe('400px');
+    });
+
+    it('non-expandable cards never change dimensions', () => {
+      const { container } = render(
+        <BaseAnimeCard anime={mockAnime} width={250} height={350} expandedWidth={500} expandable={false} />
+      );
+      const card = container.firstChild as HTMLElement;
+      const radio = container.querySelector('input[type="radio"]') as HTMLInputElement;
+      
+      // Initial state
+      expect(card.style.width).toBe('250px');
+      expect(card.style.height).toBe('350px');
+      
+      // Click should not expand
+      fireEvent.click(card);
+      expect(radio.checked).toBe(false); // Radio doesn't change
+      expect(card.style.width).toBe('250px'); // Width stays the same
+      expect(card.style.height).toBe('350px'); // Height stays the same
+    });
+  });
+
+  describe('Auto-cycling functionality', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+      // Clear any global pause states
+      Object.keys(window).forEach(key => {
+        if (key.includes('-pause')) {
+          delete (window as any)[key];
+        }
+      });
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+      // Clear any global pause states
+      Object.keys(window).forEach(key => {
+        if (key.includes('-pause')) {
+          delete (window as any)[key];
+        }
+      });
+    });
+
+    it('does not auto-cycle when autoLoop is false', () => {
+      const { container } = render(
+        <div>
+          <BaseAnimeCard anime={mockAnime} groupName="test-group" cardIndex={0} autoLoop={false} />
+          <BaseAnimeCard anime={{...mockAnime, id: 2}} groupName="test-group" cardIndex={1} autoLoop={false} />
+        </div>
+      );
+
+      const radios = container.querySelectorAll('input[type="radio"]');
+      const radio1 = radios[0] as HTMLInputElement;
+      const radio2 = radios[1] as HTMLInputElement;
+
+      // Initially no cards are checked
+      expect(radio1.checked).toBe(false);
+      expect(radio2.checked).toBe(false);
+
+      // Fast-forward time - nothing should change
+      vi.advanceTimersByTime(5000);
+      expect(radio1.checked).toBe(false);
+      expect(radio2.checked).toBe(false);
+    });
+
+    it('auto-cycles through cards when autoLoop is enabled', () => {
+      const onAutoLoopMock = vi.fn();
+      const { container } = render(
+        <div>
+          <BaseAnimeCard 
+            anime={mockAnime} 
+            groupName="test-group" 
+            cardIndex={0} 
+            autoLoop={true} 
+            loopInterval={2000}
+            onAutoLoop={onAutoLoopMock}
+          />
+          <BaseAnimeCard 
+            anime={{...mockAnime, id: 2}} 
+            groupName="test-group" 
+            cardIndex={1} 
+            autoLoop={true} 
+            loopInterval={2000}
+            onAutoLoop={onAutoLoopMock}
+          />
+        </div>
+      );
+
+      const radios = container.querySelectorAll('input[type="radio"]');
+      const radio1 = radios[0] as HTMLInputElement;
+      const radio2 = radios[1] as HTMLInputElement;
+
+      // Initially no cards are checked
+      expect(radio1.checked).toBe(false);
+      expect(radio2.checked).toBe(false);
+
+      // After 2 seconds, should cycle to first card (index 0)
+      vi.advanceTimersByTime(2000);
+      expect(radio1.checked).toBe(true);
+      expect(radio2.checked).toBe(false);
+      expect(onAutoLoopMock).toHaveBeenCalledWith(0);
+
+      // After another 2 seconds, should cycle to second card (index 1)
+      vi.advanceTimersByTime(2000);
+      expect(radio1.checked).toBe(false);
+      expect(radio2.checked).toBe(true);
+      expect(onAutoLoopMock).toHaveBeenCalledWith(1);
+
+      // After another 2 seconds, should loop back to first card
+      vi.advanceTimersByTime(2000);
+      expect(radio1.checked).toBe(true);
+      expect(radio2.checked).toBe(false);
+      expect(onAutoLoopMock).toHaveBeenCalledWith(0);
+    });
+
+    it('pauses auto-cycling when user clicks a card', () => {
+      const { container } = render(
+        <div>
+          <BaseAnimeCard 
+            anime={mockAnime} 
+            groupName="test-group" 
+            cardIndex={0} 
+            autoLoop={true} 
+            loopInterval={2000}
+            pauseOnInteraction={true}
+            pauseDuration={5000}
+          />
+          <BaseAnimeCard 
+            anime={{...mockAnime, id: 2}} 
+            groupName="test-group" 
+            cardIndex={1} 
+            autoLoop={true} 
+            loopInterval={2000}
+            pauseOnInteraction={true}
+            pauseDuration={5000}
+          />
+        </div>
+      );
+
+      const cards = container.querySelectorAll('div[role="button"]');
+      const radios = container.querySelectorAll('input[type="radio"]');
+      const card1 = cards[0] as HTMLElement;
+      const radio1 = radios[0] as HTMLInputElement;
+      const radio2 = radios[1] as HTMLInputElement;
+
+      // Initially no cards are checked
+      expect(radio1.checked).toBe(false);
+      expect(radio2.checked).toBe(false);
+
+      // User clicks card1 - should expand and pause auto-cycling
+      fireEvent.click(card1);
+      expect(radio1.checked).toBe(true);
+      expect(radio2.checked).toBe(false);
+
+      // Fast-forward past normal loop interval - should stay paused
+      vi.advanceTimersByTime(3000);
+      expect(radio1.checked).toBe(true);
+      expect(radio2.checked).toBe(false);
+
+      // Fast-forward to just before pause duration ends
+      vi.advanceTimersByTime(1900); // Total: 4900ms, still within 5000ms pause
+      expect(radio1.checked).toBe(true);
+      expect(radio2.checked).toBe(false);
+
+      // Fast-forward past pause duration and one additional loop interval
+      vi.advanceTimersByTime(200); // Total: 5100ms, past 5000ms pause - triggers resume
+      vi.advanceTimersByTime(2000); // One full loop interval after resume
+      
+      // Should have moved to next card after resuming
+      expect(radio1.checked).toBe(false);
+      expect(radio2.checked).toBe(true);
+    });
+
+    it('does not pause when pauseOnInteraction is false', () => {
+      const { container } = render(
+        <div>
+          <BaseAnimeCard 
+            anime={mockAnime} 
+            groupName="test-group" 
+            cardIndex={0} 
+            autoLoop={true} 
+            loopInterval={2000}
+            pauseOnInteraction={false}
+          />
+          <BaseAnimeCard 
+            anime={{...mockAnime, id: 2}} 
+            groupName="test-group" 
+            cardIndex={1} 
+            autoLoop={true} 
+            loopInterval={2000}
+            pauseOnInteraction={false}
+          />
+        </div>
+      );
+
+      const cards = container.querySelectorAll('div[role="button"]');
+      const radios = container.querySelectorAll('input[type="radio"]');
+      const card1 = cards[0] as HTMLElement;
+      const radio1 = radios[0] as HTMLInputElement;
+      const radio2 = radios[1] as HTMLInputElement;
+
+      // User clicks card1
+      fireEvent.click(card1);
+      expect(radio1.checked).toBe(true);
+
+      // Auto-cycling should continue even after click
+      vi.advanceTimersByTime(2000);
+      expect(radio1.checked).toBe(false);
+      expect(radio2.checked).toBe(true);
+    });
+
+    it('does not auto-cycle when expandable is false', () => {
+      const { container } = render(
+        <div>
+          <BaseAnimeCard 
+            anime={mockAnime} 
+            groupName="test-group" 
+            cardIndex={0} 
+            autoLoop={true} 
+            expandable={false}
+            loopInterval={2000}
+          />
+          <BaseAnimeCard 
+            anime={{...mockAnime, id: 2}} 
+            groupName="test-group" 
+            cardIndex={1} 
+            autoLoop={true} 
+            expandable={false}
+            loopInterval={2000}
+          />
+        </div>
+      );
+
+      const radios = container.querySelectorAll('input[type="radio"]');
+      const radio1 = radios[0] as HTMLInputElement;
+      const radio2 = radios[1] as HTMLInputElement;
+
+      // Fast-forward time - nothing should change because cards are not expandable
+      vi.advanceTimersByTime(5000);
+      expect(radio1.checked).toBe(false);
+      expect(radio2.checked).toBe(false);
+    });
+  });
+
+  describe('Dimension validation', () => {
+    it('prevents negative width values', () => {
+      const { container } = render(
+        <BaseAnimeCard anime={mockAnime} width={-100} />
+      );
+      const card = container.firstChild as HTMLElement;
+      
+      // Negative width should be converted to 0px
+      expect(card.style.width).toBe('0px');
+    });
+
+    it('prevents negative height values', () => {
+      const { container } = render(
+        <BaseAnimeCard anime={mockAnime} height={-200} />
+      );
+      const card = container.firstChild as HTMLElement;
+      
+      // Negative height should be converted to 0px
+      expect(card.style.height).toBe('0px');
+    });
+
+    it('prevents negative expandedWidth values', () => {
+      const { container } = render(
+        <BaseAnimeCard anime={mockAnime} width={200} expandedWidth={-300} />
+      );
+      const card = container.firstChild as HTMLElement;
+      
+      // Negative expandedWidth should be converted to at least width + 1
+      expect(card.style.getPropertyValue('--expanded-width')).toBe('201px');
+    });
+
+    it('ensures expandedWidth is greater than width', () => {
+      const { container } = render(
+        <BaseAnimeCard anime={mockAnime} width={200} expandedWidth={200} />
+      );
+      const card = container.firstChild as HTMLElement;
+      
+      // expandedWidth equal to width should be increased to width + 1
+      expect(card.style.getPropertyValue('--expanded-width')).toBe('201px');
+    });
+
+    it('ensures expandedWidth is greater than width when expandedWidth is smaller', () => {
+      const { container } = render(
+        <BaseAnimeCard anime={mockAnime} width={300} expandedWidth={250} />
+      );
+      const card = container.firstChild as HTMLElement;
+      
+      // expandedWidth smaller than width should be increased to width + 1
+      expect(card.style.getPropertyValue('--expanded-width')).toBe('301px');
+    });
+
+    it('allows valid expandedWidth that is greater than width', () => {
+      const { container } = render(
+        <BaseAnimeCard anime={mockAnime} width={200} expandedWidth={400} />
+      );
+      const card = container.firstChild as HTMLElement;
+      
+      // Valid expandedWidth should remain unchanged
+      expect(card.style.getPropertyValue('--expanded-width')).toBe('400px');
+    });
+
+    it('handles zero values correctly', () => {
+      const { container } = render(
+        <BaseAnimeCard anime={mockAnime} width={0} height={0} expandedWidth={0} />
+      );
+      const card = container.firstChild as HTMLElement;
+      
+      // Zero width and height should be allowed
+      expect(card.style.width).toBe('0px');
+      expect(card.style.height).toBe('0px');
+      // Zero expandedWidth should be increased to width + 1 = 1px
+      expect(card.style.getPropertyValue('--expanded-width')).toBe('1px');
+    });
+
+    it('does not validate string dimension values', () => {
+      const { container } = render(
+        <BaseAnimeCard 
+          anime={mockAnime} 
+          width="10rem" 
+          height="15rem" 
+          expandedWidth="20rem" 
+        />
+      );
+      const card = container.firstChild as HTMLElement;
+      
+      // String values should pass through unchanged (assuming they're valid CSS values)
+      expect(card.style.width).toBe('10rem');
+      expect(card.style.height).toBe('15rem');
+      expect(card.style.getPropertyValue('--expanded-width')).toBe('20rem');
+    });
+
+    it('handles mixed string and number dimensions', () => {
+      const { container } = render(
+        <BaseAnimeCard 
+          anime={mockAnime} 
+          width={150} 
+          height="20rem" 
+          expandedWidth="25rem" 
+        />
+      );
+      const card = container.firstChild as HTMLElement;
+      
+      // Number width should be validated, strings should pass through
+      expect(card.style.width).toBe('150px');
+      expect(card.style.height).toBe('20rem');
+      expect(card.style.getPropertyValue('--expanded-width')).toBe('25rem');
+    });
+
+    it('validates expandedWidth only when both width and expandedWidth are numbers', () => {
+      const { container } = render(
+        <BaseAnimeCard 
+          anime={mockAnime} 
+          width="10rem" 
+          expandedWidth={200} 
+        />
+      );
+      const card = container.firstChild as HTMLElement;
+      
+      // Since width is string, expandedWidth validation should not apply
+      expect(card.style.width).toBe('10rem');
+      expect(card.style.getPropertyValue('--expanded-width')).toBe('200px');
+    });
+
+    it('handles edge case with very small positive values', () => {
+      const { container } = render(
+        <BaseAnimeCard anime={mockAnime} width={1} expandedWidth={1} />
+      );
+      const card = container.firstChild as HTMLElement;
+      
+      // width=1, expandedWidth=1 should become expandedWidth=2
+      expect(card.style.width).toBe('1px');
+      expect(card.style.getPropertyValue('--expanded-width')).toBe('2px');
+    });
+
+    it('preserves original-width CSS variable correctly', () => {
+      const { container } = render(
+        <BaseAnimeCard anime={mockAnime} width={250} expandedWidth={200} />
+      );
+      const card = container.firstChild as HTMLElement;
+      
+      // original-width should match the validated width
+      expect(card.style.getPropertyValue('--original-width')).toBe('250px');
+      // expandedWidth should be corrected to width + 1
+      expect(card.style.getPropertyValue('--expanded-width')).toBe('251px');
     });
   });
 });

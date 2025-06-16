@@ -57,37 +57,61 @@
 
 /* === COLOR VARIANTS === */
 .at-badge-primary {
-  background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-600));
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-500),
+    var(--color-primary-600)
+  );
   color: var(--color-text-inverse);
   border: 1px solid var(--color-primary-600);
 }
 
 .at-badge-secondary {
-  background: linear-gradient(135deg, var(--color-secondary-500), var(--color-secondary-600));
+  background: linear-gradient(
+    135deg,
+    var(--color-secondary-500),
+    var(--color-secondary-600)
+  );
   color: var(--color-text-inverse);
   border: 1px solid var(--color-secondary-600);
 }
 
 .at-badge-success {
-  background: linear-gradient(135deg, var(--color-success-500), var(--color-success-600));
+  background: linear-gradient(
+    135deg,
+    var(--color-success-500),
+    var(--color-success-600)
+  );
   color: var(--color-text-inverse);
   border: 1px solid var(--color-success-600);
 }
 
 .at-badge-warning {
-  background: linear-gradient(135deg, var(--color-warning-500), var(--color-warning-600));
+  background: linear-gradient(
+    135deg,
+    var(--color-warning-500),
+    var(--color-warning-600)
+  );
   color: var(--color-text-inverse);
   border: 1px solid var(--color-warning-600);
 }
 
 .at-badge-danger {
-  background: linear-gradient(135deg, var(--color-danger-500), var(--color-danger-600));
+  background: linear-gradient(
+    135deg,
+    var(--color-danger-500),
+    var(--color-danger-600)
+  );
   color: var(--color-text-inverse);
   border: 1px solid var(--color-danger-600);
 }
 
 .at-badge-info {
-  background: linear-gradient(135deg, var(--color-info-500), var(--color-info-600));
+  background: linear-gradient(
+    135deg,
+    var(--color-info-500),
+    var(--color-info-600)
+  );
   color: var(--color-text-inverse);
   border: 1px solid var(--color-info-600);
 }
@@ -120,27 +144,51 @@
 }
 
 .at-badge-interactive.at-badge-primary:hover {
-  background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-700));
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-600),
+    var(--color-primary-700)
+  );
 }
 
 .at-badge-interactive.at-badge-secondary:hover {
-  background: linear-gradient(135deg, var(--color-secondary-600), var(--color-secondary-700));
+  background: linear-gradient(
+    135deg,
+    var(--color-secondary-600),
+    var(--color-secondary-700)
+  );
 }
 
 .at-badge-interactive.at-badge-success:hover {
-  background: linear-gradient(135deg, var(--color-success-600), var(--color-success-700));
+  background: linear-gradient(
+    135deg,
+    var(--color-success-600),
+    var(--color-success-700)
+  );
 }
 
 .at-badge-interactive.at-badge-warning:hover {
-  background: linear-gradient(135deg, var(--color-warning-600), var(--color-warning-700));
+  background: linear-gradient(
+    135deg,
+    var(--color-warning-600),
+    var(--color-warning-700)
+  );
 }
 
 .at-badge-interactive.at-badge-danger:hover {
-  background: linear-gradient(135deg, var(--color-danger-600), var(--color-danger-700));
+  background: linear-gradient(
+    135deg,
+    var(--color-danger-600),
+    var(--color-danger-700)
+  );
 }
 
 .at-badge-interactive.at-badge-info:hover {
-  background: linear-gradient(135deg, var(--color-info-600), var(--color-info-700));
+  background: linear-gradient(
+    135deg,
+    var(--color-info-600),
+    var(--color-info-700)
+  );
 }
 
 .at-badge-interactive.at-badge-neutral:hover {
@@ -159,7 +207,7 @@
 }
 
 .at-badge-animated::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;

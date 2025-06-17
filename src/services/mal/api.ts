@@ -150,6 +150,12 @@ export const normalizeMALAnime = (
       : undefined,
     format: anime.media_type,
     source: "mal",
+    // Enhanced metadata
+    duration: anime.average_episode_duration 
+      ? Math.round(anime.average_episode_duration / 60).toString() // Convert seconds to minutes
+      : undefined,
+    studios: anime.studios?.map((s) => s.name) || [],
+    popularity: anime.popularity,
   };
 
   // Process related anime if requested and available
@@ -183,7 +189,7 @@ export const malService = {
               headers: getHeaders(accessToken),
               params: {
                 fields:
-                  "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,my_list_status",
+                  "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,my_list_status,average_episode_duration,studios,popularity",
                 limit: 12,
               },
             });
@@ -215,7 +221,7 @@ export const malService = {
               params: {
                 ranking_type: rankingType,
                 fields:
-                  "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,my_list_status",
+                  "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,my_list_status,average_episode_duration,studios,popularity",
                 limit: 12,
               },
             });
@@ -244,7 +250,7 @@ export const malService = {
               params: {
                 q: query,
                 fields:
-                  "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,my_list_status",
+                  "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,my_list_status,average_episode_duration,studios,popularity",
                 limit: 12,
               },
             });
@@ -272,7 +278,7 @@ export const malService = {
               headers,
               params: {
                 fields:
-                  "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,related_anime,my_list_status",
+                  "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,related_anime,my_list_status,average_episode_duration,studios,popularity",
               },
             });
 
@@ -292,7 +298,7 @@ export const malService = {
                           headers,
                           params: {
                             fields:
-                              "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type",
+                              "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,average_episode_duration,studios,popularity",
                           },
                         }
                       );
@@ -378,7 +384,7 @@ export const malService = {
         params: {
           status: "watching",
           fields:
-            "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,my_list_status",
+            "id,title,main_picture,pictures,synopsis,mean,num_episodes,status,genres,start_date,media_type,my_list_status,average_episode_duration,studios,popularity",
           limit: 50,
         },
       });

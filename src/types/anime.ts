@@ -51,6 +51,9 @@ export interface MALAnime {
     relation_type: string;
     relation_type_formatted: string;
   }>;
+  average_episode_duration?: number; // Duration in seconds
+  studios?: Array<{ id: number; name: string }>;
+  popularity?: number; // Popularity ranking
 }
 
 export interface AniListAnime {
@@ -80,6 +83,16 @@ export interface AniListAnime {
       node: AniListAnime;
     }>;
   };
+  duration?: number; // Episode duration in minutes
+  studios?: {
+    edges: Array<{
+      node: {
+        id: number;
+        name: string;
+      };
+    }>;
+  };
+  popularity?: number; // Popularity ranking
 }
 
 export interface AnimeListResponse {

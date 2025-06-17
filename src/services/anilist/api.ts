@@ -91,7 +91,11 @@ export const normalizeAniListAnime = (anime: AniListAnime, includeRelated: boole
     genres: anime.genres || [],
     year: anime.startDate?.year,
     format: anime.format,
-    source: 'anilist'
+    source: 'anilist',
+    // Enhanced metadata
+    duration: anime.duration ? anime.duration.toString() : undefined,
+    studios: anime.studios?.edges?.map(edge => edge.node.name) || [],
+    popularity: anime.popularity,
   };
 
   // Process related anime if requested and available
@@ -352,6 +356,16 @@ export const anilistService = {
                     year
                   }
                   format
+                  duration
+                  studios {
+                    edges {
+                      node {
+                        id
+                        name
+                      }
+                    }
+                  }
+                  popularity
                 }
               }
             }

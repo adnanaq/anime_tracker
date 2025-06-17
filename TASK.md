@@ -250,13 +250,83 @@ This document tracks all tasks identified from comprehensive project audit, orga
    - **Tests Needed**: Button interactions, authentication states, routing behavior
 
 ### Currently Being Worked On
-- ✅ **AnimeInfoCard Component Creation**: COMPLETED - metadata grid and synopsis auto-scrolling implemented
+- ✅ **Dashboard BaseAnimeCardSection Migration**: COMPLETED - All major dashboard sections migrated to new BaseAnimeCardSection component
+- ✅ **BaseAnimeCardSection Component**: COMPLETED - Self-contained horizontal scrolling card component with independent state
+- ✅ **API Metadata Enhancement**: COMPLETED - Enhanced getUserWatchingAnime APIs to include duration, studios, popularity
+- ✅ **Status Badge Alignment Fix**: COMPLETED - Resolved button wrapper styling causing badge misalignment
 - 🔄 **Storybook Implementation Phase 1**: Spinner, Skeleton, AnimeGridSkeleton stories (remaining UI System)
 - 🔄 **Simple Component Stories**: AnimatedButton, LoadingSpinner, ThemeToggle, SourceToggle (next priority)
 - ✅ **Documentation Updates**: Syncing docs with actual implementation ✅ **COMPLETED**
-- ✅ **TypeScript Type Safety Audit**: 95% elimination of any types completed, dark theme UI fixes applied
 
 ---
+
+## 🚨 HIGH PRIORITY PENDING TASKS
+
+### **Completed: Dashboard BaseAnimeCardSection Migration** ✅ **COMPLETED**
+
+#### **Task: Replace Dashboard Sections with BaseAnimeCardSection** ✅ **COMPLETED**
+**Status**: Successfully Completed - All major dashboard sections now use BaseAnimeCardSection  
+**Priority**: HIGH - Improved modularity and consistency across dashboard  
+**Achievement**: Created reusable horizontal scrolling card component with independent state management  
+
+**Implementation Architecture**:
+- **Component Extraction**: Created BaseAnimeCardSection in `src/components/BaseAnimeCardSection/`
+- **Dashboard Migration**: Replaced ExpandableGrid usage in 5 major dashboard sections
+- **State Isolation**: Each section maintains independent currentCard state and containerRef
+- **API Enhancement**: Fixed metadata inconsistencies in currentlyWatching section
+
+**Completed Components**:
+
+**1. BaseAnimeCardSection Component** ✅ **COMPLETED**
+```typescript
+interface BaseAnimeCardSectionProps {
+  anime: AnimeBase[];
+  currentSource: string;
+  updateAnimeStatus: (animeId: number, source: string, status: string) => void;
+  groupName?: string;
+}
+```
+
+**2. Dashboard Section Migration** ✅ **COMPLETED**
+- ✅ **Continue Watching**: Replaced ExpandingAnimeCards with BaseAnimeCardSection
+- ✅ **Trending Now**: Replaced ExpandableGrid with BaseAnimeCardSection  
+- ✅ **Top Rated**: Replaced ExpandableGrid with BaseAnimeCardSection
+- ✅ **Most Popular**: Replaced ExpandableGrid with BaseAnimeCardSection
+- ✅ **Current Season**: Replaced ExpandableGrid with BaseAnimeCardSection
+
+**3. API Enhancement Implementation** ✅ **COMPLETED**
+- ✅ **MAL API**: Added `average_episode_duration,studios,popularity` to getUserWatchingAnime fields
+- ✅ **AniList API**: Added `duration,studios,popularity` to getUserWatchingAnime GraphQL query
+- ✅ **Metadata Consistency**: Currently watching anime now display same rich metadata as other sections
+
+**4. Status Badge Alignment Fix** ✅ **COMPLETED**
+```css
+.status-badge-dropdown-wrapper button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  line-height: 1;
+  vertical-align: baseline;
+}
+```
+
+**Benefits Achieved**:
+- ✅ **Modular Architecture**: Each BaseAnimeCardSection operates independently without cross-interference
+- ✅ **Consistent UI**: All dashboard sections use same horizontal scrolling card layout with auto-cycling
+- ✅ **Enhanced Metadata**: All sections display comprehensive anime information (duration, studios, popularity)
+- ✅ **Clean Styling**: Status badges properly align with rating and format badges
+- ✅ **State Isolation**: No shared state conflicts between multiple card sections
+- ✅ **Reusable Component**: BaseAnimeCardSection available for future dashboard sections
+
+**Success Criteria Achieved**:
+- ✅ All 5 major dashboard sections migrated to BaseAnimeCardSection
+- ✅ Independent state management prevents cross-section interference
+- ✅ Enhanced metadata displays consistently across all sections
+- ✅ Status badge alignment issues resolved
+- ✅ Clean component architecture with proper separation of concerns
+- ✅ Maintained all existing functionality with improved user experience
 
 ## 🚨 HIGH PRIORITY PENDING TASKS
 

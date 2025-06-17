@@ -24,6 +24,16 @@ export const ANIME_FIELDS_FRAGMENT = `
       year
     }
     format
+    duration
+    studios {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+    popularity
   }
 `
 

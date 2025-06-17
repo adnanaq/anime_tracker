@@ -1,0 +1,1 @@
+export { BaseAnimeCardSection } from './BaseAnimeCardSection';

@@ -365,9 +365,34 @@ src/components/ui/
 **Current Implementation Status**:
 - ✅ **BaseAnimeCard**: Successfully created as standalone component with full data population
 - ✅ **AnimeInfoCard**: COMPLETED - metadata, genres, synopsis component with auto-scrolling and comprehensive Storybook stories
+- 🔄 **StatusBadgeDropdown Integration**: IN PROGRESS - Service-layer integration for unified status management
 - 📋 **StatusOptionsDropdown**: Pending extraction - status management UI
 - 📋 **ExpandedActionButtons**: Pending extraction - action buttons
 - 📋 **Integration**: Pending - replace ExpandableGrid content with extracted components
+
+**Phase 1.9: Dashboard BaseAnimeCardSection Migration (COMPLETED)**
+**Status**: ✅ COMPLETED - Successfully migrated all major dashboard sections to new BaseAnimeCardSection component  
+**Goal**: Replace ExpandableGrid usage with modular BaseAnimeCardSection across the dashboard  
+
+**Key Architectural Achievement**:
+- **Component Extraction**: Created reusable BaseAnimeCardSection component with isolated state management
+- **Dashboard Migration**: Replaced all major sections (Trending, Top Rated, Most Popular, Current Season, Continue Watching)
+- **Enhanced Metadata**: Fixed currentlyWatching metadata by adding enhanced fields to getUserWatchingAnime APIs
+- **Status Badge Fix**: Resolved StatusBadgeDropdown alignment issue by removing default button styling conflicts
+
+**Completed Implementation**:
+1. ✅ **BaseAnimeCardSection Component**: Self-contained component with independent state and scroll management
+2. ✅ **Dashboard Section Migration**: Replaced 5 major sections with BaseAnimeCardSection
+3. ✅ **API Enhancement**: Updated MAL and AniList getUserWatchingAnime to include duration, studios, popularity fields
+4. ✅ **Status Badge Alignment**: Fixed button wrapper styling causing misalignment with other badges
+5. ✅ **Independent State Management**: Each section maintains its own currentCard state and containerRef
+
+**Benefits Achieved**:
+- **Modular Architecture**: Each BaseAnimeCardSection operates independently without cross-interference
+- **Consistent UI**: All dashboard sections now use the same horizontal scrolling card layout
+- **Enhanced Metadata**: Currently watching anime now display the same rich metadata as other sections
+- **Clean Styling**: Status badges properly align with rating and format badges
+- **State Isolation**: No more shared state conflicts between multiple card sections
 
 **Success Criteria**:
 - All components extracted with single responsibility principle

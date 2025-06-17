@@ -22,9 +22,10 @@
 /* Smooth transition for width changes */
 .base-anime-card {
   /* Bounce-back effect (overshoot and settle) */
-  transition: width 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: width 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
-  /* Original effect */
+  /* Other easing options */
+  /* transition: width 1.2s ease-in-out; */
   /* transition: width 0.7s ease-in; */
 }
 
@@ -67,22 +68,48 @@
   pointer-events: none;
 }
 
-/* Show expanded content when card radio is checked */
+/* Show expanded content when card radio is checked OR when card has expanded class (but radio takes precedence) */
+.base-anime-card.expanded .card-expanded-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 .base-anime-card:has(input[type="radio"]:checked) .card-expanded-overlay {
   opacity: 1;
   pointer-events: auto;
 }
 
-/* Base state content (score badge and bottom info) - visible by default */
+/* Hide expanded content when radio is unchecked (overrides expanded class) */
+.base-anime-card:has(input[type="radio"]:not(:checked)) .card-expanded-overlay {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Base state content (score badge, status badge, and bottom info) - visible by default */
 .base-anime-card .card-score-badge,
+.base-anime-card .card-status-badge,
 .base-anime-card .absolute.bottom-0 {
   opacity: 1;
   transition: opacity 0.4s ease-out;
 }
 
 /* Hide base content when card is expanded */
+.base-anime-card.expanded .card-score-badge,
+.base-anime-card.expanded .card-status-badge,
+.base-anime-card.expanded .absolute.bottom-0 {
+  opacity: 0;
+}
+
 .base-anime-card:has(input[type="radio"]:checked) .card-score-badge,
+.base-anime-card:has(input[type="radio"]:checked) .card-status-badge,
 .base-anime-card:has(input[type="radio"]:checked) .absolute.bottom-0 {
   opacity: 0;
+}
+
+/* Show base content when radio is unchecked (overrides expanded class) */
+.base-anime-card:has(input[type="radio"]:not(:checked)) .card-score-badge,
+.base-anime-card:has(input[type="radio"]:not(:checked)) .card-status-badge,
+.base-anime-card:has(input[type="radio"]:not(:checked)) .absolute.bottom-0 {
+  opacity: 1;
 }
 

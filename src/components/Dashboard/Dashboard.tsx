@@ -1,54 +1,56 @@
-import { useEffect, useCallback, memo } from 'react'
-import { useAnimeStore } from '../../store/animeStore'
-import { shallow } from 'zustand/shallow'
-import { SourceToggle } from '../SourceToggle'
-import { ThemeToggle } from '../ThemeToggle'
-import { SearchBar } from '../SearchBar'
-import { AuthButton } from '../AuthButton'
-import { Hero, HeroSkeleton } from '../Hero'
-import { AnimeSchedule } from '../AnimeSchedule'
-import { AdvancedSearch } from '../AdvancedSearch'
-import { RandomAnime } from '../RandomAnime'
-import { SeasonalAnime } from '../SeasonalAnime'
-import { CacheStats } from '../CacheManager/CacheStats'
-import { CacheTest } from '../CacheTest'
-import { ExpandingAnimeCards } from '../ExpandingAnimeCards'
-import { ExpandableGrid } from '../ExpandableGrid'
-import { Typography, AnimeGridSkeleton } from '../ui'
-import type { AnimeBase } from '../../types/anime'
+import React, { useEffect, useCallback, memo } from "react";
+import { useAnimeStore } from "../../store/animeStore";
+import { shallow } from "zustand/shallow";
+import { SourceToggle } from "../SourceToggle";
+import { ThemeToggle } from "../ThemeToggle";
+import { SearchBar } from "../SearchBar";
+import { AuthButton } from "../AuthButton";
+import { Hero, HeroSkeleton } from "../Hero";
+import { AnimeSchedule } from "../AnimeSchedule";
+import { AdvancedSearch } from "../AdvancedSearch";
+import { RandomAnime } from "../RandomAnime";
+import { SeasonalAnime } from "../SeasonalAnime";
+import { CacheStats } from "../CacheManager/CacheStats";
+import { CacheTest } from "../CacheTest";
+import { ExpandingAnimeCards } from "../ExpandingAnimeCards";
+import { ExpandableGrid } from "../ExpandableGrid";
+import { BaseAnimeCardSection } from "../BaseAnimeCardSection";
+import { Typography, AnimeGridSkeleton } from "../ui";
+import type { AnimeBase } from "../../types/anime";
 
 interface AnimeSectionProps {
-  title: string
-  anime: AnimeBase[]
-  isLoading: boolean
-  LoadingGrid: () => JSX.Element
+  title: string;
+  anime: AnimeBase[];
+  isLoading: boolean;
+  LoadingGrid: () => JSX.Element;
 }
 
-const AnimeSection = memo(({
-  title,
-  anime,
-  isLoading,
-  LoadingGrid,
-}: AnimeSectionProps) => {
-  return (
-    <section className="mb-12">
-      {isLoading ? (
-        <>
-          <Typography variant="h2" className="mb-6 tracking-tight">
-            {title}
-          </Typography>
-          <LoadingGrid />
-        </>
-      ) : (
-        <ExpandableGrid anime={anime} title={title} maxCards={10} />
-      )}
-    </section>
-  )
-}, (prevProps, nextProps) => {
-  return prevProps.title === nextProps.title &&
-         prevProps.isLoading === nextProps.isLoading &&
-         prevProps.anime === nextProps.anime
-})
+const AnimeSection = memo(
+  ({ title, anime, isLoading, LoadingGrid }: AnimeSectionProps) => {
+    return (
+      <section className="mb-12">
+        {isLoading ? (
+          <>
+            <Typography variant="h2" className="mb-6 tracking-tight">
+              {title}
+            </Typography>
+            <LoadingGrid />
+          </>
+        ) : (
+          <ExpandableGrid anime={anime} title={title} maxCards={10} />
+        )}
+      </section>
+    );
+  },
+  (prevProps, nextProps) => {
+    return (
+      prevProps.title === nextProps.title &&
+      prevProps.isLoading === nextProps.isLoading &&
+      prevProps.anime === nextProps.anime
+    );
+  }
+);
+
 
 const Dashboard = () => {
   // Optimized selector 1: Core state data with shallow comparison
@@ -58,9 +60,9 @@ const Dashboard = () => {
       loading: state.loading,
     }),
     shallow
-  )
+  );
 
-  // Optimized selector 2: All anime data with shallow comparison  
+  // Optimized selector 2: All anime data with shallow comparison
   const {
     trendingAnime,
     popularAnime,
@@ -78,7 +80,7 @@ const Dashboard = () => {
       currentlyWatching: state.currentlyWatching,
     }),
     shallow
-  )
+  );
 
   // Optimized selector 3: Action functions with shallow comparison
   const {
@@ -89,6 +91,7 @@ const Dashboard = () => {
     fetchUserScores,
     fetchUserStatus,
     fetchCurrentlyWatching,
+    updateAnimeStatus,
   } = useAnimeStore(
     (state) => ({
       fetchTrendingAnime: state.fetchTrendingAnime,
@@ -98,37 +101,36 @@ const Dashboard = () => {
       fetchUserScores: state.fetchUserScores,
       fetchUserStatus: state.fetchUserStatus,
       fetchCurrentlyWatching: state.fetchCurrentlyWatching,
+      updateAnimeStatus: state.updateAnimeStatus,
     }),
     shallow
-  )
+  );
 
   useEffect(() => {
     const fetchData = async () => {
-      if (currentSource === 'anilist') {
+      if (currentSource === "anilist") {
         await Promise.all([
           fetchUserScores(),
-          fetchUserStatus(), 
-          fetchCurrentlyWatching()
-        ])
+          fetchUserStatus(),
+          fetchCurrentlyWatching(),
+        ]);
       } else {
-        await fetchCurrentlyWatching()
+        await fetchCurrentlyWatching();
       }
       await Promise.all([
         fetchTrendingAnime(),
         fetchPopularAnime(),
         fetchTopRatedAnime(),
-        fetchCurrentSeasonAnime()
-      ])
-    }
-    
-    fetchData()
-  }, [currentSource])
+        fetchCurrentSeasonAnime(),
+      ]);
+    };
 
+    fetchData();
+  }, [currentSource]);
 
   const LoadingGrid = useCallback(() => {
-    return <AnimeGridSkeleton count={10} />
-  }, [])
-
+    return <AnimeGridSkeleton count={10} />;
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50/80 dark:bg-gray-900/80 backdrop-blur-sm transition-theme">
@@ -137,8 +139,11 @@ const Dashboard = () => {
         <div className="mx-auto px-5">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center flex-shrink-0">
-              <Typography variant="h3" className="at-typography-gradient font-bold">
-                AnimeTrackr
+              <Typography
+                variant="h3"
+                className="at-typography-gradient font-bold"
+              >
+                AnimeTracker
               </Typography>
             </div>
             <div className="flex items-center space-x-4 flex-shrink-0 h-full">
@@ -163,13 +168,12 @@ const Dashboard = () => {
         </div>
       </header>
 
-      {searchResults.length === 0 && (
-        loading.trending ? (
+      {searchResults.length === 0 &&
+        (loading.trending ? (
           <HeroSkeleton />
         ) : trendingAnime.length > 0 ? (
           <Hero anime={trendingAnime} />
-        ) : null
-      )}
+        ) : null)}
 
       <main className="mx-auto px-5 py-8 at-animate-slide-up">
         {searchResults.length > 0 && (
@@ -196,137 +200,107 @@ const Dashboard = () => {
             )}
 
             {currentlyWatching.length > 0 && (
-              <>
-                <section className="mb-12">
-                  <ExpandingAnimeCards
-                    anime={currentlyWatching}
-                    title="📺 Continue Watching"
-                    variant="vertical"
-                    maxCards={5}
-                  />
-                </section>
-                
-                <section className="mb-12">
-                  <ExpandableGrid
-                    anime={currentlyWatching}
-                    title="Currently Watching (Grid View)"
-                    maxCards={12}
-                    variant="click"
-                  />
-                </section>
-              </>
-            )}
-
-            <section className="mb-12">
-              {loading.trending ? (
-                <>
-                  <Typography variant="h2" className="mb-6 tracking-tight">
-                    Trending Now
-                  </Typography>
-                  <AnimeGridSkeleton count={10} />
-                </>
-              ) : (
-                <ExpandableGrid 
-                  anime={trendingAnime} 
-                  title="Trending Now" 
-                  maxCards={12} 
-                  variant="click"
-                />
-              )}
-            </section>
-
-            <section className="mb-12">
-              {loading.popular ? (
-                <>
-                  <Typography variant="h2" className="mb-6 tracking-tight">
-                    Most Popular
-                  </Typography>
-                  <AnimeGridSkeleton count={10} />
-                </>
-              ) : (
-                <ExpandableGrid 
-                  anime={popularAnime} 
-                  title="Most Popular" 
-                  maxCards={12} 
-                  variant="click"
-                />
-              )}
-            </section>
-
-
-            {/* Expandable Grid Test Section */}
-            {trendingAnime.length > 0 && (
               <section className="mb-12">
-                <ExpandableGrid
-                  anime={trendingAnime}
-                  title="🔥 Expandable Grid Test"
-                  maxCards={12}
-                  variant="click"
+                <Typography variant="h2" className="mb-6 tracking-tight">
+                  📺 Continue Watching
+                </Typography>
+                <BaseAnimeCardSection
+                  anime={currentlyWatching.slice(0, 12)}
+                  currentSource={currentSource}
+                  updateAnimeStatus={updateAnimeStatus}
+                  groupName="currently-watching-basecard"
                 />
               </section>
             )}
 
             <section className="mb-12">
-              {loading.topRated ? (
-                <>
-                  <Typography variant="h2" className="mb-6 tracking-tight">
-                    Top Rated
-                  </Typography>
-                  <AnimeGridSkeleton count={10} />
-                </>
+              <Typography variant="h2" className="mb-6 tracking-tight">
+                Trending Now
+              </Typography>
+              {loading.trending ? (
+                <AnimeGridSkeleton count={10} />
               ) : (
-                <ExpandableGrid 
-                  anime={topRatedAnime} 
-                  title="Top Rated" 
-                  maxCards={12} 
-                  variant="click"
+                <BaseAnimeCardSection
+                  anime={trendingAnime.slice(0, 12)}
+                  currentSource={currentSource}
+                  updateAnimeStatus={updateAnimeStatus}
+                  groupName="trending-basecard"
                 />
               )}
             </section>
 
             <section className="mb-12">
-              {loading.currentSeason ? (
-                <>
-                  <Typography variant="h2" className="mb-6 tracking-tight">
-                    Current Season
-                  </Typography>
-                  <AnimeGridSkeleton count={10} />
-                </>
+              <Typography variant="h2" className="mb-6 tracking-tight">
+                Top Rated
+              </Typography>
+              {loading.topRated ? (
+                <AnimeGridSkeleton count={10} />
               ) : (
-                <ExpandableGrid 
-                  anime={currentSeasonAnime} 
-                  title="Current Season" 
-                  maxCards={12} 
-                  variant="click"
+                <BaseAnimeCardSection
+                  anime={topRatedAnime.slice(0, 12)}
+                  currentSource={currentSource}
+                  updateAnimeStatus={updateAnimeStatus}
+                  groupName="top-rated-basecard"
                 />
               )}
             </section>
 
+            <section className="mb-12">
+              <Typography variant="h2" className="mb-6 tracking-tight">
+                Most Popular
+              </Typography>
+              {loading.popular ? (
+                <AnimeGridSkeleton count={10} />
+              ) : (
+                <BaseAnimeCardSection
+                  anime={popularAnime.slice(0, 12)}
+                  currentSource={currentSource}
+                  updateAnimeStatus={updateAnimeStatus}
+                  groupName="popular-basecard"
+                />
+              )}
+            </section>
+
+            <section className="mb-12">
+              <Typography variant="h2" className="mb-6 tracking-tight">
+                Current Season
+              </Typography>
+              {loading.currentSeason ? (
+                <AnimeGridSkeleton count={10} />
+              ) : (
+                <BaseAnimeCardSection
+                  anime={currentSeasonAnime.slice(0, 12)}
+                  currentSource={currentSource}
+                  updateAnimeStatus={updateAnimeStatus}
+                  groupName="current-season-basecard"
+                />
+              )}
+            </section>
 
             {/* MAL-specific enhanced features */}
-            {currentSource === 'mal' && (
+            {currentSource === "mal" && (
               <>
                 <section className="mb-12">
                   <AdvancedSearch />
                 </section>
-                
+
                 <section className="mb-12">
                   <SeasonalAnime />
                 </section>
-                
+
                 <section className="mb-12">
                   <AnimeSchedule />
                 </section>
-                
+
                 <section className="mb-12">
                   <RandomAnime />
                 </section>
-                
+
                 {/* Developer Tools - Cache Management */}
                 <section className="mb-12">
                   <CacheStats />
                 </section>
-                
+
                 <section className="mb-12">
                   <CacheTest />
                 </section>
@@ -346,13 +320,14 @@ const Dashboard = () => {
           currentlyWatching.length === 0 && (
             <div className="text-center py-12">
               <Typography variant="bodyLarge" color="muted">
-                No anime data available. Please try switching sources or check your connection.
+                No anime data available. Please try switching sources or check
+                your connection.
               </Typography>
             </div>
           )}
       </main>
     </div>
-  )
-}
+  );
+};
 
-export { Dashboard }
+export { Dashboard };

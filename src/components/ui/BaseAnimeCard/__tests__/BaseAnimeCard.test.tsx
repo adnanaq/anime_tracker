@@ -927,4 +927,138 @@ describe('BaseAnimeCard', () => {
       expect(card.style.getPropertyValue('--expanded-width')).toBe('251px');
     });
   });
+
+  describe('Self-Contained AnimeInfoCard Integration', () => {
+    const mockStatusChange = vi.fn();
+    
+    beforeEach(() => {
+      mockStatusChange.mockClear();
+    });
+
+    it('should automatically render AnimeInfoCard in expanded state when expandedContent is enabled', () => {
+      const { container, getByText } = render(
+        <BaseAnimeCard 
+          anime={mockAnime} 
+          expandedContent={true}
+          expanded={true}
+        />
+      );
+      
+      // Should find AnimeInfoCard container with expected class
+      const infoCard = container.querySelector('.anime-info-card');
+      expect(infoCard).toBeInTheDocument();
+      
+      // Should find typical AnimeInfoCard elements
+      expect(getByText('Action')).toBeInTheDocument();
+      expect(getByText('Drama')).toBeInTheDocument();
+    });
+
+    it('should not render AnimeInfoCard when expandedContent is false', () => {
+      const { queryByText, container } = render(
+        <BaseAnimeCard 
+          anime={mockAnime} 
+          expandedContent={false}
+          expanded={true}
+        />
+      );
+      
+      // Should not find AnimeInfoCard container
+      const infoCard = container.querySelector('.anime-info-card');
+      expect(infoCard).not.toBeInTheDocument();
+    });
+
+    it('should not render AnimeInfoCard when card is not expanded', () => {
+      const { queryByText, container } = render(
+        <BaseAnimeCard 
+          anime={mockAnime} 
+          expandedContent={true}
+          expanded={false}
+        />
+      );
+      
+      // Should not find AnimeInfoCard container when collapsed
+      const infoCard = container.querySelector('.anime-info-card');
+      expect(infoCard).not.toBeInTheDocument();
+    });
+
+    it('should automatically pass statusDropdown props to built-in AnimeInfoCard', () => {
+      const { container } = render(
+        <BaseAnimeCard 
+          anime={mockAnime} 
+          expandedContent={true}
+          expanded={true}
+          statusDropdown={{
+            enabled: true,
+            onStatusChange: mockStatusChange,
+            isAuthenticated: true
+          }}
+        />
+      );
+      
+      // Should find StatusBadgeDropdown in AnimeInfoCard area (expanded content)
+      const expandedArea = container.querySelector('.card-expanded-overlay');
+      expect(expandedArea).toBeInTheDocument();
+      
+      // The StatusBadgeDropdown should be automatically included
+      const statusBadges = container.querySelectorAll('[data-testid*="status"], .status-badge-dropdown-wrapper');
+      expect(statusBadges.length).toBeGreaterThan(0);
+    });
+
+    it('should default expandedContent to true when statusDropdown is enabled', () => {
+      const { getByText } = render(
+        <BaseAnimeCard 
+          anime={mockAnime} 
+          expanded={true}
+          statusDropdown={{
+            enabled: true,
+            onStatusChange: mockStatusChange,
+            isAuthenticated: true
+          }}
+          // Not explicitly setting expandedContent
+        />
+      );
+      
+      // Should automatically show AnimeInfoCard when statusDropdown is enabled
+      expect(getByText('Action')).toBeInTheDocument();
+      expect(getByText('Drama')).toBeInTheDocument();
+    });
+
+    it('should maintain backward compatibility with manually provided children', () => {
+      const { getByText, queryByText, container } = render(
+        <BaseAnimeCard 
+          anime={mockAnime} 
+          expandedContent={true}
+          expanded={true}
+        >
+          <div>Custom expanded content</div>
+        </BaseAnimeCard>
+      );
+      
+      // Should render custom children instead of built-in AnimeInfoCard
+      expect(getByText('Custom expanded content')).toBeInTheDocument();
+      
+      // Should not find built-in AnimeInfoCard content
+      const infoCard = container.querySelector('.anime-info-card');
+      expect(infoCard).not.toBeInTheDocument();
+    });
+
+    it('should prioritize custom children over built-in expandedContent', () => {
+      const { getByText, queryByText, container } = render(
+        <BaseAnimeCard 
+          anime={mockAnime} 
+          expandedContent={true}
+          expanded={true}
+        >
+          <div>Override content</div>
+        </BaseAnimeCard>
+      );
+      
+      // Custom children should take precedence
+      expect(getByText('Override content')).toBeInTheDocument();
+      
+      // Should not find built-in AnimeInfoCard content
+      const infoCard = container.querySelector('.anime-info-card');
+      expect(infoCard).not.toBeInTheDocument();
+    });
+  });
 });

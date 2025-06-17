@@ -1,5 +1,23 @@
 /* StatusBadgeDropdown Animations */
 
+/* Fix alignment with other badges in flex containers */
+.status-badge-dropdown-wrapper {
+  display: inline-flex;
+  align-items: center;
+}
+
+.status-badge-dropdown-wrapper button {
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  line-height: 1;
+  vertical-align: baseline;
+}
+
 /* Container fade and scale animation */
 @keyframes dropdownAppear {
   from {

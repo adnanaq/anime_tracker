@@ -75,6 +75,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     currentStatus: 'plan_to_watch',
+    source: 'mal',
     onStatusChange: fn(),
     isAuthenticated: true,
   },
@@ -99,6 +100,7 @@ export const Interactive: Story = {
         </div>
         <StatusBadgeDropdown
           currentStatus={currentStatus}
+          source="mal"
           onStatusChange={handleStatusChange}
           isAuthenticated={true}
         />
@@ -121,6 +123,7 @@ export const Interactive: Story = {
 export const PlanToWatch: Story = {
   args: {
     currentStatus: 'plan_to_watch',
+    source: 'mal',
     onStatusChange: fn(),
     isAuthenticated: true,
   },
@@ -136,6 +139,7 @@ export const PlanToWatch: Story = {
 export const CurrentlyWatching: Story = {
   args: {
     currentStatus: 'currently_watching',
+    source: 'mal',
     onStatusChange: fn(),
     isAuthenticated: true,
   },
@@ -151,6 +155,7 @@ export const CurrentlyWatching: Story = {
 export const Completed: Story = {
   args: {
     currentStatus: 'completed',
+    source: 'mal',
     onStatusChange: fn(),
     isAuthenticated: true,
   },
@@ -166,6 +171,7 @@ export const Completed: Story = {
 export const OnHold: Story = {
   args: {
     currentStatus: 'on_hold',
+    source: 'mal',
     onStatusChange: fn(),
     isAuthenticated: true,
   },
@@ -181,6 +187,7 @@ export const OnHold: Story = {
 export const Dropped: Story = {
   args: {
     currentStatus: 'dropped',
+    source: 'mal',
     onStatusChange: fn(),
     isAuthenticated: true,
   },
@@ -196,6 +203,7 @@ export const Dropped: Story = {
 export const NotInList: Story = {
   args: {
     currentStatus: 'not_in_list',
+    source: 'mal',
     onStatusChange: fn(),
     isAuthenticated: true,
   },
@@ -214,7 +222,7 @@ export const NotAuthenticated: Story = {
     <div className="space-y-4">
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">MyAnimeList:</span>
-        <StatusBadgeDropdown {...args} />
+        <StatusBadgeDropdown {...args} source="mal" />
       </div>
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">AniList:</span>
@@ -224,6 +232,7 @@ export const NotAuthenticated: Story = {
   ),
   args: {
     currentStatus: 'completed',
+    source: 'mal',
     onStatusChange: fn(),
     isAuthenticated: false,
   },
@@ -241,16 +250,17 @@ export const AuthenticatedInteractive: Story = {
     <div className="space-y-4">
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">MyAnimeList:</span>
-        <StatusBadgeDropdown {...args} />
+        <StatusBadgeDropdown {...args} source="mal" />
       </div>
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">AniList:</span>
-        <StatusBadgeDropdown {...args} currentStatus="currently_watching" />
+        <StatusBadgeDropdown {...args} currentStatus="currently_watching" source="anilist" />
       </div>
     </div>
   ),
   args: {
     currentStatus: 'plan_to_watch',
+    source: 'mal',
     onStatusChange: fn(),
     isAuthenticated: true,
   },
@@ -269,16 +279,17 @@ export const Loading: Story = {
     <div className="space-y-4">
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">MyAnimeList:</span>
-        <StatusBadgeDropdown {...args} />
+        <StatusBadgeDropdown {...args} source="mal" />
       </div>
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">AniList:</span>
-        <StatusBadgeDropdown {...args} currentStatus="completed" isLoading={false} />
+        <StatusBadgeDropdown {...args} currentStatus="completed" isLoading={false} source="anilist" />
       </div>
     </div>
   ),
   args: {
     currentStatus: 'currently_watching',
+    source: 'mal',
     onStatusChange: fn(),
     isAuthenticated: true,
     isLoading: true,
@@ -322,6 +333,7 @@ export const UpdatingStatus: Story = {
             <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">MyAnimeList:</span>
             <StatusBadgeDropdown
               currentStatus={malStatus}
+              source="mal"
               onStatusChange={handleMalStatusChange}
               isAuthenticated={true}
             />
@@ -330,6 +342,7 @@ export const UpdatingStatus: Story = {
             <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">AniList:</span>
             <StatusBadgeDropdown
               currentStatus={anilistStatus}
+              source="anilist"
               onStatusChange={handleAnilistStatusChange}
               isAuthenticated={true}
             />
@@ -356,16 +369,17 @@ export const Disabled: Story = {
     <div className="space-y-4">
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">MyAnimeList:</span>
-        <StatusBadgeDropdown {...args} />
+        <StatusBadgeDropdown {...args} source="mal" />
       </div>
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">AniList:</span>
-        <StatusBadgeDropdown {...args} currentStatus="dropped" disabled={false} />
+        <StatusBadgeDropdown {...args} currentStatus="dropped" disabled={false} source="anilist" />
       </div>
     </div>
   ),
   args: {
     currentStatus: 'completed',
+    source: 'mal',
     onStatusChange: fn(),
     isAuthenticated: true,
     disabled: true,
@@ -385,16 +399,17 @@ export const SizeXS: Story = {
     <div className="space-y-4">
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">MyAnimeList:</span>
-        <StatusBadgeDropdown {...args} />
+        <StatusBadgeDropdown {...args} source="mal" />
       </div>
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">AniList:</span>
-        <StatusBadgeDropdown {...args} currentStatus="completed" />
+        <StatusBadgeDropdown {...args} currentStatus="completed" source="anilist" />
       </div>
     </div>
   ),
   args: {
     currentStatus: 'currently_watching',
+    source: 'mal',
     onStatusChange: fn(),
     isAuthenticated: true,
     size: 'xs',
@@ -413,7 +428,7 @@ export const SizeSmall: Story = {
     <div className="space-y-4">
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">MyAnimeList:</span>
-        <StatusBadgeDropdown {...args} />
+        <StatusBadgeDropdown {...args} source="mal" />
       </div>
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">AniList:</span>
@@ -423,6 +438,7 @@ export const SizeSmall: Story = {
   ),
   args: {
     currentStatus: 'currently_watching',
+    source: 'mal',
     onStatusChange: fn(),
     isAuthenticated: true,
     size: 'sm',
@@ -441,16 +457,17 @@ export const SizeMedium: Story = {
     <div className="space-y-4">
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">MyAnimeList:</span>
-        <StatusBadgeDropdown {...args} />
+        <StatusBadgeDropdown {...args} source="mal" />
       </div>
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">AniList:</span>
-        <StatusBadgeDropdown {...args} currentStatus="plan_to_watch" />
+        <StatusBadgeDropdown {...args} currentStatus="plan_to_watch" source="anilist" />
       </div>
     </div>
   ),
   args: {
     currentStatus: 'currently_watching',
+    source: 'mal',
     onStatusChange: fn(),
     isAuthenticated: true,
     size: 'md',
@@ -470,16 +487,17 @@ export const LimitedOptions: Story = {
     <div className="space-y-4">
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">MyAnimeList:</span>
-        <StatusBadgeDropdown {...args} />
+        <StatusBadgeDropdown {...args} source="mal" />
       </div>
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">AniList:</span>
-        <StatusBadgeDropdown {...args} currentStatus="completed" />
+        <StatusBadgeDropdown {...args} currentStatus="completed" source="anilist" />
       </div>
     </div>
   ),
   args: {
     currentStatus: 'plan_to_watch',
+    source: 'mal',
     availableStatuses: ['plan_to_watch', 'currently_watching', 'completed'] as AnimeStatus[],
     onStatusChange: fn(),
     isAuthenticated: true,
@@ -498,16 +516,17 @@ export const TwoOptionsOnly: Story = {
     <div className="space-y-4">
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">MyAnimeList:</span>
-        <StatusBadgeDropdown {...args} />
+        <StatusBadgeDropdown {...args} source="mal" />
       </div>
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">AniList:</span>
-        <StatusBadgeDropdown {...args} currentStatus="completed" />
+        <StatusBadgeDropdown {...args} currentStatus="completed" source="anilist" />
       </div>
     </div>
   ),
   args: {
     currentStatus: 'plan_to_watch',
+    source: 'mal',
     availableStatuses: ['plan_to_watch', 'completed'] as AnimeStatus[],
     onStatusChange: fn(),
     isAuthenticated: true,
@@ -527,11 +546,11 @@ export const StatusChangeError: Story = {
     <div className="space-y-4">
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">MyAnimeList:</span>
-        <StatusBadgeDropdown {...args} />
+        <StatusBadgeDropdown {...args} source="mal" />
       </div>
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">AniList:</span>
-        <StatusBadgeDropdown {...args} currentStatus="completed" onStatusChange={fn()} />
+        <StatusBadgeDropdown {...args} currentStatus="completed" onStatusChange={fn()} source="anilist" />
       </div>
       <div className="text-xs text-gray-500 mt-2">
         MAL will simulate an error, AniList will work normally
@@ -540,6 +559,7 @@ export const StatusChangeError: Story = {
   ),
   args: {
     currentStatus: 'plan_to_watch',
+    source: 'mal',
     onStatusChange: async () => {
       // Simulate API error
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -562,16 +582,17 @@ export const DarkTheme: Story = {
     <div className="space-y-4">
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-300 w-20">MyAnimeList:</span>
-        <StatusBadgeDropdown {...args} />
+        <StatusBadgeDropdown {...args} source="mal" />
       </div>
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-300 w-20">AniList:</span>
-        <StatusBadgeDropdown {...args} currentStatus="completed" />
+        <StatusBadgeDropdown {...args} currentStatus="completed" source="anilist" />
       </div>
     </div>
   ),
   args: {
     currentStatus: 'currently_watching',
+    source: 'mal',
     onStatusChange: fn(),
     isAuthenticated: true,
   },
@@ -600,7 +621,7 @@ export const LightTheme: Story = {
     <div className="space-y-4">
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-600 w-20">MyAnimeList:</span>
-        <StatusBadgeDropdown {...args} />
+        <StatusBadgeDropdown {...args} source="mal" />
       </div>
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-600 w-20">AniList:</span>
@@ -610,6 +631,7 @@ export const LightTheme: Story = {
   ),
   args: {
     currentStatus: 'completed',
+    source: 'mal',
     onStatusChange: fn(),
     isAuthenticated: true,
   },
@@ -643,6 +665,7 @@ export const MultipleStatuses: Story = {
             <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-32">Plan to Watch:</span>
             <StatusBadgeDropdown
               currentStatus="plan_to_watch"
+              source="mal"
               onStatusChange={fn()}
               isAuthenticated={true}
             />
@@ -651,6 +674,7 @@ export const MultipleStatuses: Story = {
             <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-32">Currently Watching:</span>
             <StatusBadgeDropdown
               currentStatus="currently_watching"
+              source="mal"
               onStatusChange={fn()}
               isAuthenticated={true}
             />
@@ -659,6 +683,7 @@ export const MultipleStatuses: Story = {
             <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-32">Completed:</span>
             <StatusBadgeDropdown
               currentStatus="completed"
+              source="mal"
               onStatusChange={fn()}
               isAuthenticated={true}
             />
@@ -673,6 +698,7 @@ export const MultipleStatuses: Story = {
             <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-32">On Hold:</span>
             <StatusBadgeDropdown
               currentStatus="on_hold"
+              source="anilist"
               onStatusChange={fn()}
               isAuthenticated={true}
             />
@@ -681,6 +707,7 @@ export const MultipleStatuses: Story = {
             <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-32">Dropped:</span>
             <StatusBadgeDropdown
               currentStatus="dropped"
+              source="anilist"
               onStatusChange={fn()}
               isAuthenticated={true}
             />
@@ -689,6 +716,7 @@ export const MultipleStatuses: Story = {
             <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-32">Not in List:</span>
             <StatusBadgeDropdown
               currentStatus="not_in_list"
+              source="anilist"
               onStatusChange={fn()}
               isAuthenticated={true}
             />
@@ -722,17 +750,18 @@ export const AnimationShowcase: Story = {
       <div className="space-y-4">
         <div className="flex items-center justify-center space-x-4">
           <span className="text-sm font-medium text-gray-300 w-20">MyAnimeList:</span>
-          <StatusBadgeDropdown {...args} />
+          <StatusBadgeDropdown {...args} source="mal" />
         </div>
         <div className="flex items-center justify-center space-x-4">
           <span className="text-sm font-medium text-gray-300 w-20">AniList:</span>
-          <StatusBadgeDropdown {...args} currentStatus="currently_watching" />
+          <StatusBadgeDropdown {...args} currentStatus="currently_watching" source="anilist" />
         </div>
       </div>
     </div>
   ),
   args: {
     currentStatus: 'plan_to_watch',
+    source: 'mal',
     onStatusChange: fn(),
     isAuthenticated: true,
   },
@@ -765,17 +794,18 @@ export const FullOptionsRipple: Story = {
       <div className="space-y-4">
         <div className="flex items-center space-x-4">
           <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">MyAnimeList:</span>
-          <StatusBadgeDropdown {...args} />
+          <StatusBadgeDropdown {...args} source="mal" />
         </div>
         <div className="flex items-center space-x-4">
           <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">AniList:</span>
-          <StatusBadgeDropdown {...args} currentStatus="plan_to_watch" />
+          <StatusBadgeDropdown {...args} currentStatus="plan_to_watch" source="anilist" />
         </div>
       </div>
     </div>
   ),
   args: {
     currentStatus: 'not_in_list',
+    source: 'mal',
     availableStatuses: ['plan_to_watch', 'currently_watching', 'completed', 'on_hold', 'dropped', 'not_in_list'] as AnimeStatus[],
     onStatusChange: fn(),
     isAuthenticated: true,
@@ -802,16 +832,17 @@ export const InteractivePlayground: Story = {
     <div className="space-y-4">
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">MyAnimeList:</span>
-        <StatusBadgeDropdown {...args} />
+        <StatusBadgeDropdown {...args} source="mal" />
       </div>
       <div className="flex items-center space-x-4">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-20">AniList:</span>
-        <StatusBadgeDropdown {...args} currentStatus="dropped" />
+        <StatusBadgeDropdown {...args} currentStatus="dropped" source="anilist" />
       </div>
     </div>
   ),
   args: {
     currentStatus: 'plan_to_watch',
+    source: 'mal',
     onStatusChange: fn(),
     isAuthenticated: true,
     isLoading: false,

@@ -2,16 +2,24 @@ import React from "react";
 import { AnimeBase } from "../../../types/anime";
 import { Badge } from "../Badge";
 import { Typography } from "../Typography";
+import { StatusBadgeDropdown } from "../StatusBadgeDropdown";
 import "./AnimeInfoCard.css";
 
 export interface AnimeInfoCardProps {
   anime: AnimeBase;
   className?: string;
+  // Status dropdown integration for expanded state
+  statusDropdown?: {
+    enabled: boolean;
+    onStatusChange?: (newStatus: string) => Promise<void> | void;
+    isAuthenticated?: boolean;
+  };
 }
 
 export const AnimeInfoCard: React.FC<AnimeInfoCardProps> = ({
   anime,
   className = "",
+  statusDropdown,
 }) => {
   const truncateText = (text: string, maxLength: number): string => {
     if (text.length <= maxLength) return text;
@@ -33,40 +41,53 @@ export const AnimeInfoCard: React.FC<AnimeInfoCardProps> = ({
           </Typography>
         </div>
 
-        {/* Status, Format, and Score Badges */}
+        {/* User Status, Format, and Score Badges */}
         <div className="flex flex-wrap gap-2 mb-4">
-          {anime.status && (
-            <Badge
-              variant={
-                anime.status === "FINISHED" || anime.status === "completed"
-                  ? "success"
-                  : anime.status === "RELEASING" ||
-                      anime.status === "currently_airing"
-                    ? "primary"
-                    : anime.status === "NOT_YET_RELEASED" ||
-                        anime.status === "not_yet_aired"
-                      ? "warning"
-                      : "neutral"
-              }
-              shape="rounded"
+          {/* User Status - Replace anime.status with StatusBadgeDropdown */}
+          {statusDropdown?.enabled && statusDropdown.onStatusChange ? (
+            <StatusBadgeDropdown
+              currentStatus={anime.userStatus || null}
+              source={anime.source}
+              onStatusChange={statusDropdown.onStatusChange}
+              isAuthenticated={statusDropdown.isAuthenticated ?? true}
               size="sm"
-              icon={
-                anime.status === "FINISHED" || anime.status === "completed"
-                  ? "✅"
-                  : anime.status === "RELEASING" ||
-                      anime.status === "currently_airing"
-                    ? "📺"
-                    : anime.status === "NOT_YET_RELEASED" ||
-                        anime.status === "not_yet_aired"
-                      ? "⏳"
-                      : "❓"
-              }
-            >
-              {anime.status
-                .replace(/_/g, " ")
-                .toLowerCase()
-                .replace(/\b\w/g, (l) => l.toUpperCase())}
-            </Badge>
+              shape="rounded"
+            />
+          ) : (
+            // Fallback to anime release status if no status dropdown
+            anime.status && (
+              <Badge
+                variant={
+                  anime.status === "FINISHED" || anime.status === "completed"
+                    ? "success"
+                    : anime.status === "RELEASING" ||
+                        anime.status === "currently_airing"
+                      ? "primary"
+                      : anime.status === "NOT_YET_RELEASED" ||
+                          anime.status === "not_yet_aired"
+                        ? "warning"
+                        : "neutral"
+                }
+                shape="rounded"
+                size="sm"
+                icon={
+                  anime.status === "FINISHED" || anime.status === "completed"
+                    ? "✅"
+                    : anime.status === "RELEASING" ||
+                        anime.status === "currently_airing"
+                      ? "📺"
+                      : anime.status === "NOT_YET_RELEASED" ||
+                          anime.status === "not_yet_aired"
+                        ? "⏳"
+                        : "❓"
+                }
+              >
+                {anime.status
+                  .replace(/_/g, " ")
+                  .toLowerCase()
+                  .replace(/\b\w/g, (l) => l.toUpperCase())}
+              </Badge>
+            )
           )}
 
           {anime.score && (
@@ -116,15 +137,15 @@ export const AnimeInfoCard: React.FC<AnimeInfoCardProps> = ({
 
       {/* Main Content Section - Metadata */}
       <div className="flex-1 min-h-0">
-        {/* Metadata Grid */}
-        <div className="grid grid-cols-2 gap-4 mb-3">
+        {/* Enhanced Metadata Grid */}
+        <div className="grid grid-cols-2 gap-4 mb-3 text-sm">
           <div className="space-y-1.5">
             {anime.episodes && (
               <div className="flex items-start space-x-2">
                 <Typography variant="label" className="text-white/70">
                   Episodes:
                 </Typography>
-                <Typography variant="bodySmall">{anime.episodes}</Typography>
+                <Typography variant="bodySmall" className="font-medium">{anime.episodes}</Typography>
               </div>
             )}
 
@@ -150,7 +171,7 @@ export const AnimeInfoCard: React.FC<AnimeInfoCardProps> = ({
           </div>
 
           <div className="space-y-1.5">
-            {anime.duration && (
+            {(anime.duration || anime.lengthMin) && (
               <div className="flex items-start space-x-2">
                 <Typography
                   variant="label"
@@ -158,8 +179,8 @@ export const AnimeInfoCard: React.FC<AnimeInfoCardProps> = ({
                 >
                   Duration:
                 </Typography>
-                <Typography variant="bodySmall" className="flex-1">
-                  {anime.duration} min/episode
+                <Typography variant="bodySmall" className="flex-1 font-medium">
+                  {anime.duration ? `${anime.duration} min/episode` : `${anime.lengthMin} min/episode`}
                 </Typography>
               </div>
             )}
@@ -172,7 +193,7 @@ export const AnimeInfoCard: React.FC<AnimeInfoCardProps> = ({
                 >
                   Studio:
                 </Typography>
-                <Typography variant="bodySmall" className="flex-1">
+                <Typography variant="bodySmall" className="flex-1 font-medium">
                   {anime.studios.slice(0, 2).join(", ").trim()}
                 </Typography>
               </div>
@@ -186,7 +207,7 @@ export const AnimeInfoCard: React.FC<AnimeInfoCardProps> = ({
                 >
                   Popularity:
                 </Typography>
-                <Typography variant="bodySmall" className="flex-1">
+                <Typography variant="bodySmall" className="flex-1 font-medium">
                   #{anime.popularity}
                 </Typography>
               </div>
@@ -242,3 +263,6 @@ export const AnimeInfoCard: React.FC<AnimeInfoCardProps> = ({
     </div>
   );
 };
+
+// Set displayName for component detection in BaseAnimeCard
+AnimeInfoCard.displayName = 'AnimeInfoCard';

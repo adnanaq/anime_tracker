@@ -86,6 +86,12 @@ vi.mock('../../ui', () => ({
   ),
   AnimeGridSkeleton: ({ count }: { count: number }) => (
     <div data-testid="anime-grid-skeleton">Loading {count} anime...</div>
+  ),
+  BaseAnimeCard: ({ anime, children }: { anime: any, children?: React.ReactNode }) => (
+    <div data-testid="base-anime-card">
+      {anime.title}
+      {children}
+    </div>
   )
 }))
 

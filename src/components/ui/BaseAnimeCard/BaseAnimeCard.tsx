@@ -5,7 +5,16 @@ import { useAutoCycling } from '../../../hooks/useAutoCycling';
 import { Card } from '../Card';
 import { Typography } from '../Typography';
 import { Badge } from '../Badge';
+import { StatusBadgeDropdown } from '../StatusBadgeDropdown';
+import { AnimeInfoCard } from '../AnimeInfoCard';
 import './BaseAnimeCard.css';
+
+export interface StatusDropdownConfig {
+  enabled: boolean;
+  position?: 'overlay' | 'bottom';
+  onStatusChange?: (newStatus: string) => Promise<void> | void;
+  isAuthenticated?: boolean;
+}
 
 export interface BaseAnimeCardProps {
   anime: AnimeBase;
@@ -25,6 +34,10 @@ export interface BaseAnimeCardProps {
   pauseOnInteraction?: boolean; // Pause auto-cycling when user interacts (default: true)
   pauseDuration?: number; // How long to pause after interaction in ms (default: 10000ms)
   onAutoLoop?: (cardIndex: number) => void; // Callback when auto-cycling occurs
+  // Status dropdown integration
+  statusDropdown?: StatusDropdownConfig;
+  // Built-in expanded content
+  expandedContent?: boolean; // Whether to automatically show AnimeInfoCard in expanded state (default: true when statusDropdown.enabled)
   // Note: aspectRatio is incompatible with horizontal-only expansion as it would change height
 }
 
@@ -46,6 +59,10 @@ export const BaseAnimeCard: React.FC<BaseAnimeCardProps> = ({
   pauseOnInteraction = true,
   pauseDuration = 10000,
   onAutoLoop,
+  // Status dropdown props
+  statusDropdown,
+  // Built-in expanded content
+  expandedContent,
 }) => {
   // State to track image loading errors
   const [imageError, setImageError] = React.useState(false);
@@ -54,6 +71,18 @@ export const BaseAnimeCard: React.FC<BaseAnimeCardProps> = ({
   React.useEffect(() => {
     setImageError(false);
   }, [anime.coverImage]);
+
+  // Determine if we should show built-in AnimeInfoCard
+  const shouldShowBuiltInContent = (() => {
+    // If children are provided, they take precedence
+    if (children) return false;
+    
+    // If expandedContent is explicitly set, use that
+    if (expandedContent !== undefined) return expandedContent;
+    
+    // Default: show built-in content when statusDropdown is enabled
+    return statusDropdown?.enabled ?? false;
+  })();
 
   // Use the useDimensions hook for all dimension validation and formatting
   const { cardStyles } = useDimensions({ width, height, expandedWidth });
@@ -84,7 +113,7 @@ export const BaseAnimeCard: React.FC<BaseAnimeCardProps> = ({
       groupName={groupName}
       cardIndex={cardIndex}
       onClick={handleClick}
-      className={`base-anime-card ${className}`}
+      className={`base-anime-card ${expanded ? 'expanded' : ''} ${className}`}
       style={cardStyles}
     >
       {/* Card Image Container */}
@@ -120,6 +149,20 @@ export const BaseAnimeCard: React.FC<BaseAnimeCardProps> = ({
             </div>
           )}
 
+          {/* Status dropdown - top right (mirrors score badge positioning) */}
+          {statusDropdown?.enabled && statusDropdown.onStatusChange && (
+            <div className="absolute top-3 right-3 card-status-badge">
+              <StatusBadgeDropdown
+                currentStatus={anime.userStatus || null}
+                source={anime.source}
+                onStatusChange={statusDropdown.onStatusChange}
+                isAuthenticated={statusDropdown.isAuthenticated ?? true}
+                size="xs"
+                className="backdrop-blur-sm"
+              />
+            </div>
+          )}
+
           {/* Bottom info */}
           <div className="absolute bottom-0 left-0 right-0 p-3">
             <Typography
@@ -138,7 +181,62 @@ export const BaseAnimeCard: React.FC<BaseAnimeCardProps> = ({
           </div>
         </div>
       </div>
-      {children}
+      {/* Built-in expanded content or enhanced children */}
+      {shouldShowBuiltInContent && expanded ? (
+        <div className="card-expanded-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-800 pointer-events-none rounded-xl p-4">
+          <AnimeInfoCard 
+            anime={anime}
+            statusDropdown={statusDropdown?.enabled ? {
+              enabled: true,
+              onStatusChange: statusDropdown.onStatusChange,
+              isAuthenticated: statusDropdown.isAuthenticated
+            } : undefined}
+          />
+        </div>
+      ) : shouldShowBuiltInContent ? null : (
+        statusDropdown?.enabled ? 
+          React.Children.map(children, (child) => {
+            if (React.isValidElement(child)) {
+              // Check if this is a div containing AnimeInfoCard (common pattern in stories)
+              if (child.type === 'div' && child.props.children) {
+                return React.cloneElement(child, {
+                  ...child.props,
+                  children: React.Children.map(child.props.children, (grandChild) => {
+                    if (React.isValidElement(grandChild) && 
+                        (grandChild.type?.displayName === 'AnimeInfoCard' || 
+                         grandChild.type?.name === 'AnimeInfoCard' ||
+                         String(grandChild.type).includes('AnimeInfoCard'))) {
+                      return React.cloneElement(grandChild, {
+                        ...grandChild.props,
+                        statusDropdown: {
+                          enabled: true,
+                          onStatusChange: statusDropdown.onStatusChange,
+                          isAuthenticated: statusDropdown.isAuthenticated
+                        }
+                      });
+                    }
+                    return grandChild;
+                  })
+                });
+              }
+              // Direct AnimeInfoCard
+              else if (child.type?.displayName === 'AnimeInfoCard' || 
+                       child.type?.name === 'AnimeInfoCard' ||
+                       String(child.type).includes('AnimeInfoCard')) {
+                return React.cloneElement(child, {
+                  ...child.props,
+                  statusDropdown: {
+                    enabled: true,
+                    onStatusChange: statusDropdown.onStatusChange,
+                    isAuthenticated: statusDropdown.isAuthenticated
+                  }
+                });
+              }
+            }
+            return child;
+          }) 
+          : children
+      )}
     </Card>
   );
 };

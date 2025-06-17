@@ -14,10 +14,13 @@ const mockAnime: AnimeBase = {
   status: "FINISHED",
   episodes: 25,
   genres: ["Action", "Drama", "Fantasy"],
-  description:
+  synopsis:
     "Humanity fights for survival against the giant humanoid Titans who have brought humanity to the brink of extinction.",
   season: "SPRING",
   userStatus: "COMPLETED",
+  duration: "24",
+  studios: ["Studio Pierrot", "MAPPA"],
+  popularity: 15,
 };
 
 // Additional anime data for testing various scenarios
@@ -31,9 +34,12 @@ const animeWithImage: AnimeBase = {
   status: "FINISHED",
   episodes: 1,
   genres: ["Romance", "Drama", "Supernatural"],
-  description: "Two teenagers share a profound, magical connection upon discovering they are swapping bodies.",
+  synopsis: "Two teenagers share a profound, magical connection upon discovering they are swapping bodies.",
   season: undefined,
   userStatus: "COMPLETED",
+  duration: "107",
+  studios: ["CoMix Wave Films"],
+  popularity: 245,
 };
 
 const animeWithoutImage: AnimeBase = {
@@ -46,7 +52,7 @@ const animeWithoutImage: AnimeBase = {
   status: "ONGOING",
   episodes: 12,
   genres: ["Action", "Adventure"],
-  description: "Test anime for demonstrating fallback image behavior.",
+  synopsis: "Test anime for demonstrating fallback image behavior.",
   season: "WINTER",
   userStatus: "WATCHING",
 };
@@ -61,7 +67,7 @@ const animeWithBrokenImage: AnimeBase = {
   status: "FINISHED",
   episodes: 3,
   genres: ["Comedy"],
-  description: "Test anime for demonstrating broken image handling.",
+  synopsis: "Test anime for demonstrating broken image handling.",
   season: undefined,
   userStatus: "PLAN_TO_WATCH",
 };
@@ -85,39 +91,50 @@ This is a **minimal empty card** with exact ExpandableGrid dimensions:
 - Overflow hidden (\`overflow-hidden\`)
 
 ## Actual Props (Current)
-- \`anime\`: AnimeBase - Required prop (not used internally yet)
+- \`anime\`: AnimeBase - Required prop with anime data including title, cover image, score, etc.
 - \`expanded\`: boolean - Initial expanded state (default: false)
 - \`onClick\`: function - Callback fired when card is clicked (optional)
 - \`groupName\`: string - Radio group name for mutual exclusion (optional)
 - \`cardIndex\`: number - Index within the radio group (optional)
 - \`className\`: string - Additional CSS classes  
-- \`children\`: ReactNode - Content to render inside the empty card
+- \`children\`: ReactNode - Content to render inside the card
 - \`expandable\`: boolean - Whether card can expand to larger size (default: true)
 - \`width\`: number | string - Custom width (default: 13rem)
-- \`height\`: number | string - Custom height (default: 23.125rem) - **remains constant during expansion**
+- \`height\`: number | string - Custom height (default: 23rem) - **remains constant during expansion**
 - \`expandedWidth\`: number | string - Custom expanded width (default: 30rem) - **horizontal expansion only**
+- \`statusDropdown\`: StatusDropdownConfig - Optional status dropdown integration (overlay position, authentication state, callbacks)
+- Auto-cycling props: \`autoLoop\`, \`loopInterval\`, \`pauseOnInteraction\`, \`pauseDuration\`, \`onAutoLoop\`
 
 ## What It Does
-- Renders a customizable rectangle with default 13rem × 23.125rem (normal) or 30rem × 23.125rem (expanded)
-- **Horizontal Expansion Only**: Width changes during expansion, height remains constant
+- **Full Anime Card Display**: Shows cover image, title, score badge, year, episodes, and metadata
+- **Status Management**: Optional StatusBadgeDropdown integration for MAL/AniList status updates
+- **Horizontal Expansion Only**: Width changes during expansion, height remains constant (13rem → 30rem)
 - **Interactive**: Click to toggle between normal and expanded states
 - **Mutual Exclusion**: Only one card can be expanded at a time (uses radio buttons like ExpandableGrid)
 - **Group Management**: Cards with same groupName share radio group (defaults to "base-anime-cards")
+- **Image Handling**: Automatic fallback for missing/broken cover images with dark mode support
+- **Auto-Cycling**: Optional auto-loop functionality like ExpandableGrid click mode
 - **Mobile-Friendly**: Non-expandable mode prevents expansion on mobile devices or constrained layouts
 - **Flexible Dimensions**: Custom width, height, expandedWidth with number or string values
 - **Fixed Height**: Height never changes during expansion for consistent vertical alignment
 - Smooth transition between states (0.7s duration, matches ExpandableGrid)
 - Keyboard accessible (Enter/Space to toggle)
-- Accepts children for custom content
-- Provides foundation for iterative development
+- Accepts children for custom content (like AnimeInfoCard integration)
+- Complete integration foundation for anime card functionality
 
-## What It Doesn't Do (Yet)
-- No image rendering
-- No anime data display  
-- No interactions or animations
-- No overlays or content areas
+## Features Included
+- ✅ Cover image rendering with fallback support
+- ✅ Anime metadata display (title, score, year, episodes)
+- ✅ Score badge with star icon
+- ✅ Status dropdown integration (MAL/AniList aware)
+- ✅ Card expansion with smooth animations
+- ✅ Auto-cycling capability
+- ✅ Group-based mutual exclusion
+- ✅ Children content support
+- ✅ Dark mode compatibility
+- ✅ Responsive design with flexible units
 
-This is intentionally minimal - a starting foundation to build upon.
+This is a complete, production-ready anime card component.
         `,
       },
     },
@@ -194,6 +211,10 @@ This is intentionally minimal - a starting foundation to build upon.
     },
     onAutoLoop: {
       description: "Callback when auto-cycling occurs",
+      control: false,
+    },
+    statusDropdown: {
+      description: "Optional status dropdown integration with position, authentication, and callback configuration",
       control: false,
     },
   },
@@ -1625,6 +1646,501 @@ export const WithAnimeInfoCard: Story = {
     docs: {
       description: {
         story: 'Complete integration testing of BaseAnimeCard with AnimeInfoCard component. The AnimeInfoCard appears when cards are expanded, showing detailed anime information including badges, metadata, and synopsis. Features proper opacity transitions and dark background support.',
+      },
+    },
+  },
+};
+
+// === STATUS DROPDOWN INTEGRATION ===
+
+export const WithStatusDropdown: Story = {
+  render: () => {
+    const [statusUpdates, setStatusUpdates] = React.useState<Record<string, string>>({});
+    
+    const handleStatusChange = (animeId: string, newStatus: string) => {
+      console.log(`Status changed for ${animeId}:`, newStatus);
+      setStatusUpdates(prev => ({ ...prev, [animeId]: newStatus }));
+    };
+
+    return (
+      <div className="space-y-6">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold mb-2">BaseAnimeCard with Status Dropdown</h3>
+          <p className="text-sm text-gray-600 mb-4">
+            StatusBadgeDropdown integration showing MAL and AniList status management
+          </p>
+          <p className="text-xs text-gray-500">
+            Click the status badges in the top-right corner to change anime status
+          </p>
+        </div>
+        
+        <div className="flex gap-4 overflow-x-auto p-4 max-w-6xl mx-auto">
+          <BaseAnimeCard 
+            anime={{
+              ...attackOnTitan,
+              userStatus: statusUpdates['mal-16498'] || 'watching'
+            }}
+            groupName="status-dropdown-cards" 
+            cardIndex={0}
+            width="13rem"
+            height="23rem"
+            expandedWidth="30rem"
+            statusDropdown={{
+              enabled: true,
+              position: 'overlay',
+              onStatusChange: (newStatus) => handleStatusChange('mal-16498', newStatus),
+              isAuthenticated: true
+            }}
+          />
+          
+          <BaseAnimeCard 
+            anime={{
+              ...spiritedAway,
+              userStatus: statusUpdates['anilist-199'] || 'COMPLETED'
+            }}
+            groupName="status-dropdown-cards" 
+            cardIndex={1}
+            width="13rem"
+            height="23rem"
+            expandedWidth="30rem"
+            statusDropdown={{
+              enabled: true,
+              position: 'overlay',
+              onStatusChange: (newStatus) => handleStatusChange('anilist-199', newStatus),
+              isAuthenticated: true
+            }}
+          />
+          
+          <BaseAnimeCard 
+            anime={{
+              ...demonSlayer,
+              userStatus: statusUpdates['anilist-101922'] || 'PLANNING'
+            }}
+            groupName="status-dropdown-cards" 
+            cardIndex={2}
+            width="13rem"
+            height="23rem"
+            expandedWidth="30rem"
+            statusDropdown={{
+              enabled: true,
+              position: 'overlay',
+              onStatusChange: (newStatus) => handleStatusChange('anilist-101922', newStatus),
+              isAuthenticated: true
+            }}
+          />
+        </div>
+        
+        <div className="text-center text-sm text-gray-500">
+          MAL anime uses MAL statuses, AniList anime uses AniList statuses - status changes are logged to console
+        </div>
+        
+        {Object.keys(statusUpdates).length > 0 && (
+          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 max-w-md mx-auto">
+            <h4 className="text-sm font-semibold mb-2">Status Updates:</h4>
+            <div className="space-y-1 text-xs text-gray-600 dark:text-gray-400">
+              {Object.entries(statusUpdates).map(([animeId, status]) => (
+                <div key={animeId}>{animeId}: {status}</div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Demonstrates StatusBadgeDropdown integration with BaseAnimeCard. Each card shows a status dropdown in the top-right corner that respects the anime source (MAL vs AniList) and provides appropriate status options. Status changes are tracked and displayed below.',
+      },
+    },
+  },
+};
+
+export const StatusDropdownPositions: Story = {
+  render: () => {
+    const handleStatusChange = (newStatus: string) => {
+      console.log('Status changed to:', newStatus);
+    };
+
+    return (
+      <div className="space-y-6">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold mb-2">Status Dropdown Positioning</h3>
+          <p className="text-sm text-gray-600 mb-4">
+            Comparison of overlay vs bottom positioning for status dropdowns
+          </p>
+        </div>
+        
+        <div className="flex gap-8 justify-center">
+          <div className="text-center">
+            <BaseAnimeCard 
+              anime={{
+                ...attackOnTitan,
+                userStatus: 'watching'
+              }}
+              width="13rem"
+              height="23rem"
+              expandedWidth="30rem"
+              statusDropdown={{
+                enabled: true,
+                position: 'overlay',
+                onStatusChange: handleStatusChange,
+                isAuthenticated: true
+              }}
+            />
+            <p className="mt-2 text-sm text-gray-600">Overlay Position (top-right)</p>
+          </div>
+          
+          <div className="text-center">
+            <BaseAnimeCard 
+              anime={{
+                ...spiritedAway,
+                userStatus: 'COMPLETED'
+              }}
+              width="13rem"
+              height="23rem"
+              expandedWidth="30rem"
+              statusDropdown={{
+                enabled: true,
+                position: 'bottom',
+                onStatusChange: handleStatusChange,
+                isAuthenticated: true
+              }}
+            />
+            <p className="mt-2 text-sm text-gray-600">Bottom Position (bottom-right)</p>
+          </div>
+        </div>
+        
+        <div className="text-center text-sm text-gray-500">
+          Click the status badges to see dropdown positioning behavior
+        </div>
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Side-by-side comparison of status dropdown positioning options. The left card uses overlay positioning (top-right corner) while the right card uses bottom positioning (bottom-right corner).',
+      },
+    },
+  },
+};
+
+export const StatusDropdownStates: Story = {
+  render: () => {
+    const handleStatusChange = (newStatus: string) => {
+      console.log('Status changed to:', newStatus);
+    };
+
+    return (
+      <div className="space-y-6">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold mb-2">Status Dropdown Authentication States</h3>
+          <p className="text-sm text-gray-600 mb-4">
+            Comparison of authenticated vs non-authenticated status dropdown behavior
+          </p>
+        </div>
+        
+        <div className="flex gap-8 justify-center">
+          <div className="text-center">
+            <BaseAnimeCard 
+              anime={{
+                ...attackOnTitan,
+                userStatus: 'watching'
+              }}
+              width="13rem"
+              height="23rem"
+              expandedWidth="30rem"
+              statusDropdown={{
+                enabled: true,
+                position: 'overlay',
+                onStatusChange: handleStatusChange,
+                isAuthenticated: true
+              }}
+            />
+            <p className="mt-2 text-sm text-gray-600">Authenticated (Interactive)</p>
+          </div>
+          
+          <div className="text-center">
+            <BaseAnimeCard 
+              anime={{
+                ...spiritedAway,
+                userStatus: 'COMPLETED'
+              }}
+              width="13rem"
+              height="23rem"
+              expandedWidth="30rem"
+              statusDropdown={{
+                enabled: true,
+                position: 'overlay',
+                onStatusChange: handleStatusChange,
+                isAuthenticated: false
+              }}
+            />
+            <p className="mt-2 text-sm text-gray-600">Not Authenticated (Display Only)</p>
+          </div>
+        </div>
+        
+        <div className="text-center text-sm text-gray-500">
+          Authenticated cards have clickable dropdowns, non-authenticated show static badges
+        </div>
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Demonstrates the difference between authenticated and non-authenticated status dropdown behavior. Authenticated users see interactive dropdowns, while non-authenticated users see static status badges.',
+      },
+    },
+  },
+};
+
+export const StatusDropdownWithExpansion: Story = {
+  render: () => {
+    const [statusUpdates, setStatusUpdates] = React.useState<Record<string, string>>({});
+    
+    const handleStatusChange = (animeId: string, newStatus: string) => {
+      setStatusUpdates(prev => ({ ...prev, [animeId]: newStatus }));
+    };
+
+    return (
+      <div className="space-y-6">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold mb-2">Status Dropdown + Card Expansion + AnimeInfoCard</h3>
+          <p className="text-sm text-gray-600 mb-4">
+            Complete integration showing all features working together with consistent badge styling
+          </p>
+          <p className="text-xs text-gray-500">
+            Click cards to expand, click status badges to change status - notice how badges match in expanded state
+          </p>
+        </div>
+        
+        <div className="flex gap-4 overflow-x-auto p-4 max-w-6xl mx-auto">
+          <BaseAnimeCard 
+            anime={{
+              ...attackOnTitan,
+              userStatus: statusUpdates['complete-mal-16498'] || 'watching'
+            }}
+            groupName="complete-integration" 
+            cardIndex={0}
+            width="13rem"
+            height="23rem"
+            expandedWidth="30rem"
+            statusDropdown={{
+              enabled: true,
+              position: 'overlay',
+              onStatusChange: (newStatus) => handleStatusChange('complete-mal-16498', newStatus),
+              isAuthenticated: true
+            }}
+          >
+            <div className="card-expanded-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-800 pointer-events-none rounded-xl p-4">
+              <AnimeInfoCard anime={attackOnTitan} />
+            </div>
+          </BaseAnimeCard>
+          
+          <BaseAnimeCard 
+            anime={{
+              ...spiritedAway,
+              userStatus: statusUpdates['complete-anilist-199'] || 'COMPLETED'
+            }}
+            groupName="complete-integration" 
+            cardIndex={1}
+            width="13rem"
+            height="23rem"
+            expandedWidth="30rem"
+            statusDropdown={{
+              enabled: true,
+              position: 'overlay',
+              onStatusChange: (newStatus) => handleStatusChange('complete-anilist-199', newStatus),
+              isAuthenticated: true
+            }}
+          >
+            <div className="card-expanded-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-800 pointer-events-none rounded-xl p-4">
+              <AnimeInfoCard anime={spiritedAway} />
+            </div>
+          </BaseAnimeCard>
+          
+          <BaseAnimeCard 
+            anime={{
+              ...demonSlayer,
+              userStatus: statusUpdates['complete-anilist-101922'] || 'PLANNING'
+            }}
+            groupName="complete-integration" 
+            cardIndex={2}
+            width="13rem"
+            height="23rem"
+            expandedWidth="30rem"
+            statusDropdown={{
+              enabled: true,
+              position: 'overlay',
+              onStatusChange: (newStatus) => handleStatusChange('complete-anilist-101922', newStatus),
+              isAuthenticated: true
+            }}
+          >
+            <div className="card-expanded-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-800 pointer-events-none rounded-xl p-4">
+              <AnimeInfoCard anime={demonSlayer} />
+            </div>
+          </BaseAnimeCard>
+        </div>
+        
+        <div className="text-center text-sm text-gray-500">
+          ✨ Complete integration: status badges now match other badges (rounded shape) in expanded state
+        </div>
+        
+        {Object.keys(statusUpdates).length > 0 && (
+          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 max-w-md mx-auto">
+            <h4 className="text-sm font-semibold mb-2">Status Changes:</h4>
+            <div className="space-y-1 text-xs text-gray-600 dark:text-gray-400">
+              {Object.entries(statusUpdates).map(([animeId, status]) => (
+                <div key={animeId}>{animeId}: {status}</div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Complete integration demonstration showing BaseAnimeCard with status dropdown, card expansion, and AnimeInfoCard. The status badges now use "rounded" shape in the expanded state to match the other badges (score, format, etc.), creating a visually consistent badge family.',
+      },
+    },
+  },
+};
+
+export const StatusDropdownClickTest: Story = {
+  render: () => {
+    const [expansionClicks, setExpansionClicks] = React.useState<Record<string, number>>({});
+    const [statusChanges, setStatusChanges] = React.useState<Record<string, string[]>>({});
+
+    const handleCardClick = (animeId: string) => {
+      setExpansionClicks(prev => ({ ...prev, [animeId]: (prev[animeId] || 0) + 1 }));
+      console.log(`🎯 Card clicked for expansion: ${animeId}`);
+    };
+
+    const handleStatusChange = (animeId: string, newStatus: string) => {
+      setStatusChanges(prev => ({ 
+        ...prev, 
+        [animeId]: [...(prev[animeId] || []), newStatus] 
+      }));
+      console.log(`📝 Status changed for ${animeId}: ${newStatus}`);
+    };
+
+    return (
+      <div className="space-y-6">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold mb-2">🧪 Click Propagation Test</h3>
+          <p className="text-sm text-gray-600 mb-4">
+            Test that status badge clicks don't trigger card expansion
+          </p>
+          <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg text-sm">
+            <p className="font-medium text-blue-900 dark:text-blue-200 mb-1">Expected behavior:</p>
+            <ul className="text-left text-blue-800 dark:text-blue-300 text-xs space-y-1">
+              <li>• Clicking status badge should open dropdown WITHOUT expanding card</li>
+              <li>• Clicking card background should expand card</li>
+              <li>• Dropdown should appear in same position regardless of card state</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div className="flex gap-4 justify-center overflow-x-auto p-4">
+          <div 
+            className="relative cursor-pointer" 
+            onClick={() => handleCardClick('test-1')}
+          >
+            <BaseAnimeCard 
+              anime={{
+                ...attackOnTitan,
+                userStatus: 'watching'
+              }}
+              groupName="click-test" 
+              cardIndex={0}
+              width="13rem"
+              height="23rem"
+              expandedWidth="30rem"
+              statusDropdown={{
+                enabled: true,
+                position: 'overlay',
+                onStatusChange: (newStatus) => handleStatusChange('test-1', newStatus),
+                isAuthenticated: true
+              }}
+            >
+              <div className="card-expanded-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-800 pointer-events-none rounded-xl p-4">
+                <AnimeInfoCard anime={attackOnTitan} />
+              </div>
+            </BaseAnimeCard>
+          </div>
+          
+          <div 
+            className="relative cursor-pointer" 
+            onClick={() => handleCardClick('test-2')}
+          >
+            <BaseAnimeCard 
+              anime={{
+                ...spiritedAway,
+                userStatus: 'COMPLETED'
+              }}
+              groupName="click-test" 
+              cardIndex={1}
+              width="13rem"
+              height="23rem"
+              expandedWidth="30rem"
+              statusDropdown={{
+                enabled: true,
+                position: 'overlay',
+                onStatusChange: (newStatus) => handleStatusChange('test-2', newStatus),
+                isAuthenticated: true
+              }}
+            >
+              <div className="card-expanded-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-800 pointer-events-none rounded-xl p-4">
+                <AnimeInfoCard anime={spiritedAway} />
+              </div>
+            </BaseAnimeCard>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+          <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+            <h4 className="text-sm font-semibold mb-2 text-green-900 dark:text-green-200">
+              ✅ Card Expansion Clicks
+            </h4>
+            <div className="space-y-1 text-xs text-green-700 dark:text-green-300">
+              {Object.entries(expansionClicks).map(([animeId, count]) => (
+                <div key={animeId}>{animeId}: {count} clicks</div>
+              ))}
+              {Object.keys(expansionClicks).length === 0 && (
+                <div className="text-green-600 dark:text-green-400">No card expansion clicks yet</div>
+              )}
+            </div>
+          </div>
+          
+          <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
+            <h4 className="text-sm font-semibold mb-2 text-purple-900 dark:text-purple-200">
+              📝 Status Changes
+            </h4>
+            <div className="space-y-1 text-xs text-purple-700 dark:text-purple-300">
+              {Object.entries(statusChanges).map(([animeId, changes]) => (
+                <div key={animeId}>{animeId}: {changes.join(' → ')}</div>
+              ))}
+              {Object.keys(statusChanges).length === 0 && (
+                <div className="text-purple-600 dark:text-purple-400">No status changes yet</div>
+              )}
+            </div>
+          </div>
+        </div>
+        
+        <div className="text-center text-xs text-gray-500">
+          💡 Open browser console to see detailed click logs
+        </div>
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Interactive test for verifying that status badge clicks properly prevent event propagation and do not trigger card expansion. Includes visual counters to track different types of interactions.',
       },
     },
   },

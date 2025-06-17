@@ -30,6 +30,13 @@ export const Card: React.FC<CardProps> = ({
 }) => {
   const radioRef = React.useRef<HTMLInputElement>(null);
 
+  // Sync radio button state when expanded prop changes (needed for auto-cycling)
+  React.useEffect(() => {
+    if (radioRef.current) {
+      radioRef.current.checked = expanded;
+    }
+  }, [expanded]);
+
   const handleClick = () => {
     // If not expandable, only call onClick callback but don't toggle expansion
     if (!expandable) {

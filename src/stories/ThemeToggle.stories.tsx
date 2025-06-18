@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from '@storybook/addon-actions';
+import { fn } from '@storybook/test';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { useState } from 'react';
 
 // Mock theme context
 const mockThemeContext = {
   isDark: false,
-  toggleTheme: action('toggleTheme'),
+  toggleTheme: fn(),
 };
 
 const mockUseTheme = () => mockThemeContext;
@@ -98,7 +98,7 @@ export const InteractiveDemo: Story = {
     mockThemeContext.isDark = isDark;
     mockThemeContext.toggleTheme = () => {
       setIsDark(!isDark);
-      action('toggleTheme')();
+      fn()();
     };
 
     return (

@@ -214,7 +214,7 @@ describe('StatusBadgeDropdown - Source Integration', () => {
       
       // Check dropdown positioning classes
       const dropdown = container.querySelector('[role="listbox"]');
-      expect(dropdown).toHaveClass('absolute', 'z-50', 'top-full', 'mt-1', 'min-w-[140px]', '-left-2');
+      expect(dropdown).toHaveClass('absolute', 'z-50', 'top-full', 'mt-1', 'min-w-[120px]', 'left-0');
     });
   });
 

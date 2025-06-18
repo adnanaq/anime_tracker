@@ -7,7 +7,8 @@ import { AnimeBase } from "../types/anime";
 const mockAnime: AnimeBase = {
   id: 1,
   title: "Attack on Titan",
-  coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg", // Using Demon Slayer image
+  coverImage:
+    "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg", // Using Demon Slayer image
   score: 9.0,
   format: "TV",
   year: 2013,
@@ -27,14 +28,16 @@ const mockAnime: AnimeBase = {
 const animeWithImage: AnimeBase = {
   id: 2,
   title: "Your Name",
-  coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-YCDoj1EkAxFn.jpg", // Using One Piece image
+  coverImage:
+    "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-YCDoj1EkAxFn.jpg", // Using One Piece image
   score: 8.4,
   format: "MOVIE",
   year: 2016,
   status: "FINISHED",
   episodes: 1,
   genres: ["Romance", "Drama", "Supernatural"],
-  synopsis: "Two teenagers share a profound, magical connection upon discovering they are swapping bodies.",
+  synopsis:
+    "Two teenagers share a profound, magical connection upon discovering they are swapping bodies.",
   season: undefined,
   userStatus: "COMPLETED",
   duration: "107",
@@ -214,7 +217,8 @@ This is a complete, production-ready anime card component.
       control: false,
     },
     statusDropdown: {
-      description: "Optional status dropdown integration with position, authentication, and callback configuration",
+      description:
+        "Optional status dropdown integration with position, authentication, and callback configuration",
       control: false,
     },
   },
@@ -1268,7 +1272,8 @@ export const WithImage: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Card displaying anime with cover image. The image uses object-position: top center for proper cropping and fills the entire card area.',
+        story:
+          "Card displaying anime with cover image. The image uses object-position: top center for proper cropping and fills the entire card area.",
       },
     },
   },
@@ -1281,7 +1286,8 @@ export const WithoutImage: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Card showing fallback behavior when anime has no cover image. Displays a gray background with "No Image" text, with proper dark mode support.',
+        story:
+          'Card showing fallback behavior when anime has no cover image. Displays a gray background with "No Image" text, with proper dark mode support.',
       },
     },
   },
@@ -1292,26 +1298,46 @@ export const ImageComparison: Story = {
     <div className="space-y-6">
       <div className="text-center">
         <h3 className="text-lg font-semibold mb-2">Image Display Comparison</h3>
-        <p className="text-sm text-gray-600">Testing image display vs fallback behavior</p>
+        <p className="text-sm text-gray-600">
+          Testing image display vs fallback behavior
+        </p>
       </div>
-      
+
       <div className="flex gap-8 justify-center items-start">
         <div>
-          <BaseAnimeCard anime={animeWithImage} groupName="image-comparison" cardIndex={0} />
-          <p className="mt-2 text-sm text-gray-600 text-center">With Cover Image</p>
-        </div>
-        
-        <div>
-          <BaseAnimeCard anime={animeWithoutImage} groupName="image-comparison" cardIndex={1} />
-          <p className="mt-2 text-sm text-gray-600 text-center">No Cover Image</p>
+          <BaseAnimeCard
+            anime={animeWithImage}
+            groupName="image-comparison"
+            cardIndex={0}
+          />
+          <p className="mt-2 text-sm text-gray-600 text-center">
+            With Cover Image
+          </p>
         </div>
 
         <div>
-          <BaseAnimeCard anime={animeWithBrokenImage} groupName="image-comparison" cardIndex={2} />
-          <p className="mt-2 text-sm text-gray-600 text-center">Broken Image URL</p>
+          <BaseAnimeCard
+            anime={animeWithoutImage}
+            groupName="image-comparison"
+            cardIndex={1}
+          />
+          <p className="mt-2 text-sm text-gray-600 text-center">
+            No Cover Image
+          </p>
+        </div>
+
+        <div>
+          <BaseAnimeCard
+            anime={animeWithBrokenImage}
+            groupName="image-comparison"
+            cardIndex={2}
+          />
+          <p className="mt-2 text-sm text-gray-600 text-center">
+            Broken Image URL
+          </p>
         </div>
       </div>
-      
+
       <div className="text-center text-sm text-gray-500">
         Click any card to test expansion behavior with different image states
       </div>
@@ -1320,7 +1346,8 @@ export const ImageComparison: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Side-by-side comparison of different image scenarios: valid image, no image, and broken image URL. All cards maintain the same expansion behavior regardless of image state.',
+        story:
+          "Side-by-side comparison of different image scenarios: valid image, no image, and broken image URL. All cards maintain the same expansion behavior regardless of image state.",
       },
     },
   },
@@ -1336,93 +1363,99 @@ export const AllWithImages: Story = {
     <div className="space-y-6">
       <div className="text-center">
         <h3 className="text-lg font-semibold mb-2">Cards with Images</h3>
-        <p className="text-sm text-gray-600">All cards showing real anime cover images - customize dimensions below</p>
+        <p className="text-sm text-gray-600">
+          All cards showing real anime cover images - customize dimensions below
+        </p>
       </div>
-      
+
       <div className="flex gap-4 overflow-x-auto p-4 max-w-6xl mx-auto">
-        <BaseAnimeCard 
-          anime={mockAnime} 
-          groupName="image-cards" 
+        <BaseAnimeCard
+          anime={mockAnime}
+          groupName="image-cards"
           cardIndex={0}
           width={`${args.width}rem`}
           height={`${args.height}rem`}
           expandedWidth={`${args.expandedWidth}rem`}
         />
-        <BaseAnimeCard 
-          anime={animeWithImage} 
-          groupName="image-cards" 
+        <BaseAnimeCard
+          anime={animeWithImage}
+          groupName="image-cards"
           cardIndex={1}
           width={`${args.width}rem`}
           height={`${args.height}rem`}
           expandedWidth={`${args.expandedWidth}rem`}
         />
-        <BaseAnimeCard 
+        <BaseAnimeCard
           anime={{
             ...mockAnime,
             id: 5,
             title: "One Piece",
-            coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-YCDoj1EkAxFn.jpg",
+            coverImage:
+              "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-YCDoj1EkAxFn.jpg",
             score: 9.2,
             year: 1999,
             episodes: 1000,
-          }} 
-          groupName="image-cards" 
+          }}
+          groupName="image-cards"
           cardIndex={2}
           width={`${args.width}rem`}
           height={`${args.height}rem`}
           expandedWidth={`${args.expandedWidth}rem`}
         />
-        <BaseAnimeCard 
+        <BaseAnimeCard
           anime={{
             ...mockAnime,
             id: 6,
             title: "Spirited Away",
-            coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg", // Using Demon Slayer image
+            coverImage:
+              "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg", // Using Demon Slayer image
             score: 9.3,
             year: 2001,
             episodes: 1,
             format: "MOVIE",
-          }} 
-          groupName="image-cards" 
+          }}
+          groupName="image-cards"
           cardIndex={3}
           width={`${args.width}rem`}
           height={`${args.height}rem`}
           expandedWidth={`${args.expandedWidth}rem`}
         />
-        <BaseAnimeCard 
+        <BaseAnimeCard
           anime={{
             ...mockAnime,
             id: 7,
             title: "Demon Slayer",
-            coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg", // Using Demon Slayer image
+            coverImage:
+              "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg", // Using Demon Slayer image
             score: 8.7,
             year: 2019,
             episodes: 26,
-          }} 
-          groupName="image-cards" 
+          }}
+          groupName="image-cards"
           cardIndex={4}
           width={`${args.width}rem`}
           height={`${args.height}rem`}
           expandedWidth={`${args.expandedWidth}rem`}
         />
-        <BaseAnimeCard 
+        <BaseAnimeCard
           anime={{
             ...mockAnime,
             id: 8,
             title: "My Hero Academia",
-            coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-YCDoj1EkAxFn.jpg", // Using One Piece image
+            coverImage:
+              "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-YCDoj1EkAxFn.jpg", // Using One Piece image
             score: 8.5,
             year: 2016,
             episodes: 13,
-          }} 
-          groupName="image-cards" 
+          }}
+          groupName="image-cards"
           cardIndex={5}
           width={`${args.width}rem`}
           height={`${args.height}rem`}
           expandedWidth={`${args.expandedWidth}rem`}
         />
       </div>
-      
+
       <div className="text-center text-sm text-gray-500">
         All cards have valid cover images - use controls to adjust dimensions
       </div>
@@ -1430,22 +1463,24 @@ export const AllWithImages: Story = {
   ),
   argTypes: {
     width: {
-      control: { type: 'range', min: 6, max: 25, step: 0.5 },
-      description: 'Width of cards in normal state (in rem units)'
+      control: { type: "range", min: 6, max: 25, step: 0.5 },
+      description: "Width of cards in normal state (in rem units)",
     },
     height: {
-      control: { type: 'range', min: 9, max: 31, step: 0.5 },
-      description: 'Height of cards (remains constant during expansion, in rem units)'
+      control: { type: "range", min: 9, max: 31, step: 0.5 },
+      description:
+        "Height of cards (remains constant during expansion, in rem units)",
     },
     expandedWidth: {
-      control: { type: 'range', min: 12, max: 50, step: 0.5 },
-      description: 'Width of cards when expanded (in rem units)'
-    }
+      control: { type: "range", min: 12, max: 50, step: 0.5 },
+      description: "Width of cards when expanded (in rem units)",
+    },
   },
   parameters: {
     docs: {
       description: {
-        story: 'Customizable gallery showing cards with valid cover images. Use the controls below to adjust width, height, and expanded width for all cards simultaneously.',
+        story:
+          "Customizable gallery showing cards with valid cover images. Use the controls below to adjust width, height, and expanded width for all cards simultaneously.",
       },
     },
   },
@@ -1456,70 +1491,93 @@ export const PopulatedCards: Story = {
     <div className="space-y-6">
       <div className="text-center">
         <h3 className="text-lg font-semibold mb-2">Mixed Image States</h3>
-        <p className="text-sm text-gray-600">Cards demonstrating all image scenarios: working images, no image, and broken URLs</p>
+        <p className="text-sm text-gray-600">
+          Cards demonstrating all image scenarios: working images, no image, and
+          broken URLs
+        </p>
       </div>
-      
+
       <div className="flex gap-4 overflow-x-auto p-4 max-w-6xl mx-auto">
         <div className="text-center">
-          <BaseAnimeCard anime={mockAnime} groupName="populated-cards" cardIndex={0} />
+          <BaseAnimeCard
+            anime={mockAnime}
+            groupName="populated-cards"
+            cardIndex={0}
+          />
           <p className="mt-2 text-xs text-gray-500">Valid Image</p>
         </div>
         <div className="text-center">
-          <BaseAnimeCard anime={animeWithImage} groupName="populated-cards" cardIndex={1} />
+          <BaseAnimeCard
+            anime={animeWithImage}
+            groupName="populated-cards"
+            cardIndex={1}
+          />
           <p className="mt-2 text-xs text-gray-500">Valid Image</p>
         </div>
         <div className="text-center">
-          <BaseAnimeCard anime={animeWithoutImage} groupName="populated-cards" cardIndex={2} />
+          <BaseAnimeCard
+            anime={animeWithoutImage}
+            groupName="populated-cards"
+            cardIndex={2}
+          />
           <p className="mt-2 text-xs text-gray-500">No Image (null)</p>
         </div>
         <div className="text-center">
-          <BaseAnimeCard anime={animeWithBrokenImage} groupName="populated-cards" cardIndex={3} />
+          <BaseAnimeCard
+            anime={animeWithBrokenImage}
+            groupName="populated-cards"
+            cardIndex={3}
+          />
           <p className="mt-2 text-xs text-gray-500">Broken URL</p>
         </div>
         <div className="text-center">
-          <BaseAnimeCard 
+          <BaseAnimeCard
             anime={{
               ...mockAnime,
               id: 5,
               title: "One Piece",
-              coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-YCDoj1EkAxFn.jpg", // Using One Piece image
+              coverImage:
+                "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-YCDoj1EkAxFn.jpg", // Using One Piece image
               score: 9.2,
               year: 1999,
               episodes: 1000,
-            }} 
-            groupName="populated-cards" 
-            cardIndex={4} 
+            }}
+            groupName="populated-cards"
+            cardIndex={4}
           />
           <p className="mt-2 text-xs text-gray-500">Valid Image</p>
         </div>
         <div className="text-center">
-          <BaseAnimeCard 
+          <BaseAnimeCard
             anime={{
               ...mockAnime,
               id: 6,
               title: "Spirited Away",
-              coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg", // Using Demon Slayer image
+              coverImage:
+                "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg", // Using Demon Slayer image
               score: 9.3,
               year: 2001,
               episodes: 1,
               format: "MOVIE",
-            }} 
-            groupName="populated-cards" 
-            cardIndex={5} 
+            }}
+            groupName="populated-cards"
+            cardIndex={5}
           />
           <p className="mt-2 text-xs text-gray-500">Valid Image</p>
         </div>
       </div>
-      
+
       <div className="text-center text-sm text-gray-500">
-        Mixed scenarios: 4 cards with images, 2 with fallback states - scroll to see all
+        Mixed scenarios: 4 cards with images, 2 with fallback states - scroll to
+        see all
       </div>
     </div>
   ),
   parameters: {
     docs: {
       description: {
-        story: 'Comprehensive testing gallery showing all image scenarios: valid images, missing images (null), and broken URLs. Labels below each card indicate the expected behavior.',
+        story:
+          "Comprehensive testing gallery showing all image scenarios: valid images, missing images (null), and broken URLs. Labels below each card indicate the expected behavior.",
       },
     },
   },
@@ -1528,78 +1586,87 @@ export const PopulatedCards: Story = {
 // Use the same data as AnimeInfoCard DarkBackground story for consistency
 const attackOnTitan: AnimeBase = {
   id: 16498,
-  title: 'Attack on Titan',
-  synopsis: 'Humanity fights for survival against giant humanoid Titans that have brought civilization to the brink of extinction. When the Titans breach Wall Maria, Eren Yeager vows to exterminate every last Titan to avenge his mother and reclaim humanity\'s territory. With his childhood friends Mikasa and Armin, Eren joins the Survey Corps, an elite group of soldiers who fight Titans outside the walls.',
+  title: "Attack on Titan",
+  synopsis:
+    "Humanity fights for survival against giant humanoid Titans that have brought civilization to the brink of extinction. When the Titans breach Wall Maria, Eren Yeager vows to exterminate every last Titan to avenge his mother and reclaim humanity's territory. With his childhood friends Mikasa and Armin, Eren joins the Survey Corps, an elite group of soldiers who fight Titans outside the walls.",
   score: 9.0,
   userScore: 10,
   episodes: 25,
   year: 2013,
-  season: 'SPRING',
-  status: 'FINISHED',
-  format: 'TV',
-  genres: ['Action', 'Drama', 'Fantasy', 'Military', 'Shounen', 'Super Power'],
-  duration: '24',
-  studios: ['Madhouse', 'Studio Pierrot'],
+  season: "SPRING",
+  status: "FINISHED",
+  format: "TV",
+  genres: ["Action", "Drama", "Fantasy", "Military", "Shounen", "Super Power"],
+  duration: "24",
+  studios: ["Madhouse", "Studio Pierrot"],
   popularity: 1,
-  source: 'anilist',
-  coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg",
+  source: "anilist",
+  coverImage:
+    "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg",
 };
 
 const spiritedAway: AnimeBase = {
   id: 199,
-  title: 'Spirited Away',
-  synopsis: 'Stubborn, spoiled, and naïve, 10-year-old Chihiro Ogino is less than pleased when she and her parents are moving to a new home. While driving to their new house, Chihiro\'s father makes a wrong turn and drives down a lonely one-lane road which dead-ends in front of a tunnel. Her parents decide to stop the car and explore the area. They go through the tunnel and find an abandoned amusement park on the other side, with its own little town.',
+  title: "Spirited Away",
+  synopsis:
+    "Stubborn, spoiled, and naïve, 10-year-old Chihiro Ogino is less than pleased when she and her parents are moving to a new home. While driving to their new house, Chihiro's father makes a wrong turn and drives down a lonely one-lane road which dead-ends in front of a tunnel. Her parents decide to stop the car and explore the area. They go through the tunnel and find an abandoned amusement park on the other side, with its own little town.",
   score: 9.3,
   userScore: 10,
   episodes: 1,
   year: 2001,
-  season: 'SUMMER',
-  status: 'FINISHED',
-  format: 'MOVIE',
-  genres: ['Adventure', 'Family', 'Supernatural', 'Drama'],
-  duration: '125',
-  studios: ['Studio Ghibli'],
+  season: "SUMMER",
+  status: "FINISHED",
+  format: "MOVIE",
+  genres: ["Adventure", "Family", "Supernatural", "Drama"],
+  duration: "125",
+  studios: ["Studio Ghibli"],
   popularity: 15,
-  source: 'mal',
-  coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg",
+  source: "mal",
+  coverImage:
+    "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg",
 };
 
 const demonSlayer: AnimeBase = {
   id: 101922,
-  title: 'Demon Slayer: Kimetsu no Yaiba',
-  synopsis: 'It is the Taisho Period in Japan. Tanjiro, a kindhearted boy who sells charcoal for a living, finds his family slaughtered by a demon. To make matters worse, his younger sister Nezuko, the sole survivor, has been transformed into a demon herself. Though devastated by this grim reality, Tanjiro resolves to become a demon slayer so that he can turn his sister back into a human and kill the demon that massacred his family.',
+  title: "Demon Slayer: Kimetsu no Yaiba",
+  synopsis:
+    "It is the Taisho Period in Japan. Tanjiro, a kindhearted boy who sells charcoal for a living, finds his family slaughtered by a demon. To make matters worse, his younger sister Nezuko, the sole survivor, has been transformed into a demon herself. Though devastated by this grim reality, Tanjiro resolves to become a demon slayer so that he can turn his sister back into a human and kill the demon that massacred his family.",
   score: 8.7,
   userScore: 9,
   episodes: 26,
   year: 2019,
-  season: 'SPRING',
-  status: 'FINISHED',
-  format: 'TV',
-  genres: ['Action', 'Supernatural', 'Historical', 'Shounen'],
-  duration: '24',
-  studios: ['Ufotable'],
+  season: "SPRING",
+  status: "FINISHED",
+  format: "TV",
+  genres: ["Action", "Supernatural", "Historical", "Shounen"],
+  duration: "24",
+  studios: ["Ufotable"],
   popularity: 2,
-  source: 'anilist',
-  coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg",
+  source: "anilist",
+  coverImage:
+    "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg",
 };
 
 export const WithAnimeInfoCard: Story = {
   render: () => (
     <div className="space-y-6">
       <div className="text-center">
-        <h3 className="text-lg font-semibold mb-2">BaseAnimeCard + AnimeInfoCard Integration</h3>
+        <h3 className="text-lg font-semibold mb-2">
+          BaseAnimeCard + AnimeInfoCard Integration
+        </h3>
         <p className="text-sm text-gray-600 mb-4">
-          Complete integration testing showing expanded content with AnimeInfoCard component
+          Complete integration testing showing expanded content with
+          AnimeInfoCard component
         </p>
         <p className="text-xs text-gray-500">
           Click any card to see the expansion with detailed anime information
         </p>
       </div>
-      
+
       <div className="flex gap-4 overflow-x-auto p-4 max-w-6xl mx-auto">
-        <BaseAnimeCard 
-          anime={attackOnTitan} 
-          groupName="integration-cards" 
+        <BaseAnimeCard
+          anime={attackOnTitan}
+          groupName="integration-cards"
           cardIndex={0}
           width="13rem"
           height="23rem"
@@ -1609,10 +1676,10 @@ export const WithAnimeInfoCard: Story = {
             <AnimeInfoCard anime={attackOnTitan} />
           </div>
         </BaseAnimeCard>
-        
-        <BaseAnimeCard 
+
+        <BaseAnimeCard
           anime={spiritedAway}
-          groupName="integration-cards" 
+          groupName="integration-cards"
           cardIndex={1}
           width="13rem"
           height="23rem"
@@ -1622,10 +1689,10 @@ export const WithAnimeInfoCard: Story = {
             <AnimeInfoCard anime={spiritedAway} />
           </div>
         </BaseAnimeCard>
-        
-        <BaseAnimeCard 
-          anime={demonSlayer} 
-          groupName="integration-cards" 
+
+        <BaseAnimeCard
+          anime={demonSlayer}
+          groupName="integration-cards"
           cardIndex={2}
           width="13rem"
           height="23rem"
@@ -1636,16 +1703,18 @@ export const WithAnimeInfoCard: Story = {
           </div>
         </BaseAnimeCard>
       </div>
-      
+
       <div className="text-center text-sm text-gray-500">
-        Integration test with AnimeInfoCard - click cards to see expanded content with detailed information
+        Integration test with AnimeInfoCard - click cards to see expanded
+        content with detailed information
       </div>
     </div>
   ),
   parameters: {
     docs: {
       description: {
-        story: 'Complete integration testing of BaseAnimeCard with AnimeInfoCard component. The AnimeInfoCard appears when cards are expanded, showing detailed anime information including badges, metadata, and synopsis. Features proper opacity transitions and dark background support.',
+        story:
+          "Complete integration testing of BaseAnimeCard with AnimeInfoCard component. The AnimeInfoCard appears when cards are expanded, showing detailed anime information including badges, metadata, and synopsis. Features proper opacity transitions and dark background support.",
       },
     },
   },
@@ -1655,91 +1724,103 @@ export const WithAnimeInfoCard: Story = {
 
 export const WithStatusDropdown: Story = {
   render: () => {
-    const [statusUpdates, setStatusUpdates] = React.useState<Record<string, string>>({});
-    
+    const [statusUpdates, setStatusUpdates] = React.useState<
+      Record<string, string>
+    >({});
+
     const handleStatusChange = (animeId: string, newStatus: string) => {
       console.log(`Status changed for ${animeId}:`, newStatus);
-      setStatusUpdates(prev => ({ ...prev, [animeId]: newStatus }));
+      setStatusUpdates((prev) => ({ ...prev, [animeId]: newStatus }));
     };
 
     return (
       <div className="space-y-6">
         <div className="text-center">
-          <h3 className="text-lg font-semibold mb-2">BaseAnimeCard with Status Dropdown</h3>
+          <h3 className="text-lg font-semibold mb-2">
+            BaseAnimeCard with Status Dropdown
+          </h3>
           <p className="text-sm text-gray-600 mb-4">
-            StatusBadgeDropdown integration showing MAL and AniList status management
+            StatusBadgeDropdown integration showing MAL and AniList status
+            management
           </p>
           <p className="text-xs text-gray-500">
-            Click the status badges in the top-right corner to change anime status
+            Click the status badges in the top-right corner to change anime
+            status
           </p>
         </div>
-        
+
         <div className="flex gap-4 overflow-x-auto p-4 max-w-6xl mx-auto">
-          <BaseAnimeCard 
+          <BaseAnimeCard
             anime={{
               ...attackOnTitan,
-              userStatus: statusUpdates['mal-16498'] || 'watching'
+              userStatus: statusUpdates["mal-16498"] || "watching",
             }}
-            groupName="status-dropdown-cards" 
+            groupName="status-dropdown-cards"
             cardIndex={0}
             width="13rem"
             height="23rem"
             expandedWidth="30rem"
             statusDropdown={{
               enabled: true,
-              position: 'overlay',
-              onStatusChange: (newStatus) => handleStatusChange('mal-16498', newStatus),
-              isAuthenticated: true
+              position: "overlay",
+              onStatusChange: (newStatus) =>
+                handleStatusChange("mal-16498", newStatus),
+              isAuthenticated: true,
             }}
           />
-          
-          <BaseAnimeCard 
+
+          <BaseAnimeCard
             anime={{
               ...spiritedAway,
-              userStatus: statusUpdates['anilist-199'] || 'COMPLETED'
+              userStatus: statusUpdates["anilist-199"] || "COMPLETED",
             }}
-            groupName="status-dropdown-cards" 
+            groupName="status-dropdown-cards"
             cardIndex={1}
             width="13rem"
             height="23rem"
             expandedWidth="30rem"
             statusDropdown={{
               enabled: true,
-              position: 'overlay',
-              onStatusChange: (newStatus) => handleStatusChange('anilist-199', newStatus),
-              isAuthenticated: true
+              position: "overlay",
+              onStatusChange: (newStatus) =>
+                handleStatusChange("anilist-199", newStatus),
+              isAuthenticated: true,
             }}
           />
-          
-          <BaseAnimeCard 
+
+          <BaseAnimeCard
             anime={{
               ...demonSlayer,
-              userStatus: statusUpdates['anilist-101922'] || 'PLANNING'
+              userStatus: statusUpdates["anilist-101922"] || "PLANNING",
             }}
-            groupName="status-dropdown-cards" 
+            groupName="status-dropdown-cards"
             cardIndex={2}
             width="13rem"
             height="23rem"
             expandedWidth="30rem"
             statusDropdown={{
               enabled: true,
-              position: 'overlay',
-              onStatusChange: (newStatus) => handleStatusChange('anilist-101922', newStatus),
-              isAuthenticated: true
+              position: "overlay",
+              onStatusChange: (newStatus) =>
+                handleStatusChange("anilist-101922", newStatus),
+              isAuthenticated: true,
             }}
           />
         </div>
-        
+
         <div className="text-center text-sm text-gray-500">
-          MAL anime uses MAL statuses, AniList anime uses AniList statuses - status changes are logged to console
+          MAL anime uses MAL statuses, AniList anime uses AniList statuses -
+          status changes are logged to console
         </div>
-        
+
         {Object.keys(statusUpdates).length > 0 && (
           <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 max-w-md mx-auto">
             <h4 className="text-sm font-semibold mb-2">Status Updates:</h4>
             <div className="space-y-1 text-xs text-gray-600 dark:text-gray-400">
               {Object.entries(statusUpdates).map(([animeId, status]) => (
-                <div key={animeId}>{animeId}: {status}</div>
+                <div key={animeId}>
+                  {animeId}: {status}
+                </div>
               ))}
             </div>
           </div>
@@ -1750,7 +1831,8 @@ export const WithStatusDropdown: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Demonstrates StatusBadgeDropdown integration with BaseAnimeCard. Each card shows a status dropdown in the top-right corner that respects the anime source (MAL vs AniList) and provides appropriate status options. Status changes are tracked and displayed below.',
+        story:
+          "Demonstrates StatusBadgeDropdown integration with BaseAnimeCard. Each card shows a status dropdown in the top-right corner that respects the anime source (MAL vs AniList) and provides appropriate status options. Status changes are tracked and displayed below.",
       },
     },
   },
@@ -1759,58 +1841,64 @@ export const WithStatusDropdown: Story = {
 export const StatusDropdownPositions: Story = {
   render: () => {
     const handleStatusChange = (newStatus: string) => {
-      console.log('Status changed to:', newStatus);
+      console.log("Status changed to:", newStatus);
     };
 
     return (
       <div className="space-y-6">
         <div className="text-center">
-          <h3 className="text-lg font-semibold mb-2">Status Dropdown Positioning</h3>
+          <h3 className="text-lg font-semibold mb-2">
+            Status Dropdown Positioning
+          </h3>
           <p className="text-sm text-gray-600 mb-4">
             Comparison of overlay vs bottom positioning for status dropdowns
           </p>
         </div>
-        
+
         <div className="flex gap-8 justify-center">
           <div className="text-center">
-            <BaseAnimeCard 
+            <BaseAnimeCard
               anime={{
                 ...attackOnTitan,
-                userStatus: 'watching'
+                userStatus: "watching",
               }}
               width="13rem"
               height="23rem"
               expandedWidth="30rem"
               statusDropdown={{
                 enabled: true,
-                position: 'overlay',
+                position: "overlay",
                 onStatusChange: handleStatusChange,
-                isAuthenticated: true
+                isAuthenticated: true,
               }}
             />
-            <p className="mt-2 text-sm text-gray-600">Overlay Position (top-right)</p>
+            <p className="mt-2 text-sm text-gray-600">
+              Overlay Position (top-right)
+            </p>
           </div>
-          
+
           <div className="text-center">
-            <BaseAnimeCard 
+            <BaseAnimeCard
               anime={{
                 ...spiritedAway,
-                userStatus: 'COMPLETED'
+                userStatus: "COMPLETED",
               }}
               width="13rem"
               height="23rem"
               expandedWidth="30rem"
               statusDropdown={{
                 enabled: true,
-                position: 'bottom',
+                position: "bottom",
                 onStatusChange: handleStatusChange,
-                isAuthenticated: true
+                isAuthenticated: true,
               }}
             />
-            <p className="mt-2 text-sm text-gray-600">Bottom Position (bottom-right)</p>
+            <p className="mt-2 text-sm text-gray-600">
+              Bottom Position (bottom-right)
+            </p>
           </div>
         </div>
-        
+
         <div className="text-center text-sm text-gray-500">
           Click the status badges to see dropdown positioning behavior
         </div>
@@ -1820,7 +1908,8 @@ export const StatusDropdownPositions: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Side-by-side comparison of status dropdown positioning options. The left card uses overlay positioning (top-right corner) while the right card uses bottom positioning (bottom-right corner).',
+        story:
+          "Side-by-side comparison of status dropdown positioning options. The left card uses overlay positioning (top-right corner) while the right card uses bottom positioning (bottom-right corner).",
       },
     },
   },
@@ -1829,60 +1918,68 @@ export const StatusDropdownPositions: Story = {
 export const StatusDropdownStates: Story = {
   render: () => {
     const handleStatusChange = (newStatus: string) => {
-      console.log('Status changed to:', newStatus);
+      console.log("Status changed to:", newStatus);
     };
 
     return (
       <div className="space-y-6">
         <div className="text-center">
-          <h3 className="text-lg font-semibold mb-2">Status Dropdown Authentication States</h3>
+          <h3 className="text-lg font-semibold mb-2">
+            Status Dropdown Authentication States
+          </h3>
           <p className="text-sm text-gray-600 mb-4">
-            Comparison of authenticated vs non-authenticated status dropdown behavior
+            Comparison of authenticated vs non-authenticated status dropdown
+            behavior
           </p>
         </div>
-        
+
         <div className="flex gap-8 justify-center">
           <div className="text-center">
-            <BaseAnimeCard 
+            <BaseAnimeCard
               anime={{
                 ...attackOnTitan,
-                userStatus: 'watching'
+                userStatus: "watching",
               }}
               width="13rem"
               height="23rem"
               expandedWidth="30rem"
               statusDropdown={{
                 enabled: true,
-                position: 'overlay',
+                position: "overlay",
                 onStatusChange: handleStatusChange,
-                isAuthenticated: true
+                isAuthenticated: true,
               }}
             />
-            <p className="mt-2 text-sm text-gray-600">Authenticated (Interactive)</p>
+            <p className="mt-2 text-sm text-gray-600">
+              Authenticated (Interactive)
+            </p>
           </div>
-          
+
           <div className="text-center">
-            <BaseAnimeCard 
+            <BaseAnimeCard
               anime={{
                 ...spiritedAway,
-                userStatus: 'COMPLETED'
+                userStatus: "COMPLETED",
               }}
               width="13rem"
               height="23rem"
               expandedWidth="30rem"
               statusDropdown={{
                 enabled: true,
-                position: 'overlay',
+                position: "overlay",
                 onStatusChange: handleStatusChange,
-                isAuthenticated: false
+                isAuthenticated: false,
               }}
             />
-            <p className="mt-2 text-sm text-gray-600">Not Authenticated (Display Only)</p>
+            <p className="mt-2 text-sm text-gray-600">
+              Not Authenticated (Display Only)
+            </p>
           </div>
         </div>
-        
+
         <div className="text-center text-sm text-gray-500">
-          Authenticated cards have clickable dropdowns, non-authenticated show static badges
+          Authenticated cards have clickable dropdowns, non-authenticated show
+          static badges
         </div>
       </div>
     );
@@ -1890,7 +1987,8 @@ export const StatusDropdownStates: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Demonstrates the difference between authenticated and non-authenticated status dropdown behavior. Authenticated users see interactive dropdowns, while non-authenticated users see static status badges.',
+        story:
+          "Demonstrates the difference between authenticated and non-authenticated status dropdown behavior. Authenticated users see interactive dropdowns, while non-authenticated users see static status badges.",
       },
     },
   },
@@ -1898,84 +1996,94 @@ export const StatusDropdownStates: Story = {
 
 export const StatusDropdownWithExpansion: Story = {
   render: () => {
-    const [statusUpdates, setStatusUpdates] = React.useState<Record<string, string>>({});
-    
+    const [statusUpdates, setStatusUpdates] = React.useState<
+      Record<string, string>
+    >({});
+
     const handleStatusChange = (animeId: string, newStatus: string) => {
-      setStatusUpdates(prev => ({ ...prev, [animeId]: newStatus }));
+      setStatusUpdates((prev) => ({ ...prev, [animeId]: newStatus }));
     };
 
     return (
       <div className="space-y-6">
         <div className="text-center">
-          <h3 className="text-lg font-semibold mb-2">Status Dropdown + Card Expansion + AnimeInfoCard</h3>
+          <h3 className="text-lg font-semibold mb-2">
+            Status Dropdown + Card Expansion + AnimeInfoCard
+          </h3>
           <p className="text-sm text-gray-600 mb-4">
-            Complete integration showing all features working together with consistent badge styling
+            Complete integration showing all features working together with
+            consistent badge styling
           </p>
           <p className="text-xs text-gray-500">
-            Click cards to expand, click status badges to change status - notice how badges match in expanded state
+            Click cards to expand, click status badges to change status - notice
+            how badges match in expanded state
           </p>
         </div>
-        
+
         <div className="flex gap-4 overflow-x-auto p-4 max-w-6xl mx-auto">
-          <BaseAnimeCard 
+          <BaseAnimeCard
             anime={{
               ...attackOnTitan,
-              userStatus: statusUpdates['complete-mal-16498'] || 'watching'
+              userStatus: statusUpdates["complete-mal-16498"] || "watching",
             }}
-            groupName="complete-integration" 
+            groupName="complete-integration"
             cardIndex={0}
             width="13rem"
             height="23rem"
             expandedWidth="30rem"
             statusDropdown={{
               enabled: true,
-              position: 'overlay',
-              onStatusChange: (newStatus) => handleStatusChange('complete-mal-16498', newStatus),
-              isAuthenticated: true
+              position: "overlay",
+              onStatusChange: (newStatus) =>
+                handleStatusChange("complete-mal-16498", newStatus),
+              isAuthenticated: true,
             }}
           >
             <div className="card-expanded-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-800 pointer-events-none rounded-xl p-4">
               <AnimeInfoCard anime={attackOnTitan} />
             </div>
           </BaseAnimeCard>
-          
-          <BaseAnimeCard 
+
+          <BaseAnimeCard
             anime={{
               ...spiritedAway,
-              userStatus: statusUpdates['complete-anilist-199'] || 'COMPLETED'
+              userStatus: statusUpdates["complete-anilist-199"] || "COMPLETED",
             }}
-            groupName="complete-integration" 
+            groupName="complete-integration"
             cardIndex={1}
             width="13rem"
             height="23rem"
             expandedWidth="30rem"
             statusDropdown={{
               enabled: true,
-              position: 'overlay',
-              onStatusChange: (newStatus) => handleStatusChange('complete-anilist-199', newStatus),
-              isAuthenticated: true
+              position: "overlay",
+              onStatusChange: (newStatus) =>
+                handleStatusChange("complete-anilist-199", newStatus),
+              isAuthenticated: true,
             }}
           >
             <div className="card-expanded-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-800 pointer-events-none rounded-xl p-4">
               <AnimeInfoCard anime={spiritedAway} />
             </div>
           </BaseAnimeCard>
-          
-          <BaseAnimeCard 
+
+          <BaseAnimeCard
             anime={{
               ...demonSlayer,
-              userStatus: statusUpdates['complete-anilist-101922'] || 'PLANNING'
+              userStatus:
+                statusUpdates["complete-anilist-101922"] || "PLANNING",
             }}
-            groupName="complete-integration" 
+            groupName="complete-integration"
             cardIndex={2}
             width="13rem"
             height="23rem"
             expandedWidth="30rem"
             statusDropdown={{
               enabled: true,
-              position: 'overlay',
-              onStatusChange: (newStatus) => handleStatusChange('complete-anilist-101922', newStatus),
-              isAuthenticated: true
+              position: "overlay",
+              onStatusChange: (newStatus) =>
+                handleStatusChange("complete-anilist-101922", newStatus),
+              isAuthenticated: true,
             }}
           >
             <div className="card-expanded-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-800 pointer-events-none rounded-xl p-4">
@@ -1983,17 +2091,20 @@ export const StatusDropdownWithExpansion: Story = {
             </div>
           </BaseAnimeCard>
         </div>
-        
+
         <div className="text-center text-sm text-gray-500">
-          ✨ Complete integration: status badges now match other badges (rounded shape) in expanded state
+          ✨ Complete integration: status badges now match other badges (rounded
+          shape) in expanded state
         </div>
-        
+
         {Object.keys(statusUpdates).length > 0 && (
           <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 max-w-md mx-auto">
             <h4 className="text-sm font-semibold mb-2">Status Changes:</h4>
             <div className="space-y-1 text-xs text-gray-600 dark:text-gray-400">
               {Object.entries(statusUpdates).map(([animeId, status]) => (
-                <div key={animeId}>{animeId}: {status}</div>
+                <div key={animeId}>
+                  {animeId}: {status}
+                </div>
               ))}
             </div>
           </div>
@@ -2004,7 +2115,8 @@ export const StatusDropdownWithExpansion: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Complete integration demonstration showing BaseAnimeCard with status dropdown, card expansion, and AnimeInfoCard. The status badges now use "rounded" shape in the expanded state to match the other badges (score, format, etc.), creating a visually consistent badge family.',
+        story:
+          'Complete integration demonstration showing BaseAnimeCard with status dropdown, card expansion, and AnimeInfoCard. The status badges now use "rounded" shape in the expanded state to match the other badges (score, format, etc.), creating a visually consistent badge family.',
       },
     },
   },
@@ -2012,18 +2124,25 @@ export const StatusDropdownWithExpansion: Story = {
 
 export const StatusDropdownClickTest: Story = {
   render: () => {
-    const [expansionClicks, setExpansionClicks] = React.useState<Record<string, number>>({});
-    const [statusChanges, setStatusChanges] = React.useState<Record<string, string[]>>({});
+    const [expansionClicks, setExpansionClicks] = React.useState<
+      Record<string, number>
+    >({});
+    const [statusChanges, setStatusChanges] = React.useState<
+      Record<string, string[]>
+    >({});
 
     const handleCardClick = (animeId: string) => {
-      setExpansionClicks(prev => ({ ...prev, [animeId]: (prev[animeId] || 0) + 1 }));
+      setExpansionClicks((prev) => ({
+        ...prev,
+        [animeId]: (prev[animeId] || 0) + 1,
+      }));
       console.log(`🎯 Card clicked for expansion: ${animeId}`);
     };
 
     const handleStatusChange = (animeId: string, newStatus: string) => {
-      setStatusChanges(prev => ({ 
-        ...prev, 
-        [animeId]: [...(prev[animeId] || []), newStatus] 
+      setStatusChanges((prev) => ({
+        ...prev,
+        [animeId]: [...(prev[animeId] || []), newStatus],
       }));
       console.log(`📝 Status changed for ${animeId}: ${newStatus}`);
     };
@@ -2031,40 +2150,51 @@ export const StatusDropdownClickTest: Story = {
     return (
       <div className="space-y-6">
         <div className="text-center">
-          <h3 className="text-lg font-semibold mb-2">🧪 Click Propagation Test</h3>
+          <h3 className="text-lg font-semibold mb-2">
+            🧪 Click Propagation Test
+          </h3>
           <p className="text-sm text-gray-600 mb-4">
             Test that status badge clicks don't trigger card expansion
           </p>
           <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg text-sm">
-            <p className="font-medium text-blue-900 dark:text-blue-200 mb-1">Expected behavior:</p>
+            <p className="font-medium text-blue-900 dark:text-blue-200 mb-1">
+              Expected behavior:
+            </p>
             <ul className="text-left text-blue-800 dark:text-blue-300 text-xs space-y-1">
-              <li>• Clicking status badge should open dropdown WITHOUT expanding card</li>
+              <li>
+                • Clicking status badge should open dropdown WITHOUT expanding
+                card
+              </li>
               <li>• Clicking card background should expand card</li>
-              <li>• Dropdown should appear in same position regardless of card state</li>
+              <li>
+                • Dropdown should appear in same position regardless of card
+                state
+              </li>
             </ul>
           </div>
         </div>
-        
+
         <div className="flex gap-4 justify-center overflow-x-auto p-4">
-          <div 
-            className="relative cursor-pointer" 
-            onClick={() => handleCardClick('test-1')}
+          <div
+            className="relative cursor-pointer"
+            onClick={() => handleCardClick("test-1")}
           >
-            <BaseAnimeCard 
+            <BaseAnimeCard
               anime={{
                 ...attackOnTitan,
-                userStatus: 'watching'
+                userStatus: "watching",
               }}
-              groupName="click-test" 
+              groupName="click-test"
               cardIndex={0}
               width="13rem"
               height="23rem"
               expandedWidth="30rem"
               statusDropdown={{
                 enabled: true,
-                position: 'overlay',
-                onStatusChange: (newStatus) => handleStatusChange('test-1', newStatus),
-                isAuthenticated: true
+                position: "overlay",
+                onStatusChange: (newStatus) =>
+                  handleStatusChange("test-1", newStatus),
+                isAuthenticated: true,
               }}
             >
               <div className="card-expanded-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-800 pointer-events-none rounded-xl p-4">
@@ -2072,26 +2202,27 @@ export const StatusDropdownClickTest: Story = {
               </div>
             </BaseAnimeCard>
           </div>
-          
-          <div 
-            className="relative cursor-pointer" 
-            onClick={() => handleCardClick('test-2')}
+
+          <div
+            className="relative cursor-pointer"
+            onClick={() => handleCardClick("test-2")}
           >
-            <BaseAnimeCard 
+            <BaseAnimeCard
               anime={{
                 ...spiritedAway,
-                userStatus: 'COMPLETED'
+                userStatus: "COMPLETED",
               }}
-              groupName="click-test" 
+              groupName="click-test"
               cardIndex={1}
               width="13rem"
               height="23rem"
               expandedWidth="30rem"
               statusDropdown={{
                 enabled: true,
-                position: 'overlay',
-                onStatusChange: (newStatus) => handleStatusChange('test-2', newStatus),
-                isAuthenticated: true
+                position: "overlay",
+                onStatusChange: (newStatus) =>
+                  handleStatusChange("test-2", newStatus),
+                isAuthenticated: true,
               }}
             >
               <div className="card-expanded-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-800 pointer-events-none rounded-xl p-4">
@@ -2100,7 +2231,7 @@ export const StatusDropdownClickTest: Story = {
             </BaseAnimeCard>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
           <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
             <h4 className="text-sm font-semibold mb-2 text-green-900 dark:text-green-200">
@@ -2108,29 +2239,37 @@ export const StatusDropdownClickTest: Story = {
             </h4>
             <div className="space-y-1 text-xs text-green-700 dark:text-green-300">
               {Object.entries(expansionClicks).map(([animeId, count]) => (
-                <div key={animeId}>{animeId}: {count} clicks</div>
+                <div key={animeId}>
+                  {animeId}: {count} clicks
+                </div>
               ))}
               {Object.keys(expansionClicks).length === 0 && (
-                <div className="text-green-600 dark:text-green-400">No card expansion clicks yet</div>
+                <div className="text-green-600 dark:text-green-400">
+                  No card expansion clicks yet
+                </div>
               )}
             </div>
           </div>
-          
+
           <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
             <h4 className="text-sm font-semibold mb-2 text-purple-900 dark:text-purple-200">
               📝 Status Changes
             </h4>
             <div className="space-y-1 text-xs text-purple-700 dark:text-purple-300">
               {Object.entries(statusChanges).map(([animeId, changes]) => (
-                <div key={animeId}>{animeId}: {changes.join(' → ')}</div>
+                <div key={animeId}>
+                  {animeId}: {changes.join(" → ")}
+                </div>
               ))}
               {Object.keys(statusChanges).length === 0 && (
-                <div className="text-purple-600 dark:text-purple-400">No status changes yet</div>
+                <div className="text-purple-600 dark:text-purple-400">
+                  No status changes yet
+                </div>
               )}
             </div>
           </div>
         </div>
-        
+
         <div className="text-center text-xs text-gray-500">
           💡 Open browser console to see detailed click logs
         </div>
@@ -2140,7 +2279,8 @@ export const StatusDropdownClickTest: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Interactive test for verifying that status badge clicks properly prevent event propagation and do not trigger card expansion. Includes visual counters to track different types of interactions.',
+        story:
+          "Interactive test for verifying that status badge clicks properly prevent event propagation and do not trigger card expansion. Includes visual counters to track different types of interactions.",
       },
     },
   },

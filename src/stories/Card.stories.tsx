@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { action } from '@storybook/addon-actions';
-import { Card } from '../components/ui/Card';
+import type { Meta, StoryObj } from "@storybook/react";
+import { fn } from "@storybook/test";
+import { Card } from "../components/ui/Card";
 
 const meta: Meta<typeof Card> = {
-  title: 'UI/Card',
+  title: "UI/Card",
   component: Card,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     docs: {
       description: {
         component: `
@@ -37,31 +37,30 @@ The Card component is a foundational UI element that provides expandable contain
   },
   argTypes: {
     expanded: {
-      description: 'Whether the card is currently expanded',
-      control: 'boolean',
+      description: "Whether the card is currently expanded",
+      control: "boolean",
     },
     expandable: {
-      description: 'Whether the card can be expanded/collapsed',
-      control: 'boolean',
+      description: "Whether the card can be expanded/collapsed",
+      control: "boolean",
     },
     groupName: {
-      description: 'Radio group name for mutual exclusion',
-      control: 'text',
+      description: "Radio group name for mutual exclusion",
+      control: "text",
     },
     cardIndex: {
-      description: 'Index of the card in the group',
-      control: { type: 'number', min: 0, max: 10, step: 1 },
+      description: "Index of the card in the group",
+      control: { type: "number", min: 0, max: 10, step: 1 },
     },
     onClick: {
-      description: 'Callback fired when card is clicked',
-      action: 'clicked',
+      description: "Callback fired when card is clicked",
     },
     className: {
-      description: 'Additional CSS classes',
-      control: 'text',
+      description: "Additional CSS classes",
+      control: "text",
     },
     children: {
-      description: 'Card content',
+      description: "Card content",
       control: false,
     },
   },
@@ -75,20 +74,23 @@ export const Default: Story = {
   args: {
     expanded: false,
     expandable: true,
-    groupName: 'default-group',
+    groupName: "default-group",
     cardIndex: 0,
-    onClick: action('card-clicked'),
+    onClick: fn(),
     children: (
       <div className="p-6">
         <h3 className="text-lg font-semibold mb-2">Default Card</h3>
-        <p className="text-gray-600">This is a basic card with default settings. Click to expand/collapse.</p>
+        <p className="text-gray-600">
+          This is a basic card with default settings. Click to expand/collapse.
+        </p>
       </div>
     ),
   },
   parameters: {
     docs: {
       description: {
-        story: 'Basic card with default configuration. Click to see expansion behavior.',
+        story:
+          "Basic card with default configuration. Click to see expansion behavior.",
       },
     },
   },
@@ -98,13 +100,15 @@ export const Expanded: Story = {
   args: {
     expanded: true,
     expandable: true,
-    groupName: 'expanded-group',
+    groupName: "expanded-group",
     cardIndex: 0,
-    onClick: action('card-clicked'),
+    onClick: fn(),
     children: (
       <div className="p-6">
         <h3 className="text-lg font-semibold mb-2">Expanded Card</h3>
-        <p className="text-gray-600 mb-4">This card starts in an expanded state.</p>
+        <p className="text-gray-600 mb-4">
+          This card starts in an expanded state.
+        </p>
         <div className="bg-blue-50 p-4 rounded">
           <p className="text-sm">Additional content visible when expanded.</p>
         </div>
@@ -114,7 +118,7 @@ export const Expanded: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Card that starts in an expanded state.',
+        story: "Card that starts in an expanded state.",
       },
     },
   },
@@ -124,18 +128,21 @@ export const NonExpandable: Story = {
   args: {
     expanded: false,
     expandable: false,
-    onClick: action('card-clicked'),
+    onClick: fn(),
     children: (
       <div className="p-6">
         <h3 className="text-lg font-semibold mb-2">Static Card</h3>
-        <p className="text-gray-600">This card cannot be expanded or collapsed. It acts as a static container.</p>
+        <p className="text-gray-600">
+          This card cannot be expanded or collapsed. It acts as a static
+          container.
+        </p>
       </div>
     ),
   },
   parameters: {
     docs: {
       description: {
-        story: 'Non-expandable card that acts as a static container.',
+        story: "Non-expandable card that acts as a static container.",
       },
     },
   },
@@ -146,7 +153,8 @@ export const RadioGroupBehavior: Story = {
   render: () => (
     <div className="space-y-4">
       <p className="text-sm text-gray-600 mb-4">
-        Cards in the same group exhibit radio button behavior - only one can be expanded at a time.
+        Cards in the same group exhibit radio button behavior - only one can be
+        expanded at a time.
       </p>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl">
         <Card
@@ -154,20 +162,20 @@ export const RadioGroupBehavior: Story = {
           expandable={true}
           groupName="radio-demo"
           cardIndex={0}
-          onClick={action('card-1-clicked')}
+          onClick={fn()}
         >
           <div className="p-4">
             <h4 className="font-semibold mb-2">Card 1</h4>
             <p className="text-sm text-gray-600">Click to expand</p>
           </div>
         </Card>
-        
+
         <Card
           expanded={true}
           expandable={true}
           groupName="radio-demo"
           cardIndex={1}
-          onClick={action('card-2-clicked')}
+          onClick={fn()}
         >
           <div className="p-4">
             <h4 className="font-semibold mb-2">Card 2</h4>
@@ -177,13 +185,13 @@ export const RadioGroupBehavior: Story = {
             </div>
           </div>
         </Card>
-        
+
         <Card
           expanded={false}
           expandable={true}
           groupName="radio-demo"
           cardIndex={2}
-          onClick={action('card-3-clicked')}
+          onClick={fn()}
         >
           <div className="p-4">
             <h4 className="font-semibold mb-2">Card 3</h4>
@@ -196,7 +204,8 @@ export const RadioGroupBehavior: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Demonstrates radio group behavior where only one card in the group can be expanded at a time.',
+        story:
+          "Demonstrates radio group behavior where only one card in the group can be expanded at a time.",
       },
     },
   },
@@ -207,9 +216,9 @@ export const WithComplexContent: Story = {
   args: {
     expanded: false,
     expandable: true,
-    groupName: 'complex-content',
+    groupName: "complex-content",
     cardIndex: 0,
-    onClick: action('card-clicked'),
+    onClick: fn(),
     children: (
       <div className="p-6">
         <div className="flex items-center mb-4">
@@ -221,16 +230,19 @@ export const WithComplexContent: Story = {
             <p className="text-sm text-gray-500">Subtitle or description</p>
           </div>
         </div>
-        
+
         <div className="space-y-3">
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Progress</span>
             <span className="text-sm text-gray-600">75%</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
-            <div className="bg-blue-500 h-2 rounded-full" style={{ width: '75%' }}></div>
+            <div
+              className="bg-blue-500 h-2 rounded-full"
+              style={{ width: "75%" }}
+            ></div>
           </div>
-          
+
           <div className="flex gap-2 mt-4">
             <button className="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600">
               Action 1
@@ -246,7 +258,8 @@ export const WithComplexContent: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Card with complex content including avatars, progress bars, and action buttons.',
+        story:
+          "Card with complex content including avatars, progress bars, and action buttons.",
       },
     },
   },
@@ -256,9 +269,9 @@ export const WithImage: Story = {
   args: {
     expanded: false,
     expandable: true,
-    groupName: 'image-card',
+    groupName: "image-card",
     cardIndex: 0,
-    onClick: action('card-clicked'),
+    onClick: fn(),
     children: (
       <div>
         <div className="aspect-video bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white font-bold text-2xl">
@@ -266,7 +279,9 @@ export const WithImage: Story = {
         </div>
         <div className="p-4">
           <h3 className="text-lg font-semibold mb-2">Card with Image</h3>
-          <p className="text-gray-600 text-sm">This card includes an image area at the top.</p>
+          <p className="text-gray-600 text-sm">
+            This card includes an image area at the top.
+          </p>
         </div>
       </div>
     ),
@@ -274,7 +289,7 @@ export const WithImage: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Card with an image or media area.',
+        story: "Card with an image or media area.",
       },
     },
   },
@@ -284,9 +299,9 @@ export const MinimalContent: Story = {
   args: {
     expanded: false,
     expandable: true,
-    groupName: 'minimal',
+    groupName: "minimal",
     cardIndex: 0,
-    onClick: action('card-clicked'),
+    onClick: fn(),
     children: (
       <div className="p-4 text-center">
         <h4 className="font-semibold">Minimal Card</h4>
@@ -296,7 +311,7 @@ export const MinimalContent: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Card with minimal content for simple use cases.',
+        story: "Card with minimal content for simple use cases.",
       },
     },
   },
@@ -307,10 +322,10 @@ export const SmallCard: Story = {
   args: {
     expanded: false,
     expandable: true,
-    groupName: 'size-demo',
+    groupName: "size-demo",
     cardIndex: 0,
-    onClick: action('card-clicked'),
-    className: 'w-48',
+    onClick: fn(),
+    className: "w-48",
     children: (
       <div className="p-3">
         <h4 className="font-semibold text-sm mb-1">Small Card</h4>
@@ -321,7 +336,7 @@ export const SmallCard: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Smaller card variant with compact content.',
+        story: "Smaller card variant with compact content.",
       },
     },
   },
@@ -331,16 +346,17 @@ export const LargeCard: Story = {
   args: {
     expanded: false,
     expandable: true,
-    groupName: 'size-demo',
+    groupName: "size-demo",
     cardIndex: 1,
-    onClick: action('card-clicked'),
-    className: 'w-96',
+    onClick: fn(),
+    className: "w-96",
     children: (
       <div className="p-8">
         <h3 className="text-xl font-bold mb-4">Large Card</h3>
         <p className="text-gray-600 mb-4">
-          This is a larger card with more spacious content. It demonstrates how the card component
-          adapts to different content sizes and spacing requirements.
+          This is a larger card with more spacious content. It demonstrates how
+          the card component adapts to different content sizes and spacing
+          requirements.
         </p>
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-gray-50 p-3 rounded">
@@ -356,7 +372,7 @@ export const LargeCard: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Larger card variant with more spacious content.',
+        story: "Larger card variant with more spacious content.",
       },
     },
   },
@@ -367,21 +383,25 @@ export const CustomStyling: Story = {
   args: {
     expanded: false,
     expandable: true,
-    groupName: 'custom-style',
+    groupName: "custom-style",
     cardIndex: 0,
-    onClick: action('card-clicked'),
-    className: 'border-2 border-blue-500 bg-blue-50 hover:border-blue-600',
+    onClick: fn(),
+    className: "border-2 border-blue-500 bg-blue-50 hover:border-blue-600",
     children: (
       <div className="p-6">
-        <h3 className="text-lg font-semibold text-blue-900 mb-2">Custom Styled Card</h3>
-        <p className="text-blue-700">This card has custom styling applied via className.</p>
+        <h3 className="text-lg font-semibold text-blue-900 mb-2">
+          Custom Styled Card
+        </h3>
+        <p className="text-blue-700">
+          This card has custom styling applied via className.
+        </p>
       </div>
     ),
   },
   parameters: {
     docs: {
       description: {
-        story: 'Card with custom styling applied through className prop.',
+        story: "Card with custom styling applied through className prop.",
       },
     },
   },
@@ -392,15 +412,16 @@ export const AccessibilityDemo: Story = {
   args: {
     expanded: false,
     expandable: true,
-    groupName: 'a11y-demo',
+    groupName: "a11y-demo",
     cardIndex: 0,
-    onClick: action('card-clicked'),
-    onKeyDown: action('key-pressed'),
+    onClick: fn(),
+    onKeyDown: fn(),
     children: (
       <div className="p-6">
         <h3 className="text-lg font-semibold mb-2">Accessible Card</h3>
         <p className="text-gray-600 mb-4">
-          This card supports keyboard navigation. Try using Tab to focus and Enter/Space to interact.
+          This card supports keyboard navigation. Try using Tab to focus and
+          Enter/Space to interact.
         </p>
         <div className="text-sm text-gray-500">
           <p>• Tab: Focus the card</p>
@@ -413,7 +434,8 @@ export const AccessibilityDemo: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Demonstrates accessibility features including keyboard navigation and screen reader support.',
+        story:
+          "Demonstrates accessibility features including keyboard navigation and screen reader support.",
       },
     },
   },
@@ -424,15 +446,16 @@ export const Playground: Story = {
   args: {
     expanded: false,
     expandable: true,
-    groupName: 'playground',
+    groupName: "playground",
     cardIndex: 0,
-    onClick: action('card-clicked'),
-    className: '',
+    onClick: fn(),
+    className: "",
     children: (
       <div className="p-6">
         <h3 className="text-lg font-semibold mb-2">Interactive Playground</h3>
         <p className="text-gray-600">
-          Use the controls below to experiment with different card configurations.
+          Use the controls below to experiment with different card
+          configurations.
         </p>
       </div>
     ),
@@ -440,7 +463,8 @@ export const Playground: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Interactive playground to test different card configurations using the controls panel.',
+        story:
+          "Interactive playground to test different card configurations using the controls panel.",
       },
     },
   },

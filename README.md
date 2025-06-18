@@ -36,7 +36,7 @@ npm run build
 - **🔍 Advanced Search**: Genre filters, score ranges, real-time search
 - **📅 Anime Schedule**: Weekly calendar with timezone support
 - **🎲 Discovery Features**: Random anime and recommendations
-- **🧪 Comprehensive Testing**: 756 tests with 98.9% pass rate and full utility coverage
+- **🧪 Comprehensive Testing**: 881 tests with 100% pass rate and full utility coverage
 
 ## 🛠 Tech Stack
 
@@ -47,6 +47,7 @@ npm run build
 - **APIs**: MAL REST + AniList GraphQL + Jikan REST
 - **Auth**: OAuth 2.0 with PKCE
 - **Cache**: Memory + IndexedDB + Request deduplication
+- **Testing**: Vitest + Testing Library + Playwright + Storybook
 
 ## 🔧 Configuration
 
@@ -91,7 +92,7 @@ npm run dev:full     # Start with proxy server
 npm run proxy        # Start MAL CORS proxy only
 npm run build        # Production build
 npm run preview      # Preview production build
-npm run test         # Run test suite (756 tests, 98.9% pass rate)
+npm run test         # Run test suite (881 tests, 100% pass rate)
 npm run test:ui      # Run tests with UI
 npm run test:coverage # Run tests with coverage report
 npm run storybook    # Start component storybook
@@ -132,3 +133,5 @@ src/
 - `tailwind.config.js` - Design system configuration
 - `vite.config.ts` - Build configuration
 - `vitest.config.ts` - Test configuration
+- `PLANNING.md` - Development roadmap and technical planning
+- `TASKS.md` - Current development tasks and implementation guides

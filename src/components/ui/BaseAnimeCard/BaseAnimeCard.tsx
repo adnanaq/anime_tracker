@@ -1,17 +1,17 @@
-import React from 'react';
-import { AnimeBase } from '../../../types/anime';
-import { useDimensions } from '../../../hooks/useDimensions';
-import { useAutoCycling } from '../../../hooks/useAutoCycling';
-import { Card } from '../Card';
-import { Typography } from '../Typography';
-import { Badge } from '../Badge';
-import { StatusBadgeDropdown } from '../StatusBadgeDropdown';
-import { AnimeInfoCard } from '../AnimeInfoCard';
-import './BaseAnimeCard.css';
+import React from "react";
+import { AnimeBase } from "../../../types/anime";
+import { useDimensions } from "../../../hooks/useDimensions";
+import { useAutoCycling } from "../../../hooks/useAutoCycling";
+import { Card } from "../Card";
+import { Typography } from "../Typography";
+import { Badge } from "../Badge";
+import { StatusBadgeDropdown } from "../StatusBadgeDropdown";
+import { AnimeInfoCard } from "../AnimeInfoCard";
+import "./BaseAnimeCard.css";
 
 export interface StatusDropdownConfig {
   enabled: boolean;
-  position?: 'overlay' | 'bottom';
+  position?: "overlay" | "bottom";
   onStatusChange?: (newStatus: string) => Promise<void> | void;
   isAuthenticated?: boolean;
 }
@@ -25,7 +25,7 @@ export interface BaseAnimeCardProps {
   groupName?: string; // Radio group name for mutual exclusion (defaults to "base-anime-cards")
   cardIndex?: number; // Index within the group
   expandable?: boolean; // Whether card can expand (default: true)
-  width?: number | string; // Custom width (default: 200px)  
+  width?: number | string; // Custom width (default: 200px)
   height?: number | string; // Custom height (default: 370px) - remains constant during expansion
   expandedWidth?: number | string; // Custom expanded width (default: 480px) - only horizontal expansion
   // Auto-cycling loop props (similar to ExpandableGrid click mode)
@@ -45,9 +45,9 @@ export const BaseAnimeCard: React.FC<BaseAnimeCardProps> = ({
   anime,
   expanded = false,
   onClick,
-  className = '',
+  className = "",
   children,
-  groupName = 'base-anime-cards', // Default group name for mutual exclusion
+  groupName = "base-anime-cards", // Default group name for mutual exclusion
   cardIndex = anime.id, // Default to anime ID if not provided
   expandable = true, // Default to expandable
   width = "13rem", // ~208px equivalent - responsive with rem
@@ -76,10 +76,10 @@ export const BaseAnimeCard: React.FC<BaseAnimeCardProps> = ({
   const shouldShowBuiltInContent = (() => {
     // If children are provided, they take precedence
     if (children) return false;
-    
+
     // If expandedContent is explicitly set, use that
     if (expandedContent !== undefined) return expandedContent;
-    
+
     // Default: show built-in content when statusDropdown is enabled
     return statusDropdown?.enabled ?? false;
   })();
@@ -113,7 +113,7 @@ export const BaseAnimeCard: React.FC<BaseAnimeCardProps> = ({
       groupName={groupName}
       cardIndex={cardIndex}
       onClick={handleClick}
-      className={`base-anime-card ${expanded ? 'expanded' : ''} ${className}`}
+      className={`base-anime-card ${expanded ? "expanded" : ""} ${!expandable ? "non-expandable" : ""} ${className}`}
       style={cardStyles}
     >
       {/* Card Image Container */}
@@ -124,7 +124,7 @@ export const BaseAnimeCard: React.FC<BaseAnimeCardProps> = ({
             src={anime.coverImage}
             alt={anime.title}
             className="w-full h-full object-cover rounded-xl"
-            style={{ objectPosition: 'top center' }}
+            style={{ objectPosition: "top center" }}
             onError={() => setImageError(true)}
           />
         ) : (
@@ -167,16 +167,13 @@ export const BaseAnimeCard: React.FC<BaseAnimeCardProps> = ({
           <div className="absolute bottom-0 left-0 right-0 p-3">
             <Typography
               variant="h6"
-              color="inverse"
-              className="mb-1 line-clamp-2 text-sm"
+              className="mb-1 line-clamp-2 text-sm text-white"
             >
               {anime.title}
             </Typography>
             <div className="flex items-center gap-2 text-xs text-white/90">
               {anime.year && <span>📅 {anime.year}</span>}
-              {anime.episodes && (
-                <span>📺 {anime.episodes} eps</span>
-              )}
+              {anime.episodes && <span>📺 {anime.episodes} eps</span>}
             </div>
           </div>
         </div>
@@ -184,59 +181,71 @@ export const BaseAnimeCard: React.FC<BaseAnimeCardProps> = ({
       {/* Built-in expanded content or enhanced children */}
       {shouldShowBuiltInContent && expanded ? (
         <div className="card-expanded-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-800 pointer-events-none rounded-xl p-4">
-          <AnimeInfoCard 
+          <AnimeInfoCard
             anime={anime}
-            statusDropdown={statusDropdown?.enabled ? {
-              enabled: true,
-              onStatusChange: statusDropdown.onStatusChange,
-              isAuthenticated: statusDropdown.isAuthenticated
-            } : undefined}
+            statusDropdown={
+              statusDropdown?.enabled
+                ? {
+                    enabled: true,
+                    onStatusChange: statusDropdown.onStatusChange,
+                    isAuthenticated: statusDropdown.isAuthenticated,
+                  }
+                : undefined
+            }
           />
         </div>
-      ) : shouldShowBuiltInContent ? null : (
-        statusDropdown?.enabled ? 
-          React.Children.map(children, (child) => {
-            if (React.isValidElement(child)) {
-              // Check if this is a div containing AnimeInfoCard (common pattern in stories)
-              if (child.type === 'div' && child.props.children) {
-                return React.cloneElement(child, {
-                  ...child.props,
-                  children: React.Children.map(child.props.children, (grandChild) => {
-                    if (React.isValidElement(grandChild) && 
-                        (grandChild.type?.displayName === 'AnimeInfoCard' || 
-                         grandChild.type?.name === 'AnimeInfoCard' ||
-                         String(grandChild.type).includes('AnimeInfoCard'))) {
+      ) : shouldShowBuiltInContent ? null : statusDropdown?.enabled ? (
+        React.Children.map(children, (child) => {
+          if (React.isValidElement(child)) {
+            // Check if this is a div containing AnimeInfoCard (common pattern in stories)
+            if (child.type === "div" && child.props.children) {
+              return React.cloneElement(child, {
+                ...child.props,
+                children: React.Children.map(
+                  child.props.children,
+                  (grandChild) => {
+                    if (
+                      React.isValidElement(grandChild) &&
+                      (grandChild.type?.displayName === "AnimeInfoCard" ||
+                        grandChild.type?.name === "AnimeInfoCard" ||
+                        String(grandChild.type).includes("AnimeInfoCard"))
+                    ) {
                       return React.cloneElement(grandChild, {
                         ...grandChild.props,
                         statusDropdown: {
                           enabled: true,
                           onStatusChange: statusDropdown.onStatusChange,
-                          isAuthenticated: statusDropdown.isAuthenticated
-                        }
+                          isAuthenticated: statusDropdown.isAuthenticated,
+                        },
                       });
                     }
                     return grandChild;
-                  })
-                });
-              }
-              // Direct AnimeInfoCard
-              else if (child.type?.displayName === 'AnimeInfoCard' || 
-                       child.type?.name === 'AnimeInfoCard' ||
-                       String(child.type).includes('AnimeInfoCard')) {
-                return React.cloneElement(child, {
-                  ...child.props,
-                  statusDropdown: {
-                    enabled: true,
-                    onStatusChange: statusDropdown.onStatusChange,
-                    isAuthenticated: statusDropdown.isAuthenticated
-                  }
-                });
-              }
+                  },
+                ),
+              });
             }
-            return child;
-          }) 
-          : children
+            // Direct AnimeInfoCard
+            else if (
+              child.type?.displayName === "AnimeInfoCard" ||
+              child.type?.name === "AnimeInfoCard" ||
+              String(child.type).includes("AnimeInfoCard")
+            ) {
+              return React.cloneElement(child, {
+                ...child.props,
+                statusDropdown: {
+                  enabled: true,
+                  onStatusChange: statusDropdown.onStatusChange,
+                  isAuthenticated: statusDropdown.isAuthenticated,
+                },
+              });
+            }
+          }
+          return child;
+        })
+      ) : (
+        children
       )}
     </Card>
   );
 };
+

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { malService } from '../../services/mal'
 import { AnimeBase } from '../../types/anime'
-import { ExpandableGrid } from '../ExpandableGrid'
+import { BaseAnimeCard } from '../ui/BaseAnimeCard'
 import { Typography, Button, AnimeGridSkeleton } from '../ui'
 
 const SEASONS = [
@@ -197,11 +197,22 @@ export const SeasonalAnime = () => {
             {loading.current ? (
               <LoadingSkeleton />
             ) : seasonalAnime.length > 0 ? (
-              <ExpandableGrid 
-                anime={seasonalAnime} 
-                title={`${currentSeasonInfo?.emoji} ${currentSeasonInfo?.label} ${currentYear} - Currently Airing`}
-                maxCards={15} 
-              />
+              <div className="space-y-4">
+                <Typography variant="h3" className="mb-4">
+                  {currentSeasonInfo?.emoji} {currentSeasonInfo?.label} {currentYear} - Currently Airing
+                </Typography>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+                  {seasonalAnime.map((anime) => (
+                    <BaseAnimeCard
+                      key={anime.id}
+                      anime={anime}
+                      expandable={false}
+                      autoLoop={false}
+                      className="mx-auto"
+                    />
+                  ))}
+                </div>
+              </div>
             ) : (
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">{currentSeasonInfo?.emoji}</div>
@@ -222,11 +233,22 @@ export const SeasonalAnime = () => {
             {loading.seasonal ? (
               <LoadingSkeleton />
             ) : seasonalAnime.length > 0 ? (
-              <ExpandableGrid 
-                anime={seasonalAnime} 
-                title={`${selectedSeasonInfo?.emoji} ${selectedSeasonInfo?.label} ${selectedYear}`}
-                maxCards={15} 
-              />
+              <div className="space-y-4">
+                <Typography variant="h3" className="mb-4">
+                  {selectedSeasonInfo?.emoji} {selectedSeasonInfo?.label} {selectedYear}
+                </Typography>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+                  {seasonalAnime.map((anime) => (
+                    <BaseAnimeCard
+                      key={anime.id}
+                      anime={anime}
+                      expandable={false}
+                      autoLoop={false}
+                      className="mx-auto"
+                    />
+                  ))}
+                </div>
+              </div>
             ) : (
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">{selectedSeasonInfo?.emoji}</div>
@@ -247,11 +269,22 @@ export const SeasonalAnime = () => {
             {loading.upcoming ? (
               <LoadingSkeleton />
             ) : upcomingAnime.length > 0 ? (
-              <ExpandableGrid 
-                anime={upcomingAnime} 
-                title="🚀 Upcoming Anime"
-                maxCards={15} 
-              />
+              <div className="space-y-4">
+                <Typography variant="h3" className="mb-4">
+                  🚀 Upcoming Anime
+                </Typography>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+                  {upcomingAnime.map((anime) => (
+                    <BaseAnimeCard
+                      key={anime.id}
+                      anime={anime}
+                      expandable={false}
+                      autoLoop={false}
+                      className="mx-auto"
+                    />
+                  ))}
+                </div>
+              </div>
             ) : (
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">🚀</div>

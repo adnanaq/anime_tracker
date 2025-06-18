@@ -46,7 +46,7 @@ const AnimeSection = memo(
       prevProps.isLoading === nextProps.isLoading &&
       prevProps.anime === nextProps.anime
     );
-  }
+  },
 );
 
 const Dashboard = () => {
@@ -56,7 +56,7 @@ const Dashboard = () => {
       currentSource: state.currentSource,
       loading: state.loading,
     }),
-    shallow
+    shallow,
   );
 
   // Optimized selector 2: All anime data with shallow comparison
@@ -76,7 +76,7 @@ const Dashboard = () => {
       searchResults: state.searchResults,
       currentlyWatching: state.currentlyWatching,
     }),
-    shallow
+    shallow,
   );
 
   // Optimized selector 3: Action functions with shallow comparison
@@ -100,7 +100,7 @@ const Dashboard = () => {
       fetchCurrentlyWatching: state.fetchCurrentlyWatching,
       updateAnimeStatus: state.updateAnimeStatus,
     }),
-    shallow
+    shallow,
   );
 
   useEffect(() => {
@@ -199,7 +199,7 @@ const Dashboard = () => {
             {currentlyWatching.length > 0 && (
               <section className="mb-12">
                 <Typography variant="h2" className="mb-6 tracking-tight">
-                  📺 Continue Watching
+                  Watching
                 </Typography>
                 <BaseAnimeCardSection
                   anime={currentlyWatching.slice(0, 12)}

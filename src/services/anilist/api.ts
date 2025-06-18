@@ -71,17 +71,18 @@ interface AniListUpdateVariables {
 export const normalizeAniListAnime = (anime: AniListAnime, includeRelated: boolean = false): AnimeBase => {
   // Handle user data if available (for anime from user's list)
   const animeWithUserData = anime as AniListAnimeWithUserData;
-  const userEntry = animeWithUserData.mediaListEntry || animeWithUserData;
+  const userEntry = animeWithUserData.mediaListEntry;
   const userScore = userEntry?.score || undefined;
   const userStatus = userEntry?.status || undefined;
   const userProgress = userEntry?.progress || undefined;
 
   const normalized: AnimeBase = {
     id: anime.id,
-    title: anime.title.romaji || anime.title.english || anime.title.native || '',
+    title: anime.title.english || anime.title.romaji || anime.title.native || '',
     synopsis: anime.description?.replace(/<[^>]*>/g, ''), // Remove HTML tags
-    image: anime.coverImage?.large || anime.coverImage?.medium,
-    coverImage: anime.coverImage?.large || anime.coverImage?.medium,
+    imageUrl: anime.coverImage?.large || anime.coverImage?.medium || '',
+    image: anime.coverImage?.large || anime.coverImage?.medium || '',
+    coverImage: anime.coverImage?.large || anime.coverImage?.medium || '',
     score: anime.averageScore ? anime.averageScore / 10 : undefined,
     userScore: userScore,
     userStatus: userStatus,
@@ -93,7 +94,7 @@ export const normalizeAniListAnime = (anime: AniListAnime, includeRelated: boole
     format: anime.format,
     source: 'anilist',
     // Enhanced metadata
-    duration: anime.duration ? anime.duration.toString() : undefined,
+    duration: anime.duration,
     studios: anime.studios?.edges?.map(edge => edge.node.name) || [],
     popularity: anime.popularity,
   };
@@ -206,6 +207,10 @@ export const anilistService = {
   },
 
   async searchAnime(query: string) {
+    if (!query.trim()) {
+      return []
+    }
+    
     try {
       const searchQuery = buildSearchQuery()
       const data = await makeGraphQLRequest(searchQuery, { search: query })
@@ -220,6 +225,9 @@ export const anilistService = {
     try {
       const query = buildAnimeDetailsQuery()
       const data = await makeGraphQLRequest(query, { id })
+      if (!data.Media) {
+        return null
+      }
       return normalizeAniListAnime(data.Media, true) // Include related anime for detail view
     } catch (error) {
       console.error('AniList anime details error:', error)

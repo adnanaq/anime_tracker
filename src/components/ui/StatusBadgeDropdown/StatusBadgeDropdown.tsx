@@ -209,6 +209,31 @@ export const StatusBadgeDropdown: React.FC<StatusBadgeDropdownProps> = ({
                 </div>
               );
             })}
+          
+          {/* Remove from List option - only show when anime has a status */}
+          {currentStatus && (
+            <div className="px-1 py-1">
+              <button
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleStatusSelect('');
+                }}
+                disabled={isUpdating}
+                className={`w-full px-2 py-1 focus:outline-none disabled:opacity-50 status-option status-option-neutral rounded-full`}
+                role="option"
+                aria-selected={false}
+                style={{
+                  animationDelay: `${actualAvailableStatuses.filter(status => status !== currentStatus).length * 0.05}s`
+                }}
+              >
+                <div className="flex items-center justify-center">
+                  <span className="text-xs font-medium">
+                    Remove from List
+                  </span>
+                </div>
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

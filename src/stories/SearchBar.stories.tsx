@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from '@storybook/addon-actions';
+import { fn } from '@storybook/test';
 import { SearchBar } from '../components/SearchBar';
 
 // Mock the anime store
 const mockAnimeStore = {
-  searchAnime: action('searchAnime'),
-  clearSearch: action('clearSearch'),
+  searchAnime: fn(),
+  clearSearch: fn(),
   loading: { search: false },
   searchResults: [],
 };
@@ -149,7 +149,7 @@ export const EmptyState: Story = {
 export const ErrorState: Story = {
   beforeEach: () => {
     mockAnimeStore.loading.search = false;
-    mockAnimeStore.searchAnime = action('searchAnime-error');
+    mockAnimeStore.searchAnime = fn();
   },
   parameters: {
     docs: {

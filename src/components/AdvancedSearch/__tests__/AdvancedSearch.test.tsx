@@ -398,7 +398,7 @@ describe('AdvancedSearch Component', () => {
       await waitFor(() => {
         expect(screen.queryByTestId('expandable-grid')).not.toBeInTheDocument()
       })
-      expect(screen.getByText('Advanced Anime Search')).toBeInTheDocument() // Shows initial state
+      expect(screen.getByText('🔍 Advanced Search')).toBeInTheDocument() // Shows initial state
     })
 
     it('should disable search button while loading', async () => {

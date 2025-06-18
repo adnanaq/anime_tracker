@@ -46,6 +46,14 @@ vi.mock("../../SeasonalAnime", () => ({
   SeasonalAnime: () => <div data-testid="seasonal-anime">Seasonal Anime</div>,
 }));
 
+vi.mock("../../BaseAnimeCardSection", () => ({
+  BaseAnimeCardSection: ({ anime }: { anime: any[] }) => (
+    <div data-testid="base-anime-card-section">
+      Base Anime Cards - {anime.length} anime
+    </div>
+  ),
+}));
+
 // vi.mock('../../CacheManager/CacheStats', () => ({
 //   CacheStats: () => <div data-testid="cache-stats">Cache Stats</div>
 // }))
@@ -85,7 +93,7 @@ vi.mock("../../ExpandableGrid", () => ({
     variant?: string;
   }) => (
     <div data-testid="expandable-grid">
-      {title} - {anime.length} anime - max {maxCards}{" "}
+      {title} - {anime.length} anime - max {maxCards} - click{" "}
       {variant ? `- ${variant}` : ""}
     </div>
   ),
@@ -191,7 +199,7 @@ describe("Dashboard Component", () => {
     it("should render the main header with all components", () => {
       render(<Dashboard />);
 
-      expect(screen.getByText("AnimeTrackr")).toBeInTheDocument();
+      expect(screen.getByText("AnimeTracker")).toBeInTheDocument();
       expect(screen.getAllByTestId("search-bar")).toHaveLength(2); // Desktop and mobile
       expect(screen.getByTestId("source-toggle")).toBeInTheDocument();
       expect(screen.getByTestId("auth-button")).toBeInTheDocument();
@@ -224,7 +232,7 @@ describe("Dashboard Component", () => {
     it("should handle different sources correctly", () => {
       const anilistStore = { ...mockStore, currentSource: "anilist" };
       mockUseAnimeStore.mockImplementation((selector) =>
-        selector(anilistStore)
+        selector(anilistStore),
       );
 
       render(<Dashboard />);
@@ -240,7 +248,7 @@ describe("Dashboard Component", () => {
         loading: { ...mockStore.loading, trending: true },
       };
       mockUseAnimeStore.mockImplementation((selector) =>
-        selector(loadingStore)
+        selector(loadingStore),
       );
 
       render(<Dashboard />);
@@ -255,7 +263,7 @@ describe("Dashboard Component", () => {
         loading: { ...mockStore.loading, trending: true },
       };
       mockUseAnimeStore.mockImplementation((selector) =>
-        selector(loadingStore)
+        selector(loadingStore),
       );
 
       render(<Dashboard />);
@@ -272,7 +280,7 @@ describe("Dashboard Component", () => {
         trendingAnime: mockAnime,
       };
       mockUseAnimeStore.mockImplementation((selector) =>
-        selector(storeWithTrending)
+        selector(storeWithTrending),
       );
 
       render(<Dashboard />);
@@ -287,7 +295,7 @@ describe("Dashboard Component", () => {
         trendingAnime: mockAnime,
       };
       mockUseAnimeStore.mockImplementation((selector) =>
-        selector(storeWithTrending)
+        selector(storeWithTrending),
       );
 
       render(<Dashboard />);
@@ -295,13 +303,14 @@ describe("Dashboard Component", () => {
       // Should show featured trending cards
       expect(
         screen.getByText(
-          "✨ Featured Trending Anime - 3 anime - horizontal - max 6"
-        )
+          "✨ Featured Trending Anime - 3 anime - horizontal - max 6",
+        ),
       ).toBeInTheDocument();
 
-      // Should show trending grid
+      // Should show trending section with Typography header and BaseAnimeCardSection
+      expect(screen.getByText("Trending Now")).toBeInTheDocument();
       expect(
-        screen.getByText("Trending Now - 3 anime - max 12 - click")
+        screen.getByText("Base Anime Cards - 3 anime"),
       ).toBeInTheDocument();
     });
 
@@ -311,21 +320,15 @@ describe("Dashboard Component", () => {
         currentlyWatching: mockAnime,
       };
       mockUseAnimeStore.mockImplementation((selector) =>
-        selector(storeWithWatching)
+        selector(storeWithWatching),
       );
 
       render(<Dashboard />);
 
-      // Should show continue watching cards
+      // Should show continue watching section with Typography header and BaseAnimeCardSection
+      expect(screen.getByText("Watching")).toBeInTheDocument();
       expect(
-        screen.getByText("📺 Continue Watching - 3 anime - vertical - max 5")
-      ).toBeInTheDocument();
-
-      // Should show currently watching grid
-      expect(
-        screen.getByText(
-          "Currently Watching (Grid View) - 3 anime - max 12 - click"
-        )
+        screen.getByText("Base Anime Cards - 3 anime"),
       ).toBeInTheDocument();
     });
 
@@ -335,13 +338,13 @@ describe("Dashboard Component", () => {
         searchResults: mockAnime,
       };
       mockUseAnimeStore.mockImplementation((selector) =>
-        selector(storeWithSearch)
+        selector(storeWithSearch),
       );
 
       render(<Dashboard />);
 
       expect(
-        screen.getByText("Search Results - 3 anime - max 10")
+        screen.getByText("Search Results - 3 anime - max 10 - click"),
       ).toBeInTheDocument();
 
       // Hero should be hidden when search results are shown
@@ -357,13 +360,13 @@ describe("Dashboard Component", () => {
         trendingAnime: mockAnime,
       };
       mockUseAnimeStore.mockImplementation((selector) =>
-        selector(storeWithSearchAndTrending)
+        selector(storeWithSearchAndTrending),
       );
 
       render(<Dashboard />);
 
       expect(
-        screen.getByText("Search Results - 3 anime - max 10")
+        screen.getByText("Search Results - 3 anime - max 10 - click"),
       ).toBeInTheDocument();
       expect(screen.queryByTestId("hero")).not.toBeInTheDocument();
     });
@@ -376,20 +379,18 @@ describe("Dashboard Component", () => {
         currentlyWatching: mockAnime,
       };
       mockUseAnimeStore.mockImplementation((selector) =>
-        selector(storeWithSearchAndTrending)
+        selector(storeWithSearchAndTrending),
       );
 
       render(<Dashboard />);
 
       expect(
-        screen.getByText("Search Results - 3 anime - max 10")
+        screen.getByText("Search Results - 3 anime - max 10 - click"),
       ).toBeInTheDocument();
       expect(
-        screen.queryByText("✨ Featured Trending Anime")
+        screen.queryByText("✨ Featured Trending Anime"),
       ).not.toBeInTheDocument();
-      expect(
-        screen.queryByText("📺 Continue Watching")
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText("Watching")).not.toBeInTheDocument();
     });
 
     it("should show different sections based on available data", () => {
@@ -402,7 +403,7 @@ describe("Dashboard Component", () => {
         currentlyWatching: mockAnime,
       };
       mockUseAnimeStore.mockImplementation((selector) =>
-        selector(storeWithData)
+        selector(storeWithData),
       );
 
       render(<Dashboard />);
@@ -410,20 +411,16 @@ describe("Dashboard Component", () => {
       // Should show all main sections when data is available
       expect(
         screen.getByText(
-          "✨ Featured Trending Anime - 3 anime - horizontal - max 6"
-        )
+          "✨ Featured Trending Anime - 3 anime - horizontal - max 6",
+        ),
       ).toBeInTheDocument();
-      expect(
-        screen.getByText("📺 Continue Watching - 3 anime - vertical - max 5")
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText(
-          "Currently Watching (Grid View) - 3 anime - max 12 - click"
-        )
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText("Trending Now - 3 anime - max 12 - click")
-      ).toBeInTheDocument();
+      expect(screen.getByText("Watching")).toBeInTheDocument();
+      expect(screen.getByText("Trending Now")).toBeInTheDocument();
+      expect(screen.getByText("Top Rated")).toBeInTheDocument();
+      expect(screen.getByText("Most Popular")).toBeInTheDocument();
+      expect(screen.getByText("Current Season")).toBeInTheDocument();
+      // Should have BaseAnimeCardSection for each section with data
+      expect(screen.getAllByText(/Base Anime Cards - 3 anime/)).toHaveLength(5);
     });
   });
 
@@ -447,7 +444,7 @@ describe("Dashboard Component", () => {
     it("should call additional functions for AniList source", async () => {
       const anilistStore = { ...mockStore, currentSource: "anilist" };
       mockUseAnimeStore.mockImplementation((selector) =>
-        selector(anilistStore)
+        selector(anilistStore),
       );
 
       render(<Dashboard />);
@@ -471,7 +468,7 @@ describe("Dashboard Component", () => {
         loading: { ...mockStore.loading, trending: true },
       };
       mockUseAnimeStore.mockImplementation((selector) =>
-        selector(loadingStore)
+        selector(loadingStore),
       );
 
       render(<Dashboard />);
@@ -487,14 +484,14 @@ describe("Dashboard Component", () => {
         loading: { ...mockStore.loading, search: false },
       };
       mockUseAnimeStore.mockImplementation((selector) =>
-        selector(storeWithSearch)
+        selector(storeWithSearch),
       );
 
       render(<Dashboard />);
 
       // AnimeSection should render with ExpandableGrid
       expect(
-        screen.getByText("Search Results - 3 anime - max 10")
+        screen.getByText("Search Results - 3 anime - max 10 - click"),
       ).toBeInTheDocument();
     });
   });
@@ -515,15 +512,13 @@ describe("Dashboard Component", () => {
       render(<Dashboard />);
 
       // Should still render header
-      expect(screen.getByText("AnimeTrackr")).toBeInTheDocument();
+      expect(screen.getByText("AnimeTracker")).toBeInTheDocument();
 
       // Should not render anime sections when arrays are empty
       expect(
-        screen.queryByText("✨ Featured Trending Anime")
+        screen.queryByText("✨ Featured Trending Anime"),
       ).not.toBeInTheDocument();
-      expect(
-        screen.queryByText("📺 Continue Watching")
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText("Watching")).not.toBeInTheDocument();
     });
 
     it("should handle loading states gracefully", () => {
@@ -539,7 +534,7 @@ describe("Dashboard Component", () => {
         },
       };
       mockUseAnimeStore.mockImplementation((selector) =>
-        selector(allLoadingStore)
+        selector(allLoadingStore),
       );
 
       render(<Dashboard />);

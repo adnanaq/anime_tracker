@@ -58,18 +58,22 @@ describe('API Normalization Functions', () => {
         id: 123,
         title: 'Attack on Titan',
         synopsis: 'A dark fantasy animeWith HTML tags',
+        imageUrl: 'https://example.com/large.jpg',
         image: 'https://example.com/large.jpg',
         coverImage: 'https://example.com/large.jpg',
         score: 8.5,
         userScore: undefined,
-        userStatus: 'FINISHED', // This comes from anime.status when no mediaListEntry
+        userStatus: undefined,
         userProgress: undefined,
         episodes: 25,
         status: 'FINISHED',
         genres: ['Action', 'Drama'],
         year: 2013,
         format: 'TV',
-        source: 'anilist'
+        source: 'anilist',
+        duration: undefined,
+        studios: [],
+        popularity: undefined
       })
     })
 
@@ -77,8 +81,9 @@ describe('API Normalization Functions', () => {
       const animeWithoutImage = { ...mockAniListAnime, coverImage: null }
       const result = normalizeAniListAnime(animeWithoutImage)
 
-      expect(result.image).toBeUndefined()
-      expect(result.coverImage).toBeUndefined()
+      expect(result.image).toBe('')
+      expect(result.coverImage).toBe('')
+      expect(result.imageUrl).toBe('')
     })
 
     it('should use medium image as fallback', () => {
@@ -144,9 +149,12 @@ describe('API Normalization Functions', () => {
 
       const result = normalizeAniListAnime(animeWithDirectUserData)
 
-      expect(result.userScore).toBe(8)
-      expect(result.userStatus).toBe('CURRENT')
-      expect(result.userProgress).toBe(15)
+      // User data should only come from mediaListEntry, not directly on anime object
+      expect(result.userScore).toBeUndefined()
+      expect(result.userStatus).toBeUndefined()
+      expect(result.userProgress).toBeUndefined()
+      // anime.status should still be preserved
+      expect(result.status).toBe('CURRENT')
     })
 
     it('should include related anime when requested', () => {
@@ -157,18 +165,22 @@ describe('API Normalization Functions', () => {
         id: 456,
         title: 'Attack on Titan Season 2',
         synopsis: undefined,
+        imageUrl: 'https://example.com/s2-large.jpg',
         image: 'https://example.com/s2-large.jpg',
         coverImage: 'https://example.com/s2-large.jpg',
         score: 9,
         userScore: undefined,
-        userStatus: 'FINISHED', // This comes from anime.status when no mediaListEntry
+        userStatus: undefined,
         userProgress: undefined,
         episodes: 12,
         status: 'FINISHED',
         genres: ['Action'],
         year: 2017,
         format: 'TV',
-        source: 'anilist'
+        source: 'anilist',
+        duration: undefined,
+        studios: [],
+        popularity: undefined
       })
     })
 
@@ -462,7 +474,10 @@ describe('API Normalization Functions', () => {
         genres: ['Action', 'Shounen'],
         year: 2002,
         format: 'tv',
-        source: 'mal'
+        source: 'mal',
+        duration: undefined,
+        studios: [],
+        popularity: undefined
       })
     })
 
@@ -556,7 +571,10 @@ describe('API Normalization Functions', () => {
         genres: ['Action'],
         year: 2007,
         format: 'tv',
-        source: 'mal'
+        source: 'mal',
+        duration: undefined,
+        studios: [],
+        popularity: undefined
       })
     })
 

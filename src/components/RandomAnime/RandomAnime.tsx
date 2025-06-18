@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AnimeBase } from "../../types/anime";
 import { malService } from "../../services/mal";
-import { ExpandableGrid } from "../ExpandableGrid";
+import { BaseAnimeCard } from "../ui/BaseAnimeCard";
 import { Typography, Button, Spinner } from "../ui";
 
 export const RandomAnime = () => {
@@ -102,11 +102,17 @@ export const RandomAnime = () => {
 
       {randomAnime.length > 0 && (
         <div className="space-y-4">
-          <ExpandableGrid
-            anime={randomAnime}
-            title="🎲 Random Discoveries"
-            maxCards={6}
-          />
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {randomAnime.map((anime) => (
+              <BaseAnimeCard
+                key={anime.id}
+                anime={anime}
+                expandable={false}
+                autoLoop={false}
+                className="mx-auto"
+              />
+            ))}
+          </div>
 
           <div className="text-center pt-4">
             <Typography variant="bodySmall" color="muted" className="mb-4">

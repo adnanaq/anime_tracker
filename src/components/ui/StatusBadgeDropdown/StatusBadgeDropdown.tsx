@@ -176,7 +176,7 @@ export const StatusBadgeDropdown: React.FC<StatusBadgeDropdownProps> = ({
       {isOpen && (
         <div
           ref={dropdownRef}
-          className="absolute z-50 top-full mt-1 min-w-[140px] -left-2 status-dropdown-backdrop py-2 status-dropdown-enter"
+          className="absolute z-50 top-full mt-1 min-w-[120px] left-0 status-dropdown-backdrop py-2 status-dropdown-enter"
           role="listbox"
           aria-label="Status options"
         >
@@ -193,7 +193,7 @@ export const StatusBadgeDropdown: React.FC<StatusBadgeDropdownProps> = ({
                       handleStatusSelect(status);
                     }}
                     disabled={isUpdating}
-                    className={`w-full px-3 py-1 focus:outline-none disabled:opacity-50 status-option status-option-${statusVariant} rounded-full`}
+                    className={`w-full px-2 py-1 focus:outline-none disabled:opacity-50 status-option status-option-${statusVariant} rounded-full`}
                     role="option"
                     aria-selected={false}
                     style={{

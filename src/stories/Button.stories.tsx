@@ -104,141 +104,14 @@ export const Default: Story = {
   },
 }
 
-export const Primary: Story = {
-  render: (args) => {
-    const { variant, ...otherArgs } = args
-    return <Button {...otherArgs} variant="primary">{args.children || 'Primary'}</Button>
-  },
-  args: {
-    children: 'Primary',
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Primary variant button. Variant is fixed to primary, but you can control size, animation, children, loading, disabled, and other properties.'
-      }
-    }
-  }
-}
+// Individual variant stories removed - see AllVariants story for comprehensive showcase
 
-export const Secondary: Story = {
-  render: (args) => {
-    const { variant, ...otherArgs } = args
-    return <Button {...otherArgs} variant="secondary">{args.children || 'Secondary'}</Button>
-  },
-  args: {
-    children: 'Secondary',
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Secondary variant button. Variant is fixed to secondary, but you can control size, animation, children, loading, disabled, and other properties.'
-      }
-    }
-  }
-}
 
-export const Success: Story = {
-  render: (args) => {
-    const { variant, ...otherArgs } = args
-    return <Button {...otherArgs} variant="success">{args.children || 'Success'}</Button>
-  },
-  args: {
-    children: 'Success',
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Success variant button. Variant is fixed to success, but you can control size, animation, children, loading, disabled, and other properties.'
-      }
-    }
-  }
-}
 
-export const Warning: Story = {
-  render: (args) => {
-    const { variant, ...otherArgs } = args
-    return <Button {...otherArgs} variant="warning">{args.children || 'Warning'}</Button>
-  },
-  args: {
-    children: 'Warning',
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Warning variant button. Variant is fixed to warning, but you can control size, animation, children, loading, disabled, and other properties.'
-      }
-    }
-  }
-}
 
-export const Danger: Story = {
-  render: (args) => {
-    const { variant, ...otherArgs } = args
-    return <Button {...otherArgs} variant="danger">{args.children || 'Danger'}</Button>
-  },
-  args: {
-    children: 'Danger',
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Danger variant button. Variant is fixed to danger, but you can control size, animation, children, loading, disabled, and other properties.'
-      }
-    }
-  }
-}
 
-export const Ghost: Story = {
-  render: (args) => {
-    const { variant, ...otherArgs } = args
-    return <Button {...otherArgs} variant="ghost">{args.children || 'Ghost'}</Button>
-  },
-  args: {
-    children: 'Ghost',
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Ghost variant button. Variant is fixed to ghost, but you can control size, animation, children, loading, disabled, and other properties.'
-      }
-    }
-  }
-}
 
-export const Outline: Story = {
-  render: (args) => {
-    const { variant, ...otherArgs } = args
-    return <Button {...otherArgs} variant="outline">{args.children || 'Outline'}</Button>
-  },
-  args: {
-    children: 'Outline',
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Outline variant button. Variant is fixed to outline, but you can control size, animation, children, loading, disabled, and other properties.'
-      }
-    }
-  }
-}
 
-export const Link: Story = {
-  render: (args) => {
-    const { variant, ...otherArgs } = args
-    return <Button {...otherArgs} variant="link">{args.children || 'Link Button'}</Button>
-  },
-  args: {
-    children: 'Link Button',
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Link variant button. Variant is fixed to link, but you can control size, animation, children, loading, disabled, and other properties.'
-      }
-    }
-  }
-}
 
 // === SIZE VARIANTS ===
 

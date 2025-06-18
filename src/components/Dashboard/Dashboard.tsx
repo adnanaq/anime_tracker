@@ -10,8 +10,6 @@ import { AnimeSchedule } from "../AnimeSchedule";
 import { AdvancedSearch } from "../AdvancedSearch";
 import { RandomAnime } from "../RandomAnime";
 import { SeasonalAnime } from "../SeasonalAnime";
-import { CacheStats } from "../CacheManager/CacheStats";
-import { CacheTest } from "../CacheTest";
 import { ExpandingAnimeCards } from "../ExpandingAnimeCards";
 import { ExpandableGrid } from "../ExpandableGrid";
 import { BaseAnimeCardSection } from "../BaseAnimeCardSection";
@@ -50,7 +48,6 @@ const AnimeSection = memo(
     );
   }
 );
-
 
 const Dashboard = () => {
   // Optimized selector 1: Core state data with shallow comparison
@@ -296,14 +293,14 @@ const Dashboard = () => {
                   <RandomAnime />
                 </section>
 
-                {/* Developer Tools - Cache Management */}
-                <section className="mb-12">
+                {/* Leave Developer Tools - Cache Management commented out, Don't delete*/}
+                {/* <section className="mb-12">
                   <CacheStats />
                 </section>
 
                 <section className="mb-12">
                   <CacheTest />
-                </section>
+                </section> */}
               </>
             )}
           </>

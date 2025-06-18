@@ -86,73 +86,9 @@ export const Default: Story = {
   }
 }
 
-export const Card: Story = {
-  render: (args) => {
-    const { variant, ...otherArgs } = args
-    return <Skeleton {...otherArgs} variant="card" />
-  },
-  args: {
-    size: 'md'
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Card variant skeleton with 3:4 aspect ratio perfect for anime posters. Variant is fixed to card, but you can control size, className, and delay.'
-      }
-    }
-  }
-}
 
-export const Text: Story = {
-  render: (args) => {
-    const { variant, ...otherArgs } = args
-    return <Skeleton {...otherArgs} variant="text" />
-  },
-  args: {
-    size: 'md'
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Text variant skeleton for single line text placeholders. Variant is fixed to text, but you can control size, className, and delay.'
-      }
-    }
-  }
-}
 
-export const Avatar: Story = {
-  render: (args) => {
-    const { variant, ...otherArgs } = args
-    return <Skeleton {...otherArgs} variant="avatar" />
-  },
-  args: {
-    size: 'md'
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Avatar variant skeleton with circular shape for profile pictures. Variant is fixed to avatar, but you can control size, className, and delay.'
-      }
-    }
-  }
-}
 
-export const Button: Story = {
-  render: (args) => {
-    const { variant, ...otherArgs } = args
-    return <Skeleton {...otherArgs} variant="button" />
-  },
-  args: {
-    size: 'md'
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Button variant skeleton with proper padding and rounded corners. Variant is fixed to button, but you can control size, className, and delay.'
-      }
-    }
-  }
-}
 
 // === SIZE VARIANTS ===
 

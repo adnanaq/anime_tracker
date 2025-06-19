@@ -1,0 +1,172 @@
+/* Airing Indicator - Subtle ripple effect for currently airing anime */
+
+.airing-ripple {
+  transform-origin: center;
+}
+
+/* Keyframe animation for ripple effect */
+@keyframes ripple {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Full card ripple overlay */
+.card-ripple-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+/* Card ripple animation from different origins */
+.card-ripple-overlay::before {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.5) 0%, rgba(34, 197, 94, 0.25) 50%, rgba(34, 197, 94, 0.1) 80%, transparent 100%);
+  animation: cardRipple 2.5s ease-out infinite;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.3);
+}
+
+/* Position the ripple origin based on indicator position */
+.card-ripple-overlay.ripple-top-right::before {
+  top: 12px;
+  right: 12px;
+  transform-origin: center;
+}
+
+.card-ripple-overlay.ripple-top-left::before {
+  top: 12px;
+  left: 12px;
+  transform-origin: center;
+}
+
+.card-ripple-overlay.ripple-bottom-right::before {
+  bottom: 12px;
+  right: 12px;
+  transform-origin: center;
+}
+
+.card-ripple-overlay.ripple-bottom-left::before {
+  bottom: 12px;
+  left: 12px;
+  transform-origin: center;
+}
+
+/* Card ripple keyframes - expands to cover entire card */
+@keyframes cardRipple {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.6;
+  }
+  40% {
+    transform: scale(12);
+    opacity: 0.3;
+  }
+  80% {
+    transform: scale(28);
+    opacity: 0.1;
+  }
+  100% {
+    transform: scale(32);
+    opacity: 0;
+  }
+}
+
+/* Add a secondary ripple wave for subtle layering */
+.card-ripple-overlay::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.3) 0%, rgba(34, 197, 94, 0.15) 60%, transparent 100%);
+  animation: cardRipple 2.5s ease-out infinite 1.2s;
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.2);
+}
+
+/* Position the secondary ripple same as primary */
+.card-ripple-overlay.ripple-top-right::after {
+  top: 14px;
+  right: 14px;
+  transform-origin: center;
+}
+
+.card-ripple-overlay.ripple-top-left::after {
+  top: 14px;
+  left: 14px;
+  transform-origin: center;
+}
+
+.card-ripple-overlay.ripple-bottom-right::after {
+  bottom: 14px;
+  right: 14px;
+  transform-origin: center;
+}
+
+.card-ripple-overlay.ripple-bottom-left::after {
+  bottom: 14px;
+  left: 14px;
+  transform-origin: center;
+}
+
+/* Ensure proper stacking and backdrop blur for visibility */
+.airing-indicator {
+  backdrop-filter: blur(1px);
+}
+
+/* Subtle glow effect for enhanced visibility on images */
+.airing-indicator::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.2) 0%, transparent 70%);
+  z-index: -1;
+}
+
+/* Responsive sizing adjustments */
+@media (max-width: 640px) {
+  .airing-indicator {
+    transform: scale(0.9);
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .airing-ripple {
+    animation: none;
+  }
+  
+  .airing-indicator::before {
+    animation: none;
+  }
+  
+  /* Simple pulse for reduced motion */
+  .airing-indicator {
+    animation: simple-pulse 2s ease-in-out infinite;
+  }
+}
+
+@keyframes simple-pulse {
+  0%, 100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

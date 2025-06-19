@@ -87,7 +87,7 @@ const meta: Meta<typeof BaseAnimeCard> = {
 
 ## Current Implementation
 This is a **minimal empty card** with exact ExpandableGrid dimensions:
-- Fixed size: 13rem × 23.125rem  
+- Fixed size: 13rem × 21rem  
 - Gray background (\`bg-gray-200\`) for visibility
 - Border (\`border border-gray-300\`)
 - Rounded corners (\`rounded-xl\`)
@@ -103,7 +103,7 @@ This is a **minimal empty card** with exact ExpandableGrid dimensions:
 - \`children\`: ReactNode - Content to render inside the card
 - \`expandable\`: boolean - Whether card can expand to larger size (default: true)
 - \`width\`: number | string - Custom width (default: 13rem)
-- \`height\`: number | string - Custom height (default: 23rem) - **remains constant during expansion**
+- \`height\`: number | string - Custom height (default: 21rem) - **remains constant during expansion**
 - \`expandedWidth\`: number | string - Custom expanded width (default: 30rem) - **horizontal expansion only**
 - \`statusDropdown\`: StatusDropdownConfig - Optional status dropdown integration (overlay position, authentication state, callbacks)
 - Auto-cycling props: \`autoLoop\`, \`loopInterval\`, \`pauseOnInteraction\`, \`pauseDuration\`, \`onAutoLoop\`
@@ -1669,7 +1669,7 @@ export const WithAnimeInfoCard: Story = {
           groupName="integration-cards"
           cardIndex={0}
           width="13rem"
-          height="23rem"
+          height="21rem"
           expandedWidth="30rem"
         >
           <div className="card-expanded-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-800 pointer-events-none rounded-xl p-4">
@@ -1682,7 +1682,7 @@ export const WithAnimeInfoCard: Story = {
           groupName="integration-cards"
           cardIndex={1}
           width="13rem"
-          height="23rem"
+          height="21rem"
           expandedWidth="30rem"
         >
           <div className="card-expanded-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-800 pointer-events-none rounded-xl p-4">
@@ -1695,7 +1695,7 @@ export const WithAnimeInfoCard: Story = {
           groupName="integration-cards"
           cardIndex={2}
           width="13rem"
-          height="23rem"
+          height="21rem"
           expandedWidth="30rem"
         >
           <div className="card-expanded-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-800 pointer-events-none rounded-xl p-4">
@@ -1758,7 +1758,7 @@ export const WithStatusDropdown: Story = {
             groupName="status-dropdown-cards"
             cardIndex={0}
             width="13rem"
-            height="23rem"
+            height="21rem"
             expandedWidth="30rem"
             statusDropdown={{
               enabled: true,
@@ -1777,7 +1777,7 @@ export const WithStatusDropdown: Story = {
             groupName="status-dropdown-cards"
             cardIndex={1}
             width="13rem"
-            height="23rem"
+            height="21rem"
             expandedWidth="30rem"
             statusDropdown={{
               enabled: true,
@@ -1796,7 +1796,7 @@ export const WithStatusDropdown: Story = {
             groupName="status-dropdown-cards"
             cardIndex={2}
             width="13rem"
-            height="23rem"
+            height="21rem"
             expandedWidth="30rem"
             statusDropdown={{
               enabled: true,
@@ -1863,7 +1863,7 @@ export const StatusDropdownPositions: Story = {
                 userStatus: "watching",
               }}
               width="13rem"
-              height="23rem"
+              height="21rem"
               expandedWidth="30rem"
               statusDropdown={{
                 enabled: true,
@@ -1884,7 +1884,7 @@ export const StatusDropdownPositions: Story = {
                 userStatus: "COMPLETED",
               }}
               width="13rem"
-              height="23rem"
+              height="21rem"
               expandedWidth="30rem"
               statusDropdown={{
                 enabled: true,
@@ -1941,7 +1941,7 @@ export const StatusDropdownStates: Story = {
                 userStatus: "watching",
               }}
               width="13rem"
-              height="23rem"
+              height="21rem"
               expandedWidth="30rem"
               statusDropdown={{
                 enabled: true,
@@ -1962,7 +1962,7 @@ export const StatusDropdownStates: Story = {
                 userStatus: "COMPLETED",
               }}
               width="13rem"
-              height="23rem"
+              height="21rem"
               expandedWidth="30rem"
               statusDropdown={{
                 enabled: true,
@@ -2029,7 +2029,7 @@ export const StatusDropdownWithExpansion: Story = {
             groupName="complete-integration"
             cardIndex={0}
             width="13rem"
-            height="23rem"
+            height="21rem"
             expandedWidth="30rem"
             statusDropdown={{
               enabled: true,
@@ -2052,7 +2052,7 @@ export const StatusDropdownWithExpansion: Story = {
             groupName="complete-integration"
             cardIndex={1}
             width="13rem"
-            height="23rem"
+            height="21rem"
             expandedWidth="30rem"
             statusDropdown={{
               enabled: true,
@@ -2076,7 +2076,7 @@ export const StatusDropdownWithExpansion: Story = {
             groupName="complete-integration"
             cardIndex={2}
             width="13rem"
-            height="23rem"
+            height="21rem"
             expandedWidth="30rem"
             statusDropdown={{
               enabled: true,
@@ -2187,7 +2187,7 @@ export const StatusDropdownClickTest: Story = {
               groupName="click-test"
               cardIndex={0}
               width="13rem"
-              height="23rem"
+              height="21rem"
               expandedWidth="30rem"
               statusDropdown={{
                 enabled: true,
@@ -2215,7 +2215,7 @@ export const StatusDropdownClickTest: Story = {
               groupName="click-test"
               cardIndex={1}
               width="13rem"
-              height="23rem"
+              height="21rem"
               expandedWidth="30rem"
               statusDropdown={{
                 enabled: true,

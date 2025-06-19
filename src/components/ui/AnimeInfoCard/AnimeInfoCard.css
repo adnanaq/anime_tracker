@@ -90,7 +90,7 @@
 .scrolling-synopsis {
   position: relative;
   overflow: hidden;
-  max-height: 5rem; /* Default for standard cards (23rem height) */
+  max-height: 5rem; /* Default for standard cards (21rem height) */
   min-height: 3rem; /* Minimum readable height */
   margin-bottom: 0;
   flex: 1; /* Take available space in flex containers */

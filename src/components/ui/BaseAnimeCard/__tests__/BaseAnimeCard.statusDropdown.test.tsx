@@ -25,7 +25,7 @@ vi.mock('../../StatusBadgeDropdown', () => ({
 // Mock other dependencies
 vi.mock('../../../hooks/useDimensions', () => ({
   useDimensions: () => ({
-    cardStyles: { width: '13rem', height: '23rem' }
+    cardStyles: { width: '13rem', height: '21rem' }
   })
 }));
 

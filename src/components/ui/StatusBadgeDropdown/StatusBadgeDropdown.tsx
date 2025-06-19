@@ -1,8 +1,12 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Badge } from '../Badge';
-import { AnimeSource } from '../../../types/anime';
-import { getStatusOptions, getStatusLabel, getStatusColor } from '../../../utils/animeStatus';
-import './StatusBadgeDropdown.css';
+import React, { useState, useRef, useEffect } from "react";
+import { Badge } from "../Badge";
+import { AnimeSource } from "../../../types/anime";
+import {
+  getStatusOptions,
+  getStatusLabel,
+  getStatusColor,
+} from "../../../utils/animeStatus";
+import "./StatusBadgeDropdown.css";
 
 export interface StatusBadgeDropdownProps {
   currentStatus: string | null;
@@ -12,34 +16,36 @@ export interface StatusBadgeDropdownProps {
   isAuthenticated?: boolean;
   isLoading?: boolean;
   disabled?: boolean;
-  size?: 'xs' | 'sm' | 'md';
-  shape?: 'pill' | 'rounded' | 'square';
-  position?: 'auto' | 'top' | 'bottom';
+  size?: "xs" | "sm" | "md";
+  shape?: "pill" | "rounded" | "square";
+  position?: "auto" | "top" | "bottom";
   className?: string;
 }
 
 // Map status to badge variant
-const getStatusVariant = (status: string | null): 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'neutral' => {
-  if (!status) return 'neutral';
-  
+const getStatusVariant = (
+  status: string | null,
+): "primary" | "secondary" | "success" | "warning" | "danger" | "neutral" => {
+  if (!status) return "neutral";
+
   switch (status.toLowerCase()) {
-    case 'watching':
-    case 'current':
-      return 'success';
-    case 'completed':
-      return 'success';
-    case 'plan_to_watch':
-    case 'planning':
-      return 'primary';
-    case 'on_hold':
-    case 'paused':
-      return 'warning';
-    case 'dropped':
-      return 'danger';
-    case 'repeating':
-      return 'secondary';
+    case "watching":
+    case "current":
+      return "success";
+    case "completed":
+      return "success";
+    case "plan_to_watch":
+    case "planning":
+      return "primary";
+    case "on_hold":
+    case "paused":
+      return "warning";
+    case "dropped":
+      return "danger";
+    case "repeating":
+      return "secondary";
     default:
-      return 'neutral';
+      return "neutral";
   }
 };
 
@@ -51,10 +57,10 @@ export const StatusBadgeDropdown: React.FC<StatusBadgeDropdownProps> = ({
   isAuthenticated = true,
   isLoading = false,
   disabled = false,
-  size = 'sm',
-  shape = 'pill',
-  position = 'auto',
-  className = ''
+  size = "sm",
+  shape = "pill",
+  position = "auto",
+  className = "",
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -63,8 +69,9 @@ export const StatusBadgeDropdown: React.FC<StatusBadgeDropdownProps> = ({
 
   // Get status options from utility based on source
   const sourceStatusOptions = getStatusOptions(source);
-  const actualAvailableStatuses = availableStatuses || sourceStatusOptions.map(option => option.value);
-  
+  const actualAvailableStatuses =
+    availableStatuses || sourceStatusOptions.map((option) => option.value);
+
   // Get current status display info
   const currentStatusLabel = getStatusLabel(currentStatus);
   const currentStatusVariant = getStatusVariant(currentStatus);
@@ -73,7 +80,7 @@ export const StatusBadgeDropdown: React.FC<StatusBadgeDropdownProps> = ({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        dropdownRef.current && 
+        dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node) &&
         triggerRef.current &&
         !triggerRef.current.contains(event.target as Node)
@@ -83,8 +90,9 @@ export const StatusBadgeDropdown: React.FC<StatusBadgeDropdownProps> = ({
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [isOpen]);
 
@@ -93,24 +101,24 @@ export const StatusBadgeDropdown: React.FC<StatusBadgeDropdownProps> = ({
     const handleKeyDown = (event: KeyboardEvent) => {
       if (!isOpen) return;
 
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         setIsOpen(false);
         triggerRef.current?.focus();
       }
     };
 
     if (isOpen) {
-      document.addEventListener('keydown', handleKeyDown);
-      return () => document.removeEventListener('keydown', handleKeyDown);
+      document.addEventListener("keydown", handleKeyDown);
+      return () => document.removeEventListener("keydown", handleKeyDown);
     }
   }, [isOpen]);
 
   const handleTriggerClick = (event: React.MouseEvent) => {
     if (disabled || !isAuthenticated) return;
-    
+
     // Prevent event bubbling to parent elements (like card expansion)
     event.stopPropagation();
-    
+
     setIsOpen(!isOpen);
   };
 
@@ -125,13 +133,12 @@ export const StatusBadgeDropdown: React.FC<StatusBadgeDropdownProps> = ({
       await onStatusChange(newStatus);
       setIsOpen(false);
     } catch (error) {
-      console.error('Failed to update status:', error);
+      console.error("Failed to update status:", error);
       // Keep dropdown open on error for retry
     } finally {
       setIsUpdating(false);
     }
   };
-
 
   // Don't render if not authenticated
   if (!isAuthenticated) {
@@ -148,7 +155,9 @@ export const StatusBadgeDropdown: React.FC<StatusBadgeDropdownProps> = ({
   }
 
   return (
-    <div className={`relative inline-block status-badge-dropdown-wrapper ${className}`}>
+    <div
+      className={`relative inline-block status-badge-dropdown-wrapper ${className}`}
+    >
       {/* Trigger Badge */}
       <button
         ref={triggerRef}
@@ -165,8 +174,8 @@ export const StatusBadgeDropdown: React.FC<StatusBadgeDropdownProps> = ({
           shape={shape}
           interactive
           className={`cursor-pointer transition-all duration-200 hover:scale-105 ${
-            isOpen ? 'status-badge-active' : ''
-          } ${isLoading || isUpdating ? 'status-loading' : ''}`}
+            isOpen ? "status-badge-active" : ""
+          } ${isLoading || isUpdating ? "status-loading" : ""}`}
         >
           {currentStatusLabel}
         </Badge>
@@ -181,7 +190,7 @@ export const StatusBadgeDropdown: React.FC<StatusBadgeDropdownProps> = ({
           aria-label="Status options"
         >
           {actualAvailableStatuses
-            .filter(status => status !== currentStatus)
+            .filter((status) => status !== currentStatus)
             .map((status, index) => {
               const statusLabel = getStatusLabel(status);
               const statusVariant = getStatusVariant(status);
@@ -197,39 +206,35 @@ export const StatusBadgeDropdown: React.FC<StatusBadgeDropdownProps> = ({
                     role="option"
                     aria-selected={false}
                     style={{
-                      animationDelay: `${index * 0.05}s`
+                      animationDelay: `${index * 0.05}s`,
                     }}
                   >
                     <div className="flex items-center justify-center">
-                      <span className="text-xs font-medium">
-                        {statusLabel}
-                      </span>
+                      <span className="text-xs font-medium">{statusLabel}</span>
                     </div>
                   </button>
                 </div>
               );
             })}
-          
+
           {/* Remove from List option - only show when anime has a status */}
           {currentStatus && (
             <div className="px-1 py-1">
               <button
                 onClick={(event) => {
                   event.stopPropagation();
-                  handleStatusSelect('');
+                  handleStatusSelect("");
                 }}
                 disabled={isUpdating}
                 className={`w-full px-2 py-1 focus:outline-none disabled:opacity-50 status-option status-option-neutral rounded-full`}
                 role="option"
                 aria-selected={false}
                 style={{
-                  animationDelay: `${actualAvailableStatuses.filter(status => status !== currentStatus).length * 0.05}s`
+                  animationDelay: `${actualAvailableStatuses.filter((status) => status !== currentStatus).length * 0.05}s`,
                 }}
               >
                 <div className="flex items-center justify-center">
-                  <span className="text-xs font-medium">
-                    Remove from List
-                  </span>
+                  <span className="text-xs font-medium">Remove from List</span>
                 </div>
               </button>
             </div>
@@ -239,3 +244,4 @@ export const StatusBadgeDropdown: React.FC<StatusBadgeDropdownProps> = ({
     </div>
   );
 };
+

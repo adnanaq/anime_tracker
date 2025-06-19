@@ -7,6 +7,7 @@ import { Typography } from "../Typography";
 import { Badge } from "../Badge";
 import { StatusBadgeDropdown } from "../StatusBadgeDropdown";
 import { AnimeInfoCard } from "../AnimeInfoCard";
+import { AiringIndicator } from "../AiringIndicator";
 import "./BaseAnimeCard.css";
 
 export interface StatusDropdownConfig {
@@ -51,7 +52,7 @@ export const BaseAnimeCard: React.FC<BaseAnimeCardProps> = ({
   cardIndex = anime.id, // Default to anime ID if not provided
   expandable = true, // Default to expandable
   width = "13rem", // ~208px equivalent - responsive with rem
-  height = "23rem", // 368px equivalent - responsive with rem
+  height = "21rem", // 336px equivalent - responsive with rem
   expandedWidth = "30rem", // 480px equivalent - responsive with rem
   // Auto-cycling props
   autoLoop = false,
@@ -163,6 +164,20 @@ export const BaseAnimeCard: React.FC<BaseAnimeCardProps> = ({
             </div>
           )}
 
+          {/* Airing indicator - positioned to avoid conflicts with other badges */}
+          <AiringIndicator 
+            status={anime.status}
+            airingStatus={anime.airingStatus}
+            position={statusDropdown?.enabled ? "bottom-right" : "top-right"}
+            size="sm"
+            className="backdrop-blur-sm"
+            fullCardRipple={true}
+            onRippleRender={(rippleElement, position) => {
+              // Add position-specific class for ripple origin
+              rippleElement.classList.add(`ripple-${position}`);
+            }}
+          />
+
           {/* Bottom info */}
           <div className="absolute bottom-0 left-0 right-0 p-3">
             <Typography
@@ -180,7 +195,7 @@ export const BaseAnimeCard: React.FC<BaseAnimeCardProps> = ({
       </div>
       {/* Built-in expanded content or enhanced children */}
       {shouldShowBuiltInContent && expanded ? (
-        <div className="card-expanded-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-800 pointer-events-none rounded-xl p-4">
+        <div className="card-expanded-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-800 pointer-events-none rounded-xl p-2">
           <AnimeInfoCard
             anime={anime}
             statusDropdown={
@@ -248,4 +263,3 @@ export const BaseAnimeCard: React.FC<BaseAnimeCardProps> = ({
     </Card>
   );
 };
-

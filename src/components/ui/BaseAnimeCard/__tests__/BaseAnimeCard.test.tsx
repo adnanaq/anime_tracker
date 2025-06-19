@@ -23,7 +23,7 @@ describe('BaseAnimeCard', () => {
     const { container } = render(<BaseAnimeCard anime={mockAnime} />);
     const card = container.firstChild as HTMLElement;
     expect(card.style.width).toBe('13rem');
-    expect(card.style.height).toBe('23rem');
+    expect(card.style.height).toBe('21rem');
   });
 
   describe('Title and Metadata Display', () => {
@@ -141,7 +141,7 @@ describe('BaseAnimeCard', () => {
     const radio = container.querySelector('input[type="radio"]') as HTMLInputElement;
     const card = container.firstChild as HTMLElement;
     expect(radio.checked).toBe(true);
-    expect(card.style.height).toBe('23rem');
+    expect(card.style.height).toBe('21rem');
   });
 
   it('renders with rounded corners and overflow hidden', () => {
@@ -471,7 +471,7 @@ describe('BaseAnimeCard', () => {
       const card = container.firstChild as HTMLElement;
       
       expect(card.style.width).toBe('13rem');
-      expect(card.style.height).toBe('23rem');
+      expect(card.style.height).toBe('21rem');
       expect(card.style.getPropertyValue('--expanded-width')).toBe('30rem');
     });
 

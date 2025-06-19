@@ -19,7 +19,7 @@ const meta: Meta<typeof AnimeInfoCard> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-900" style={{ width: '30rem', height: '23rem' }}>
+      <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-900" style={{ width: '30rem', height: '21rem' }}>
         <Story />
       </div>
     ),
@@ -300,7 +300,7 @@ export const DarkBackground: Story = {
         className="p-4 rounded-lg" 
         style={{ 
           width: '30rem', 
-          height: '23rem',
+          height: '21rem',
           background: 'linear-gradient(to right, rgba(0,0,0,0.95), rgba(0,0,0,0.8), rgba(0,0,0,0.6))'
         }}
       >

@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 import { useState } from 'react';
 import { StatusBadgeDropdown } from '../components/ui/StatusBadgeDropdown';
+import { Badge } from '../components/ui/Badge';
 import type { AnimeStatus } from '../components/ui/StatusBadgeDropdown';
 
 const meta: Meta<typeof StatusBadgeDropdown> = {
@@ -853,6 +854,128 @@ export const InteractivePlayground: Story = {
     docs: {
       description: {
         story: 'Interactive playground to test all component props and states on both services.',
+      },
+    },
+  },
+};
+
+// Alignment test with regular badges
+export const AlignmentTest: Story = {
+  render: (args) => (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-gray-100">
+          🧪 Alignment Test: StatusBadgeDropdown vs Regular Badges
+        </h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+          Testing vertical alignment when StatusBadgeDropdown is placed alongside regular Badge components in a flex container.
+        </p>
+      </div>
+      
+      {/* Test: Same size badges in flex container */}
+      <div>
+        <h4 className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+          Size "sm" badges in flex container (as used in AnimeInfoCard):
+        </h4>
+        <div className="flex flex-wrap gap-2 mb-4 p-4 bg-gray-100 dark:bg-gray-800 rounded">
+          <StatusBadgeDropdown 
+            {...args} 
+            currentStatus="watching"
+            source="mal" 
+            size="sm"
+            shape="rounded"
+          />
+          <Badge variant="warning" size="sm" shape="rounded" icon="⭐">
+            9.0
+          </Badge>
+          <Badge variant="info" size="sm" shape="rounded" icon="👤">
+            8/10
+          </Badge>
+          <Badge variant="secondary" size="sm" shape="rounded" icon="📺">
+            TV
+          </Badge>
+        </div>
+      </div>
+
+      {/* Test: Different sizes for comparison */}
+      <div>
+        <h4 className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+          Size "xs" badges in flex container (as used in BaseAnimeCard overlays):
+        </h4>
+        <div className="flex flex-wrap gap-2 mb-4 p-4 bg-gray-100 dark:bg-gray-800 rounded">
+          <Badge variant="warning" size="xs" shape="pill" icon="⭐">
+            9.0
+          </Badge>
+          <StatusBadgeDropdown 
+            {...args} 
+            currentStatus="completed"
+            source="anilist" 
+            size="xs"
+            shape="pill"
+          />
+          <Badge variant="secondary" size="xs" shape="pill">
+            10/10
+          </Badge>
+          <Badge variant="danger" size="xs" shape="pill">
+            TV
+          </Badge>
+        </div>
+      </div>
+
+      {/* Visual reference lines for alignment */}
+      <div>
+        <h4 className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+          With alignment reference lines:
+        </h4>
+        <div className="relative p-4 bg-gray-100 dark:bg-gray-800 rounded">
+          {/* Baseline reference lines */}
+          <div className="absolute inset-0 flex items-center pointer-events-none">
+            <div className="w-full border-t border-red-300 opacity-50"></div>
+          </div>
+          <div className="absolute inset-0 flex items-start pt-2 pointer-events-none">
+            <div className="w-full border-t border-blue-300 opacity-50"></div>
+          </div>
+          <div className="absolute inset-0 flex items-end pb-2 pointer-events-none">
+            <div className="w-full border-t border-blue-300 opacity-50"></div>
+          </div>
+          
+          <div className="flex flex-wrap gap-2 relative z-10">
+            <Badge variant="warning" size="sm" shape="rounded" icon="⭐">
+              9.0
+            </Badge>
+            <StatusBadgeDropdown 
+              {...args} 
+              currentStatus="watching"
+              source="mal" 
+              size="sm"
+              shape="rounded"
+            />
+            <Badge variant="info" size="sm" shape="rounded" icon="👤">
+              8/10
+            </Badge>
+            <Badge variant="secondary" size="sm" shape="rounded" icon="📺">
+              TV
+            </Badge>
+          </div>
+        </div>
+        <p className="text-xs text-gray-500 mt-1">
+          Red line = center, Blue lines = top/bottom bounds. All badges should align to center line.
+        </p>
+      </div>
+    </div>
+  ),
+  args: {
+    currentStatus: 'watching',
+    source: 'mal',
+    onStatusChange: fn(),
+    isAuthenticated: true,
+    isLoading: false,
+    disabled: false,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Visual test for alignment issues between StatusBadgeDropdown and regular Badge components in flex containers.',
       },
     },
   },

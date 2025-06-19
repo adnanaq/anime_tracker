@@ -617,4 +617,369 @@ export const SeasonalAnime = () => {
 
 ---
 
+## 🔧 Phase 1.10 - Enhanced Anime Schedule Features (PLANNED)
+
+### 🎯 **Enhancement Objectives**
+**Status**: Planning Phase - Ready for Implementation  
+**Priority**: High (User Experience Enhancement)  
+**Complexity**: Medium-High (Multiple components, API integration)  
+**Timeline**: 3-4 development sessions  
+
+### 📊 **Current Schedule Component Analysis**
+- **API Integration**: AnimSchedule.net API with basic timetable functionality
+- **Features Used**: Weekly schedule, timezone support, basic filtering
+- **Underutilized Data**: Streaming links, episode status, multi-language titles, detailed metadata
+- **Enhancement Potential**: High - API provides rich data not currently displayed
+
+### 🚀 **Planned Enhancement Features**
+
+#### **Feature 1: Advanced Filtering System** 🔥 **HIGH PRIORITY**
+**Goal**: Comprehensive filtering options for better anime discovery  
+**Implementation**: Enhanced filter state with multiple criteria  
+
+**Filter Categories**:
+```typescript
+interface ScheduleFilters {
+  search: string;
+  airType: "all" | "raw" | "sub" | "dub";
+  airingStatus: "all" | "aired" | "airing" | "delayed" | "skipped" | "tba";
+  streamingPlatform: "all" | "crunchyroll" | "funimation" | "youtube" | "amazon" | "hidive";
+  episodeDelay: boolean; // Show only delayed episodes
+  donghua: boolean; // Chinese animation filter
+  hasStreaming: boolean; // Only anime with streaming links
+}
+```
+
+**UI Components**:
+- **Filter Dropdown Menu**: Organized filter categories with clear visual hierarchy
+- **Active Filter Tags**: Visual indicators of applied filters with quick removal
+- **Filter Result Counter**: Dynamic count of filtered results
+- **Clear All Filters**: Quick reset functionality
+
+#### **Feature 2: Streaming Platform Integration** 🔥 **HIGH PRIORITY**
+**Goal**: Direct access to legal streaming platforms  
+**Implementation**: Leverage existing streaming data from AnimSchedule.net API  
+
+**Platform Support**:
+- Crunchyroll, Funimation, YouTube, Amazon Prime, Apple TV, HIDIVE
+- Platform-specific styling and icons
+- Direct external links to episodes
+- Platform availability indicators
+
+**UI Components**:
+```typescript
+const StreamingLinks = ({ streams }: { streams?: AnimeScheduleEntry['streams'] }) => {
+  return (
+    <div className="flex flex-wrap gap-2 mt-2">
+      {Object.entries(streams || {}).map(([platform, url]) => (
+        <a
+          key={platform}
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs hover:bg-blue-200 transition-colors"
+        >
+          <PlatformIcon platform={platform} />
+          {platform.charAt(0).toUpperCase() + platform.slice(1)}
+        </a>
+      ))}
+    </div>
+  );
+};
+```
+
+#### **Feature 3: Enhanced Episode Status Display** 🔥 **HIGH PRIORITY**
+**Goal**: Rich visual indicators for episode airing status  
+**Implementation**: Comprehensive status badge system with animations  
+
+**Status Types**:
+- **Aired**: Green badge with checkmark icon
+- **Airing**: Blue badge with pulse animation
+- **Delayed**: Yellow badge with clock icon and delay duration
+- **Skipped**: Red badge with skip icon
+- **TBA**: Gray badge with question mark icon
+
+**Enhanced Information**:
+```typescript
+const EpisodeStatusDisplay = ({ entry }: { entry: AnimeScheduleEntry }) => {
+  return (
+    <div className="space-y-2">
+      <EpisodeStatusBadge status={entry.airingStatus} />
+      {entry.episodeDelay && (
+        <DelayBadge delay={entry.episodeDelay} />
+      )}
+      {entry.delayedFrom && entry.delayedUntil && (
+        <DelayPeriod from={entry.delayedFrom} until={entry.delayedUntil} />
+      )}
+    </div>
+  );
+};
+```
+
+#### **Feature 4: Real-time Airing Countdown** 🔥 **HIGH PRIORITY**
+**Goal**: Live countdown timers using modern Temporal API  
+**Implementation**: Real-time updates with timezone awareness  
+
+**Countdown Features**:
+- **Live Timer**: Updates every minute until episode airs
+- **Timezone Conversion**: Shows countdown in user's selected timezone
+- **Past Episode Indicator**: "Aired X hours ago" for recently aired episodes
+- **Smart Display**: Different formats for different time ranges
+
+**Implementation**:
+```typescript
+const AiringCountdown = ({ episodeDate, timezone }: { 
+  episodeDate: string; 
+  timezone: string; 
+}) => {
+  const [timeLeft, setTimeLeft] = useState<string>('');
+  
+  useEffect(() => {
+    const updateCountdown = () => {
+      const now = Temporal.Now.instant();
+      const airTime = Temporal.Instant.from(episodeDate);
+      const duration = airTime.since(now);
+      
+      if (duration.sign === -1) {
+        const hoursAgo = Math.floor(Math.abs(duration.total('hours')));
+        setTimeLeft(`Aired ${hoursAgo}h ago`);
+      } else {
+        const days = Math.floor(duration.total('days'));
+        const hours = Math.floor(duration.total('hours') % 24);
+        const minutes = Math.floor(duration.total('minutes') % 60);
+        
+        if (days > 0) {
+          setTimeLeft(`${days}d ${hours}h ${minutes}m`);
+        } else if (hours > 0) {
+          setTimeLeft(`${hours}h ${minutes}m`);
+        } else {
+          setTimeLeft(`${minutes}m`);
+        }
+      }
+    };
+    
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 60000);
+    return () => clearInterval(interval);
+  }, [episodeDate]);
+
+  return (
+    <span className="text-sm font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">
+      🕒 {timeLeft}
+    </span>
+  );
+};
+```
+
+#### **Feature 5: Multi-Language Title Support** 📋 **MEDIUM PRIORITY**
+**Goal**: Support for English, Romaji, and Native titles  
+**Implementation**: Title preference system with fallback logic  
+
+**Title Display Options**:
+- User preference for primary title language
+- Subtitle display for alternate titles
+- Hover tooltip showing all available titles
+- Smart fallback when preferred language unavailable
+
+#### **Feature 6: Watchlist Integration** 🔥 **HIGH PRIORITY**
+**Goal**: Cross-reference schedule with user's anime lists  
+**Implementation**: MAL/AniList integration for personalized experience  
+
+**Integration Features**:
+- **Watching Status Indicators**: Visual badges for anime in user's list
+- **Quick Status Updates**: Add to watchlist directly from schedule
+- **Notification System**: Alert when watched anime have new episodes
+- **Progress Tracking**: Show episode progress vs aired episodes
+- **Personalized Highlighting**: Emphasize anime user is currently watching
+
+**UI Implementation**:
+```typescript
+const WatchlistIntegration = ({ anime }: { anime: AnimeBase }) => {
+  const { userAnimeStatus, isAuthenticated } = useAnimeStore();
+  const userStatus = userAnimeStatus[anime.malId];
+  
+  return (
+    <div className="space-y-2">
+      {userStatus && (
+        <StatusBadge status={userStatus.status} score={userStatus.score} />
+      )}
+      {isAuthenticated && !userStatus && (
+        <AddToWatchlistButton anime={anime} />
+      )}
+      {userStatus?.status === 'watching' && (
+        <EpisodeProgress 
+          current={userStatus.episodesWatched} 
+          total={anime.episodes} 
+        />
+      )}
+    </div>
+  );
+};
+```
+
+### 🏗️ **Implementation Architecture**
+
+#### **Enhanced API Service Layer**
+```typescript
+// Extend existing animeScheduleService
+export const animeScheduleService = {
+  // ... existing methods
+
+  async getAnimeDetails(slug: string): Promise<AnimeScheduleEntry | null> {
+    // Get detailed anime information
+  },
+
+  async searchAnime(params: {
+    q?: string;
+    genres?: string[];
+    studios?: string[];
+    year?: number;
+    season?: string;
+    airType?: string;
+    streamingPlatform?: string;
+  }): Promise<AnimeScheduleEntry[]> {
+    // Advanced search functionality
+  },
+
+  async getStreamingAvailability(malId: number): Promise<StreamingInfo[]> {
+    // Cross-reference streaming availability
+  }
+};
+```
+
+#### **Enhanced Filter System**
+```typescript
+// New filtering utilities
+export const scheduleFilters = {
+  applyFilters(episodes: AnimeScheduleEntry[], filters: ScheduleFilters): AnimeScheduleEntry[] {
+    return episodes.filter(episode => {
+      // Apply all filter criteria
+      if (filters.airType !== 'all' && episode.airType !== filters.airType) return false;
+      if (filters.airingStatus !== 'all' && episode.airingStatus !== filters.airingStatus) return false;
+      if (filters.streamingPlatform !== 'all' && !episode.streams?.[filters.streamingPlatform]) return false;
+      if (filters.episodeDelay && !episode.episodeDelay) return false;
+      if (filters.donghua !== episode.donghua) return false;
+      if (filters.hasStreaming && !episode.streams) return false;
+      if (filters.search && !episode.title.toLowerCase().includes(filters.search.toLowerCase())) return false;
+      
+      return true;
+    });
+  },
+
+  getFilterStats(episodes: AnimeScheduleEntry[]): FilterStats {
+    // Generate filter statistics for UI
+  }
+};
+```
+
+#### **Component Structure**
+```
+src/components/AnimeSchedule/
+├── AnimeSchedule.tsx (main component)
+├── components/
+│   ├── AdvancedFilters/
+│   │   ├── AdvancedFilters.tsx
+│   │   ├── FilterDropdown.tsx
+│   │   ├── ActiveFilterTags.tsx
+│   │   └── FilterStats.tsx
+│   ├── EpisodeCard/
+│   │   ├── EpisodeCard.tsx
+│   │   ├── EpisodeStatusBadge.tsx
+│   │   ├── AiringCountdown.tsx
+│   │   ├── StreamingLinks.tsx
+│   │   └── WatchlistIntegration.tsx
+│   ├── TitleDisplay/
+│   │   ├── AnimeTitleDisplay.tsx
+│   │   └── TitleLanguageToggle.tsx
+│   └── WeekNavigation/
+│       ├── WeekNavigation.tsx
+│       └── TimezoneSelector.tsx
+├── hooks/
+│   ├── useScheduleFilters.ts
+│   ├── useWatchlistIntegration.ts
+│   └── useAiringCountdown.ts
+├── utils/
+│   ├── scheduleFilters.ts
+│   ├── streamingPlatforms.ts
+│   └── countdownCalculations.ts
+└── types/
+    ├── scheduleTypes.ts
+    └── filterTypes.ts
+```
+
+### 📋 **Implementation Phases**
+
+#### **Phase 1.10.1: Foundation & Advanced Filtering** (Session 1)
+- [ ] Create enhanced filter system with comprehensive options
+- [ ] Implement filter UI components with dropdown menus
+- [ ] Add active filter tags and result counting
+- [ ] Create filter utilities and state management
+- [ ] Write comprehensive tests for filtering logic
+
+#### **Phase 1.10.2: Episode Status & Streaming Integration** (Session 2)
+- [ ] Implement enhanced episode status display system
+- [ ] Create streaming platform link components
+- [ ] Add platform-specific styling and icons
+- [ ] Integrate status badges with animations
+- [ ] Add comprehensive component tests
+
+#### **Phase 1.10.3: Real-time Countdown & Multi-language** (Session 3)
+- [ ] Implement real-time countdown using Temporal API
+- [ ] Create multi-language title display system
+- [ ] Add timezone-aware countdown calculations
+- [ ] Implement countdown update intervals
+- [ ] Add comprehensive temporal logic tests
+
+#### **Phase 1.10.4: Watchlist Integration & Testing** (Session 4)
+- [ ] Integrate with existing MAL/AniList user data
+- [ ] Implement personalized anime highlighting
+- [ ] Add quick status update functionality
+- [ ] Create episode progress tracking
+- [ ] Comprehensive integration testing and TDD validation
+
+### 🎯 **Success Criteria**
+
+**Functional Requirements**:
+✅ All existing schedule functionality preserved  
+✅ Advanced filtering reduces cognitive load  
+✅ Streaming integration provides value to users  
+✅ Real-time countdowns enhance engagement  
+✅ Watchlist integration creates personalized experience  
+
+**Technical Requirements**:
+✅ TDD approach maintains code quality  
+✅ Modern Temporal API integration  
+✅ Comprehensive test coverage  
+✅ Performance optimization maintained  
+✅ TypeScript strict mode compliance  
+
+**User Experience Goals**:
+✅ Faster anime discovery through filtering  
+✅ Direct access to legal streaming  
+✅ Real-time engagement with countdown timers  
+✅ Personalized experience through watchlist integration  
+✅ Rich visual feedback through status indicators  
+
+### 🛡️ **Risk Mitigation**
+
+**Zero Breaking Changes**:
+- Incremental feature addition approach
+- Backward compatibility maintained
+- Existing API integration preserved
+- All current functionality retained
+
+**Performance Considerations**:
+- Efficient filtering algorithms
+- Memoized expensive calculations
+- Optimized re-render strategies
+- Smart countdown update intervals
+
+**Testing Strategy**:
+- Component isolation testing
+- Integration testing for watchlist features
+- Performance testing for filter operations
+- Accessibility testing for new UI elements
+
+---
+
 This planning document reflects the actual state of the project as of the comprehensive audit, showing significant achievements beyond original plans while maintaining clear direction for future development phases.

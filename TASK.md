@@ -1,16 +1,659 @@
 # 📋 AnimeTrackr - Sprint-Oriented Task Management
 
-## 🎯 Current Sprint: SeasonalAnime Component Refactoring
+## 🎯 Current Sprint: Enhanced Anime Schedule Features (Phase 1.10)
 
-**Sprint Goal**: Refactor SeasonalAnime component to improve maintainability, reduce code duplication, and enhance modularity without breaking any existing functionality.
+**Sprint Goal**: Implement advanced filtering, episode status display, real-time countdown, and watchlist integration for the anime schedule component to provide a comprehensive and personalized viewing experience.
 
-**Timeline**: 2-3 development sessions  
-**Priority**: Medium (Code Quality & Technical Debt)  
-**Risk Level**: Low (Zero breaking changes)  
+**Timeline**: 3-4 development sessions  
+**Priority**: High (User Experience Enhancement)  
+**Risk Level**: Low-Medium (Feature additions with TDD approach)  
+
+### 🚀 **Features to Implement**
+1. **Advanced Filtering System** - Comprehensive filtering with air type, status, platform
+2. **Enhanced Episode Status Display** - Rich status badges with animations  
+3. **Real-time Airing Countdown** - Live countdown timers using Temporal API
+4. **Watchlist Integration** - Cross-reference with user's MAL/AniList data
+
+### ✅ **Previous Sprint Completed: SeasonalAnime Component Refactoring**
+**Status**: ✅ **AVAILABLE FOR FUTURE IMPLEMENTATION**  
+**Note**: Deferred to focus on high-priority user experience enhancements  
 
 ---
 
-## 🚀 Phase 1.9.1: Foundation Setup & Custom Hook Development
+## 🚀 Phase 1.10.1: Foundation & Advanced Filtering System
+
+### **Task 1.1: Create Enhanced Filter Types & Interfaces**
+**Priority**: High | **Complexity**: Low | **Estimated Time**: 45 minutes
+
+- [ ] **Create** `src/components/AnimeSchedule/types/filterTypes.ts`
+- [ ] **Define** comprehensive filter interface:
+  ```typescript
+  interface ScheduleFilters {
+    search: string;
+    airType: "all" | "raw" | "sub" | "dub";
+    airingStatus: "all" | "aired" | "airing" | "delayed" | "skipped" | "tba";
+    streamingPlatform: "all" | "crunchyroll" | "funimation" | "youtube" | "amazon" | "hidive";
+    episodeDelay: boolean;
+    donghua: boolean;
+    hasStreaming: boolean;
+  }
+  
+  interface FilterStats {
+    total: number;
+    filtered: number;
+    byAirType: Record<string, number>;
+    byStatus: Record<string, number>;
+    byPlatform: Record<string, number>;
+  }
+  ```
+- [ ] **Export** all filter-related types
+- [ ] **Add** JSDoc documentation for all interfaces
+
+**Acceptance Criteria**:
+✅ Complete filter type definitions  
+✅ Proper TypeScript strict compliance  
+✅ Clear interface documentation  
+
+---
+
+### **Task 1.2: Implement Filter Utility Functions**
+**Priority**: High | **Complexity**: Medium | **Estimated Time**: 1.5 hours
+
+- [ ] **Create** `src/components/AnimeSchedule/utils/scheduleFilters.ts`
+- [ ] **Implement** core filtering logic:
+  ```typescript
+  export const scheduleFilters = {
+    applyFilters(episodes: AnimeScheduleEntry[], filters: ScheduleFilters): AnimeScheduleEntry[] {
+      return episodes.filter(episode => {
+        // Search filter
+        if (filters.search && !episode.title.toLowerCase().includes(filters.search.toLowerCase())) {
+          return false;
+        }
+        
+        // Air type filter
+        if (filters.airType !== 'all' && episode.airType !== filters.airType) {
+          return false;
+        }
+        
+        // Status filter
+        if (filters.airingStatus !== 'all' && episode.airingStatus !== filters.airingStatus) {
+          return false;
+        }
+        
+        // Streaming platform filter
+        if (filters.streamingPlatform !== 'all' && !episode.streams?.[filters.streamingPlatform]) {
+          return false;
+        }
+        
+        // Episode delay filter
+        if (filters.episodeDelay && !episode.episodeDelay) {
+          return false;
+        }
+        
+        // Donghua filter
+        if (filters.donghua !== !!episode.donghua) {
+          return false;
+        }
+        
+        // Has streaming filter
+        if (filters.hasStreaming && !episode.streams) {
+          return false;
+        }
+        
+        return true;
+      });
+    },
+
+    getFilterStats(episodes: AnimeScheduleEntry[]): FilterStats {
+      // Calculate comprehensive filter statistics
+    },
+
+    getDefaultFilters(): ScheduleFilters {
+      // Return sensible default filter state
+    }
+  };
+  ```
+- [ ] **Add** comprehensive unit tests for all filter functions
+- [ ] **Optimize** filter performance for large datasets
+
+**Acceptance Criteria**:
+✅ All filter types working correctly  
+✅ Performance optimized for 100+ episodes  
+✅ 100% test coverage for filter logic  
+✅ Filter statistics generation working  
+
+---
+
+### **Task 1.3: Create useScheduleFilters Custom Hook**
+**Priority**: High | **Complexity**: Medium | **Estimated Time**: 1 hour
+
+- [ ] **Create** `src/components/AnimeSchedule/hooks/useScheduleFilters.ts`
+- [ ] **Implement** filter state management:
+  ```typescript
+  interface UseScheduleFiltersReturn {
+    filters: ScheduleFilters;
+    filteredEpisodes: AnimeScheduleEntry[];
+    filterStats: FilterStats;
+    actions: {
+      updateFilter: <K extends keyof ScheduleFilters>(key: K, value: ScheduleFilters[K]) => void;
+      clearFilters: () => void;
+      resetFilter: <K extends keyof ScheduleFilters>(key: K) => void;
+    };
+  }
+
+  export const useScheduleFilters = (episodes: AnimeScheduleEntry[]): UseScheduleFiltersReturn => {
+    const [filters, setFilters] = useState<ScheduleFilters>(scheduleFilters.getDefaultFilters());
+    
+    const filteredEpisodes = useMemo(() => 
+      scheduleFilters.applyFilters(episodes, filters), 
+      [episodes, filters]
+    );
+    
+    const filterStats = useMemo(() => 
+      scheduleFilters.getFilterStats(episodes), 
+      [episodes]
+    );
+    
+    // Implementation
+  };
+  ```
+- [ ] **Add** memoization for expensive filter operations
+- [ ] **Implement** debounced search functionality
+- [ ] **Create** comprehensive hook tests
+
+**Acceptance Criteria**:
+✅ Filter state management working correctly  
+✅ Performance optimized with memoization  
+✅ Debounced search implementation  
+✅ Hook tests cover all edge cases  
+
+---
+
+### **Task 1.4: Create Advanced Filter UI Components**
+**Priority**: High | **Complexity**: Medium | **Estimated Time**: 2 hours
+
+- [ ] **Create** `src/components/AnimeSchedule/components/AdvancedFilters/`
+- [ ] **Implement** `AdvancedFilters.tsx` main component:
+  ```typescript
+  interface AdvancedFiltersProps {
+    filters: ScheduleFilters;
+    filterStats: FilterStats;
+    onFilterChange: <K extends keyof ScheduleFilters>(key: K, value: ScheduleFilters[K]) => void;
+    onClearFilters: () => void;
+  }
+  ```
+- [ ] **Create** `FilterDropdown.tsx` for organized filter categories
+- [ ] **Create** `ActiveFilterTags.tsx` for visual filter indicators
+- [ ] **Create** `FilterStats.tsx` for result counting
+- [ ] **Implement** responsive design and accessibility
+- [ ] **Add** smooth animations for filter interactions
+
+**UI Requirements**:
+- Dropdown menu with categorized filters
+- Search input with real-time filtering
+- Toggle switches for boolean filters
+- Clear visual feedback for active filters
+- Filter result counter
+- "Clear All" quick action
+
+**Acceptance Criteria**:
+✅ All filter UI components working  
+✅ Responsive design across devices  
+✅ Accessibility standards met  
+✅ Smooth animations implemented  
+✅ Component tests for all interactions  
+
+---
+
+## 🎨 Phase 1.10.2: Episode Status & Streaming Integration
+
+### **Task 2.1: Create Episode Status Badge System**
+**Priority**: High | **Complexity**: Medium | **Estimated Time**: 1.5 hours
+
+- [ ] **Create** `src/components/AnimeSchedule/components/EpisodeCard/EpisodeStatusBadge.tsx`
+- [ ] **Implement** status badge variants:
+  ```typescript
+  interface EpisodeStatusBadgeProps {
+    status: AnimeScheduleEntry['airingStatus'];
+    delay?: number;
+    className?: string;
+  }
+
+  const statusConfig = {
+    aired: { color: 'green', icon: '✓', label: 'Aired' },
+    airing: { color: 'blue', icon: '📺', label: 'Airing', pulse: true },
+    delayed: { color: 'yellow', icon: '⏰', label: 'Delayed' },
+    skipped: { color: 'red', icon: '⏭️', label: 'Skipped' },
+    tba: { color: 'gray', icon: '❓', label: 'TBA' }
+  };
+  ```
+- [ ] **Add** pulse animation for "airing" status
+- [ ] **Implement** delay duration display for delayed episodes
+- [ ] **Create** responsive badge sizing
+- [ ] **Add** comprehensive component tests
+
+**Visual Requirements**:
+- Color-coded badges with icons
+- Pulse animation for currently airing
+- Delay duration display
+- Consistent styling with design system
+- Tooltip support for additional information
+
+**Acceptance Criteria**:
+✅ All status types have proper badges  
+✅ Animations working smoothly  
+✅ Delay information displayed correctly  
+✅ Component tests cover all variants  
+
+---
+
+### **Task 2.2: Implement Streaming Platform Integration**
+**Priority**: High | **Complexity**: Medium | **Estimated Time**: 2 hours
+
+- [ ] **Create** `src/components/AnimeSchedule/utils/streamingPlatforms.ts`
+- [ ] **Define** platform configuration:
+  ```typescript
+  interface StreamingPlatform {
+    name: string;
+    icon: string;
+    color: string;
+    baseUrl: string;
+  }
+
+  export const streamingPlatforms: Record<string, StreamingPlatform> = {
+    crunchyroll: { name: 'Crunchyroll', icon: '🍙', color: 'orange', baseUrl: 'crunchyroll.com' },
+    funimation: { name: 'Funimation', icon: '⚡', color: 'purple', baseUrl: 'funimation.com' },
+    youtube: { name: 'YouTube', icon: '📺', color: 'red', baseUrl: 'youtube.com' },
+    amazon: { name: 'Prime Video', icon: '📦', color: 'blue', baseUrl: 'amazon.com' },
+    hidive: { name: 'HIDIVE', icon: '🎭', color: 'teal', baseUrl: 'hidive.com' }
+  };
+  ```
+- [ ] **Create** `StreamingLinks.tsx` component:
+  ```typescript
+  interface StreamingLinksProps {
+    streams?: AnimeScheduleEntry['streams'];
+    className?: string;
+  }
+  ```
+- [ ] **Implement** platform-specific styling and icons
+- [ ] **Add** external link handling with proper security
+- [ ] **Create** availability indicator when no streams exist
+
+**Features**:
+- Platform-specific icons and colors
+- External link with security attributes
+- Hover effects and tooltips
+- "No streaming available" state
+- Platform priority ordering
+
+**Acceptance Criteria**:
+✅ All supported platforms have proper styling  
+✅ External links work securely  
+✅ Empty state handled gracefully  
+✅ Component tests cover all scenarios  
+
+---
+
+### **Task 2.3: Enhanced Episode Card Layout**
+**Priority**: Medium | **Complexity**: Medium | **Estimated Time**: 1.5 hours
+
+- [ ] **Update** existing episode card layout in `AnimeSchedule.tsx`
+- [ ] **Integrate** `EpisodeStatusBadge` component
+- [ ] **Integrate** `StreamingLinks` component
+- [ ] **Improve** card visual hierarchy:
+  ```typescript
+  const EpisodeCard = ({ anime }: { anime: AnimeBase & ScheduledAnime }) => {
+    return (
+      <div className="at-bg-surface/80 rounded-lg overflow-hidden transition group hover:shadow-lg">
+        <div className="p-4 space-y-3">
+          {/* Title and basic info */}
+          <div className="space-y-2">
+            <Typography variant="h4" weight="semibold" className="line-clamp-2">
+              {anime.title}
+            </Typography>
+            
+            {/* Status and episode info */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <EpisodeStatusBadge 
+                status={anime.airingStatus} 
+                delay={anime.episodeDelay} 
+              />
+              {anime.episodeNumber && (
+                <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
+                  Episode {anime.episodeNumber}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Streaming platforms */}
+          <StreamingLinks streams={anime.streams} />
+
+          {/* Air time */}
+          {anime.episodeDate && (
+            <div className="text-sm text-muted flex items-center gap-1">
+              🕒 {formatAirTime(anime.episodeDate, selectedTimezone)}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+  ```
+- [ ] **Ensure** responsive layout across screen sizes
+- [ ] **Add** hover effects and interactions
+
+**Acceptance Criteria**:
+✅ Enhanced visual hierarchy  
+✅ Status badges integrated seamlessly  
+✅ Streaming links displayed properly  
+✅ Responsive design maintained  
+
+---
+
+## ⏰ Phase 1.10.3: Real-time Countdown & Enhanced Features
+
+### **Task 3.1: Implement Real-time Airing Countdown**
+**Priority**: High | **Complexity**: Medium | **Estimated Time**: 2 hours
+
+- [ ] **Create** `src/components/AnimeSchedule/hooks/useAiringCountdown.ts`
+- [ ] **Implement** countdown logic with Temporal API:
+  ```typescript
+  interface UseAiringCountdownReturn {
+    timeLeft: string;
+    isAired: boolean;
+    isAiringSoon: boolean; // Within 1 hour
+    formattedAirTime: string;
+  }
+
+  export const useAiringCountdown = (
+    episodeDate: string, 
+    timezone: string
+  ): UseAiringCountdownReturn => {
+    const [timeLeft, setTimeLeft] = useState<string>('');
+    
+    useEffect(() => {
+      const updateCountdown = () => {
+        const now = Temporal.Now.instant();
+        const airTime = Temporal.Instant.from(episodeDate);
+        const duration = airTime.since(now);
+        
+        if (duration.sign === -1) {
+          // Episode has aired
+          const hoursAgo = Math.floor(Math.abs(duration.total('hours')));
+          setTimeLeft(`Aired ${hoursAgo}h ago`);
+        } else {
+          // Episode hasn't aired yet
+          const days = Math.floor(duration.total('days'));
+          const hours = Math.floor(duration.total('hours') % 24);
+          const minutes = Math.floor(duration.total('minutes') % 60);
+          
+          if (days > 0) {
+            setTimeLeft(`${days}d ${hours}h`);
+          } else if (hours > 0) {
+            setTimeLeft(`${hours}h ${minutes}m`);
+          } else {
+            setTimeLeft(`${minutes}m`);
+          }
+        }
+      };
+      
+      updateCountdown();
+      const interval = setInterval(updateCountdown, 60000); // Update every minute
+      return () => clearInterval(interval);
+    }, [episodeDate]);
+    
+    // Implementation details
+  };
+  ```
+- [ ] **Create** `AiringCountdown.tsx` component with visual countdown
+- [ ] **Implement** timezone-aware calculations
+- [ ] **Add** visual indicators for airing soon (within 1 hour)
+- [ ] **Optimize** performance to prevent unnecessary re-renders
+
+**Features**:
+- Real-time countdown updates
+- Timezone-aware display
+- "Airing soon" highlighting
+- "Aired X ago" for past episodes
+- Smart formatting (days/hours/minutes)
+
+**Acceptance Criteria**:
+✅ Countdown updates in real-time  
+✅ Timezone conversions working correctly  
+✅ Performance optimized  
+✅ Visual indicators for imminent airings  
+✅ Comprehensive tests for time calculations  
+
+---
+
+### **Task 3.2: Multi-language Title Display**
+**Priority**: Medium | **Complexity**: Low | **Estimated Time**: 1 hour
+
+- [ ] **Create** `src/components/AnimeSchedule/components/TitleDisplay/AnimeTitleDisplay.tsx`
+- [ ] **Implement** title preference system:
+  ```typescript
+  interface AnimeTitleDisplayProps {
+    entry: AnimeScheduleEntry;
+    preferredLanguage: 'english' | 'romaji' | 'native';
+    showAlternates?: boolean;
+  }
+
+  const getDisplayTitle = (entry: AnimeScheduleEntry, preference: string) => {
+    switch (preference) {
+      case 'english': return entry.english || entry.romaji || entry.title;
+      case 'romaji': return entry.romaji || entry.english || entry.title;
+      case 'native': return entry.native || entry.romaji || entry.title;
+      default: return entry.title;
+    }
+  };
+  ```
+- [ ] **Add** title preference toggle in schedule header
+- [ ] **Implement** subtitle display for alternate titles
+- [ ] **Add** hover tooltip showing all available titles
+
+**Acceptance Criteria**:
+✅ Title language preference working  
+✅ Fallback logic for missing titles  
+✅ Alternate titles displayed as subtitles  
+✅ Tooltip shows all available titles  
+
+---
+
+## 🔗 Phase 1.10.4: Watchlist Integration & Testing
+
+### **Task 4.1: Implement Watchlist Integration**
+**Priority**: High | **Complexity**: High | **Estimated Time**: 2.5 hours
+
+- [ ] **Create** `src/components/AnimeSchedule/hooks/useWatchlistIntegration.ts`
+- [ ] **Implement** user anime status lookup:
+  ```typescript
+  interface UseWatchlistIntegrationReturn {
+    getUserStatus: (malId: number) => UserAnimeStatus | null;
+    isInWatchlist: (malId: number) => boolean;
+    addToWatchlist: (anime: AnimeBase) => Promise<void>;
+    updateStatus: (malId: number, status: string) => Promise<void>;
+    getWatchingAnime: () => AnimeBase[];
+  }
+
+  export const useWatchlistIntegration = (): UseWatchlistIntegrationReturn => {
+    const { userAnimeStatus, isAuthenticated, updateAnimeStatus, addAnimeToList } = useAnimeStore();
+    
+    const getUserStatus = useCallback((malId: number) => {
+      return userAnimeStatus[malId] || null;
+    }, [userAnimeStatus]);
+    
+    // Implementation
+  };
+  ```
+- [ ] **Create** `WatchlistIntegration.tsx` component:
+  ```typescript
+  const WatchlistIntegration = ({ anime }: { anime: AnimeBase }) => {
+    const { getUserStatus, isInWatchlist, addToWatchlist } = useWatchlistIntegration();
+    const userStatus = getUserStatus(anime.malId);
+    
+    return (
+      <div className="space-y-2">
+        {userStatus && (
+          <div className="flex items-center gap-2">
+            <StatusBadge status={userStatus.status} />
+            {userStatus.score && <ScoreBadge score={userStatus.score} />}
+          </div>
+        )}
+        
+        {userStatus?.status === 'watching' && (
+          <EpisodeProgress 
+            current={userStatus.episodesWatched} 
+            total={anime.episodes || 0}
+          />
+        )}
+        
+        {!userStatus && isAuthenticated && (
+          <AddToWatchlistButton anime={anime} onAdd={addToWatchlist} />
+        )}
+      </div>
+    );
+  };
+  ```
+- [ ] **Add** personalized highlighting for anime user is watching
+- [ ] **Implement** quick status update functionality
+- [ ] **Create** episode progress indicators
+
+**Features**:
+- Status badges for anime in user's list
+- Quick add to watchlist functionality
+- Episode progress tracking
+- Personalized highlighting
+- Score display integration
+
+**Acceptance Criteria**:
+✅ User anime status displayed correctly  
+✅ Add to watchlist functionality working  
+✅ Episode progress tracking accurate  
+✅ Personalized highlighting implemented  
+✅ Integration tests with store  
+
+---
+
+### **Task 4.2: Comprehensive Testing Suite**
+**Priority**: High | **Complexity**: Medium | **Estimated Time**: 3 hours
+
+- [ ] **Create** test files for all new components:
+  - `AdvancedFilters.test.tsx`
+  - `EpisodeStatusBadge.test.tsx`
+  - `StreamingLinks.test.tsx`
+  - `AiringCountdown.test.tsx`
+  - `WatchlistIntegration.test.tsx`
+  - `useScheduleFilters.test.ts`
+  - `useAiringCountdown.test.ts`
+  - `useWatchlistIntegration.test.ts`
+  - `scheduleFilters.test.ts`
+
+- [ ] **Test** all filter combinations and edge cases
+- [ ] **Test** countdown calculations with various timezones
+- [ ] **Test** watchlist integration with mock store data
+- [ ] **Test** streaming platform link generation
+- [ ] **Add** integration tests for complete user workflows
+- [ ] **Ensure** 100% test coverage for new code
+
+**Testing Categories**:
+- **Unit Tests**: Individual component and function testing
+- **Integration Tests**: Component interaction testing
+- **Hook Tests**: Custom hook state management testing
+- **Accessibility Tests**: Screen reader and keyboard navigation
+- **Performance Tests**: Filter operation efficiency
+
+**Acceptance Criteria**:
+✅ All components have comprehensive test coverage  
+✅ Hook tests cover all state transitions  
+✅ Integration tests verify complete workflows  
+✅ Performance tests validate filter efficiency  
+✅ Accessibility standards met  
+
+---
+
+### **Task 4.3: Performance Optimization & Final Integration**
+**Priority**: Medium | **Complexity**: Medium | **Estimated Time**: 1.5 hours
+
+- [ ] **Optimize** filter performance for large datasets
+- [ ] **Add** React.memo for stable components
+- [ ] **Implement** virtual scrolling if needed for large episode lists
+- [ ] **Optimize** countdown update intervals based on time remaining
+- [ ] **Add** loading states for watchlist data fetching
+- [ ] **Profile** component performance and optimize renders
+
+**Optimizations**:
+- Memoized filter calculations
+- Debounced search input
+- Optimized countdown update intervals
+- Virtual scrolling for large lists
+- Lazy loading for streaming platform data
+
+**Acceptance Criteria**:
+✅ Filter operations handle 200+ episodes smoothly  
+✅ Countdown updates efficiently without performance issues  
+✅ Component renders optimized  
+✅ Loading states provide good UX  
+
+---
+
+## 📋 Implementation Checklist
+
+### **Pre-Implementation Setup**
+- [ ] Create feature branch: `feature/enhanced-anime-schedule`
+- [ ] Set up testing environment for new components
+- [ ] Review existing AnimeSchedule component structure
+- [ ] Document current component behavior baseline
+
+### **Development Process Guidelines**
+- [ ] Follow TDD approach for all new features
+- [ ] Run tests after each component creation
+- [ ] Maintain git commit history for rollback capability
+- [ ] Code review each phase before proceeding to next
+
+### **Quality Gates**
+- [ ] All existing schedule functionality preserved
+- [ ] No visual or behavioral regressions
+- [ ] TypeScript strict mode compliance
+- [ ] Accessibility standards maintained
+- [ ] Performance benchmarks met or improved
+
+### **Documentation Updates**
+- [ ] Update component README with new features
+- [ ] Add Storybook stories for new components
+- [ ] Update API documentation for new hooks
+- [ ] Document new filter and integration features
+
+---
+
+## 🎯 Success Criteria Summary
+
+**Functional Requirements**:
+✅ Advanced filtering system working across all categories  
+✅ Episode status badges display correctly with animations  
+✅ Real-time countdown updates accurately  
+✅ Watchlist integration provides personalized experience  
+✅ Streaming platform links function properly  
+
+**Technical Requirements**:
+✅ TDD approach maintains high code quality  
+✅ Modern Temporal API integration working  
+✅ Comprehensive test coverage (90%+ for new code)  
+✅ Performance optimized for production use  
+✅ TypeScript strict mode compliance maintained  
+
+**User Experience Goals**:
+✅ Faster anime discovery through advanced filtering  
+✅ Real-time engagement with countdown timers  
+✅ Personalized experience through watchlist integration  
+✅ Direct access to streaming platforms  
+✅ Rich visual feedback through status indicators  
+
+---
+
+## 📊 Ready Backlog: Next Sprint Candidates
+
+### 🔥 **Deferred Sprint: SeasonalAnime Component Refactoring**
 
 ### **Task 1.1: Create Utility Module**
 **Priority**: High | **Complexity**: Low | **Estimated Time**: 30 minutes

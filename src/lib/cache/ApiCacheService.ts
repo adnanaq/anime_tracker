@@ -248,109 +248,19 @@ export class JikanCacheService extends BaseCacheService {
 }
 
 // === ANIME SCHEDULE CACHE SERVICE ===
-
-export class AnimeScheduleCacheService extends BaseCacheService {
-  protected serviceName = 'schedule'
-
-  // Adaptive TTL based on episode air time
-  private getAdaptiveTTL(episodeDate?: string): number {
-    if (!episodeDate) return 6 * 60 * 60 * 1000 // 6 hours default
-
-    const now = new Date()
-    const airDate = new Date(episodeDate)
-    const timeDiff = airDate.getTime() - now.getTime()
-
-    if (timeDiff > 24 * 60 * 60 * 1000) {
-      // Episode is >24h away: cache for 6 hours
-      return 6 * 60 * 60 * 1000
-    } else if (timeDiff > 60 * 60 * 1000) {
-      // Episode is 1-24h away: cache for 30 minutes
-      return 30 * 60 * 1000
-    } else if (timeDiff > 0) {
-      // Episode is <1h away: cache for 5 minutes
-      return 5 * 60 * 1000
-    } else {
-      // Episode is airing or recently aired: cache for 2 minutes
-      return 2 * 60 * 1000
-    }
-  }
-
-  // Weekly schedule caching with adaptive TTL
-  async getWeeklySchedule<T>(
-    timezone: string,
-    requestFn: () => Promise<T>
-  ): Promise<T> {
-    const cacheKey = this.createCacheKey('weekly', { timezone })
-    
-    return this.cachedRequest(cacheKey, requestFn, {
-      ttl: 30 * 60 * 1000, // 30 minutes default
-      persistent: false,
-      version: '1.0.0'
-    })
-  }
-
-  // Daily schedule caching
-  async getDaySchedule<T>(
-    date: string,
-    timezone: string,
-    requestFn: () => Promise<T>,
-    episodeDates?: string[]
-  ): Promise<T> {
-    const cacheKey = this.createCacheKey('day', { date, timezone })
-    
-    // Use adaptive TTL based on earliest episode
-    const earliestEpisode = episodeDates?.sort()[0]
-    const ttl = this.getAdaptiveTTL(earliestEpisode)
-    
-    return this.cachedRequest(cacheKey, requestFn, {
-      ttl,
-      persistent: false,
-      version: '1.0.0'
-    })
-  }
-
-  // Upcoming episodes caching (most time-sensitive)
-  async getUpcomingEpisodes<T>(
-    days: number,
-    timezone: string,
-    requestFn: () => Promise<T>
-  ): Promise<T> {
-    const cacheKey = this.createCacheKey('upcoming', { days, timezone })
-    
-    return this.cachedRequest(cacheKey, requestFn, {
-      ttl: 5 * 60 * 1000, // 5 minutes - this needs to be fresh
-      persistent: false,
-      version: '1.0.0'
-    })
-  }
-
-  // Invalidate schedule data when time-sensitive
-  async invalidateTimeData(): Promise<void> {
-    const now = new Date()
-    const hour = now.getHours()
-    
-    // During prime anime hours (evening JST), invalidate more aggressively
-    if (hour >= 18 && hour <= 23) { // 6 PM - 11 PM
-      await this.invalidatePattern('*')
-    } else {
-      await this.invalidatePattern('upcoming:*')
-    }
-  }
-}
+// Removed: AnimeScheduleCacheService - not used anywhere in the codebase
 
 // === SINGLETON INSTANCES ===
 
 export const malCache = new MALCacheService()
 export const jikanCache = new JikanCacheService()
-export const animeScheduleCache = new AnimeScheduleCacheService()
 
 // === UTILITY FUNCTIONS ===
 
 export const clearAllApiCaches = async (): Promise<void> => {
   await Promise.all([
     malCache.clearServiceCache(),
-    jikanCache.clearServiceCache(),
-    animeScheduleCache.clearServiceCache()
+    jikanCache.clearServiceCache()
   ])
 }
 

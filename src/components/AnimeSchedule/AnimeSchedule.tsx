@@ -4,28 +4,50 @@ import { animeScheduleService } from "../../services/animeSchedule";
 import { jikanService } from "../../services/jikan";
 import { AnimeBase } from "../../types/anime";
 import { Typography, Button, AnimeGridSkeleton } from "../ui";
+import { Temporal } from "@js-temporal/polyfill";
+
+const getCurrentWeek = (): { week: number; year: number } => {
+  const today = Temporal.Now.plainDateISO();
+
+  return {
+    week: today.weekOfYear ?? 1,
+    year: today.year,
+  };
+};
+
+const getWeeksInYear = (year: number): number => {
+  const date = Temporal.PlainDate.from(`${year}-12-28`);
+  return date.weekOfYear!;
+};
 
 interface ScheduledAnime extends AnimeBase {
   episodeNumber?: number;
-  lengthMin?: number;
   episodeDate?: string;
 }
 
-// Common timezones for the dropdown
 const COMMON_TIMEZONES = [
-  { value: "UTC", label: "UTC (Coordinated Universal Time)", emoji: "🌍" },
-  { value: "America/New_York", label: "Eastern Time (US)", emoji: "🇺🇸" },
-  { value: "America/Los_Angeles", label: "Pacific Time (US)", emoji: "🇺🇸" },
-  { value: "America/Chicago", label: "Central Time (US)", emoji: "🇺🇸" },
-  { value: "Europe/London", label: "British Time", emoji: "🇬🇧" },
-  { value: "Europe/Paris", label: "Central European Time", emoji: "🇪🇺" },
-  { value: "Europe/Berlin", label: "Central European Time", emoji: "🇩🇪" },
-  { value: "Asia/Tokyo", label: "Japan Standard Time", emoji: "🇯🇵" },
-  { value: "Asia/Seoul", label: "Korea Standard Time", emoji: "🇰🇷" },
-  { value: "Asia/Shanghai", label: "China Standard Time", emoji: "🇨🇳" },
-  { value: "Australia/Sydney", label: "Australian Eastern Time", emoji: "🇦🇺" },
-  { value: "Asia/Kolkata", label: "India Standard Time", emoji: "🇮🇳" },
+  "UTC",
+  "America/Toronto",
+  "America/New_York",
+  "America/Los_Angeles",
+  "America/Chicago",
+  "Europe/London",
+  "Europe/Paris",
+  "Europe/Berlin",
+  "Asia/Tokyo",
+  "Asia/Seoul",
+  "Asia/Shanghai",
+  "Australia/Sydney",
+  "Asia/Kolkata",
 ];
+
+const COMMON_TIMEZONE_OPTIONS = COMMON_TIMEZONES.map((tz) => {
+  const offset = Temporal.Now.zonedDateTimeISO(tz).offset;
+  return {
+    value: tz,
+    label: `${tz} (UTC${offset})`,
+  };
+});
 
 // Function to detect user's timezone
 const getUserTimezone = () => {
@@ -37,13 +59,13 @@ const getUserTimezone = () => {
 };
 
 const DAYS_OF_WEEK = [
-  { key: "monday", label: "Monday", emoji: "🌙" },
-  { key: "tuesday", label: "Tuesday", emoji: "🔥" },
-  { key: "wednesday", label: "Wednesday", emoji: "🌸" },
-  { key: "thursday", label: "Thursday", emoji: "⚡" },
-  { key: "friday", label: "Friday", emoji: "🌟" },
-  { key: "saturday", label: "Saturday", emoji: "🎯" },
-  { key: "sunday", label: "Sunday", emoji: "☀️" },
+  { key: "monday", label: "Monday" },
+  { key: "tuesday", label: "Tuesday" },
+  { key: "wednesday", label: "Wednesday" },
+  { key: "thursday", label: "Thursday" },
+  { key: "friday", label: "Friday" },
+  { key: "saturday", label: "Saturday" },
+  { key: "sunday", label: "Sunday" },
 ];
 
 interface ScheduleData {
@@ -54,29 +76,38 @@ export const AnimeSchedule = () => {
   const navigate = useNavigate();
   const [scheduleData, setScheduleData] = useState<ScheduleData>({});
   const [selectedDay, setSelectedDay] = useState<string>(() => {
-    // Default to current day
-    const today = new Date().getDay();
+    const today = Temporal.Now.plainDateISO().dayOfWeek; // 1 (Monday) to 7 (Sunday)
     const dayNames = [
-      "sunday",
       "monday",
       "tuesday",
       "wednesday",
       "thursday",
       "friday",
       "saturday",
+      "sunday",
     ];
-    return dayNames[today];
+    // Convert Temporal's 1–7 to 0–6 for array index
+    return dayNames[(today - 1) % 7];
   });
   const [selectedTimezone, setSelectedTimezone] = useState<string>(() => {
     // Try to detect user's timezone, fallback to UTC
     const userTz = getUserTimezone();
     // Check if the detected timezone is in our common list
-    const isCommonTz = COMMON_TIMEZONES.some((tz) => tz.value === userTz);
+    const isCommonTz = COMMON_TIMEZONE_OPTIONS.some(
+      (tz) => tz.value === userTz,
+    );
     return isCommonTz ? userTz : "UTC";
   });
+
+  const [currentWeek, setCurrentWeek] = useState<{
+    week: number;
+    year: number;
+  }>(() => getCurrentWeek());
+
   const [filters, setFilters] = useState({
     search: "", // Search by title
   });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -86,9 +117,38 @@ export const AnimeSchedule = () => {
       setError(null);
 
       try {
-        const schedule =
-          await animeScheduleService.getWeeklySchedule(selectedTimezone);
-        setScheduleData(schedule);
+        // Get episodes for the specific week
+        const allEpisodes = await animeScheduleService.getTimetables({
+          week: currentWeek.week,
+          year: currentWeek.year,
+          timezone: selectedTimezone,
+        });
+
+        // Group episodes by day of week
+        const weeklySchedule: ScheduleData = {
+          monday: [],
+          tuesday: [],
+          wednesday: [],
+          thursday: [],
+          friday: [],
+          saturday: [],
+          sunday: [],
+        };
+
+        allEpisodes.forEach((episode) => {
+          if (episode.episodeDate) {
+            const airDate = new Date(episode.episodeDate);
+            const dayName = airDate
+              .toLocaleDateString("en-US", { weekday: "long" })
+              .toLowerCase();
+
+            if (weeklySchedule[dayName]) {
+              weeklySchedule[dayName].push(episode);
+            }
+          }
+        });
+
+        setScheduleData(weeklySchedule);
       } catch (err) {
         setError("Failed to fetch anime schedule. Please try again.");
         console.error("Schedule fetch error:", err);
@@ -98,7 +158,7 @@ export const AnimeSchedule = () => {
     };
 
     fetchSchedule();
-  }, [selectedTimezone]);
+  }, [selectedTimezone, currentWeek]);
 
   const handleAnimeNavigation = async (anime: AnimeBase) => {
     // First try to navigate using MAL ID if available
@@ -121,6 +181,41 @@ export const AnimeSchedule = () => {
       console.error("Error searching for anime:", error);
     }
   };
+
+  // Week navigation functions
+  const navigateToWeek = (weekDelta: number) => {
+    const newWeek = {
+      week: currentWeek.week + weekDelta,
+      year: currentWeek.year,
+    };
+
+    // Handle year rollover
+    if (newWeek.week < 1) {
+      newWeek.year -= 1;
+      newWeek.week = getWeeksInYear(newWeek.year);
+    } else if (newWeek.week > getWeeksInYear(newWeek.year)) {
+      newWeek.year += 1;
+      newWeek.week = 1;
+    }
+
+    setCurrentWeek(newWeek);
+  };
+
+  const goToPreviousWeek = () => navigateToWeek(-1);
+  const goToNextWeek = () => navigateToWeek(1);
+  const goToCurrentWeek = () => setCurrentWeek(getCurrentWeek());
+
+  // Check if we can navigate (limit to reasonable range)
+  const actualCurrentWeek = getCurrentWeek();
+  const weeksDifferenceFromCurrent =
+    (currentWeek.year - actualCurrentWeek.year) * 52 +
+    (currentWeek.week - actualCurrentWeek.week);
+
+  const canGoToPrevious = weeksDifferenceFromCurrent > -4; // Max 4 weeks back
+  const canGoToNext = weeksDifferenceFromCurrent < 4; // Max 4 weeks forward
+  const isCurrentWeek =
+    currentWeek.week === actualCurrentWeek.week &&
+    currentWeek.year === actualCurrentWeek.year;
 
   // Filter and deduplicate episodes based on current filters
   const filterEpisodes = (episodes: AnimeBase[]) => {
@@ -160,7 +255,49 @@ export const AnimeSchedule = () => {
       {/* Header */}
       <div className="p-6 at-border-b">
         <div className="flex items-center justify-between mb-4">
-          <Typography variant="h2">📅 Weekly Anime Schedule</Typography>
+          <div className="flex items-center space-x-4">
+            <Typography variant="h2">📅 Weekly Anime Schedule</Typography>
+
+            {/* Week Navigation */}
+            <div className="flex items-center space-x-2">
+              <Button
+                onClick={goToPreviousWeek}
+                disabled={!canGoToPrevious || loading}
+                variant="ghost"
+                size="sm"
+                className="px-2"
+              >
+                ←
+              </Button>
+
+              <div className="flex items-center space-x-2">
+                <Typography variant="bodySmall" color="muted">
+                  Week {currentWeek.week}, {currentWeek.year}
+                </Typography>
+                {!isCurrentWeek && (
+                  <Button
+                    onClick={goToCurrentWeek}
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs px-2 py-1"
+                  >
+                    Current
+                  </Button>
+                )}
+              </div>
+
+              <Button
+                onClick={goToNextWeek}
+                disabled={!canGoToNext || loading}
+                variant="ghost"
+                size="sm"
+                className="px-2"
+              >
+                →
+              </Button>
+            </div>
+          </div>
+
           <div className="flex items-center space-x-4">
             {/* Timezone Selector */}
             <div className="flex items-center space-x-2">
@@ -170,9 +307,9 @@ export const AnimeSchedule = () => {
                 onChange={(e) => setSelectedTimezone(e.target.value)}
                 className="at-bg-surface at-border rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:at-border-focus at-transition-colors at-text-primary"
               >
-                {COMMON_TIMEZONES.map((tz) => (
+                {COMMON_TIMEZONE_OPTIONS.map((tz) => (
                   <option key={tz.value} value={tz.value}>
-                    {tz.emoji} {tz.label}
+                    {tz.label}
                   </option>
                 ))}
               </select>
@@ -208,7 +345,6 @@ export const AnimeSchedule = () => {
                   isToday ? "ring-2 ring-blue-400 ring-opacity-50" : ""
                 }
               >
-                <span className="mr-2">{day.emoji}</span>
                 {day.label}
                 {isToday && <span className="ml-2 text-xs">📍</span>}
               </Button>
@@ -273,7 +409,7 @@ export const AnimeSchedule = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {selectedDayData.slice(0, 12).map((anime) => {
+              {selectedDayData.slice().map((anime) => {
                 const ContentArea = ({
                   children,
                 }: {
@@ -342,19 +478,9 @@ export const AnimeSchedule = () => {
                 );
               })}
             </div>
-
-            {selectedDayData.length > 12 && (
-              <div className="text-center mt-6">
-                <Typography variant="bodySmall" color="muted">
-                  Showing 12 of {selectedDayData.length} anime. More available
-                  on AnimeSchedule.net.
-                </Typography>
-              </div>
-            )}
           </>
         ) : (
           <div className="text-center py-12">
-            <div className="text-6xl mb-4">{selectedDayInfo.emoji}</div>
             <Typography variant="h3" weight="semibold" className="mb-2">
               No Anime Scheduled
             </Typography>
@@ -367,4 +493,3 @@ export const AnimeSchedule = () => {
     </div>
   );
 };
-

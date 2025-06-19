@@ -1,2 +1,2 @@
 export { animeScheduleService } from './api'
-export type { AnimeScheduleEntry, AnimeScheduleResponse } from './api'
+export type { AnimeScheduleEntry } from './api'

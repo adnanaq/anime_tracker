@@ -10,10 +10,8 @@ export {
   BaseCacheService,
   MALCacheService,
   JikanCacheService,
-  AnimeScheduleCacheService,
   malCache,
   jikanCache,
-  animeScheduleCache,
   clearAllApiCaches,
   getCacheStats,
   getHitRate
@@ -35,7 +33,6 @@ import { cacheManager } from './CacheManager'
 import { 
   malCache, 
   jikanCache, 
-  animeScheduleCache, 
   clearAllApiCaches 
 } from './ApiCacheService'
 
@@ -170,7 +167,6 @@ const cacheSystem = {
   // Services
   get malCache() { return malCache },
   get jikanCache() { return jikanCache },
-  get animeScheduleCache() { return animeScheduleCache },
   
   // Request management - TODO: implement when managers are fully functional
   // get malRequestManager() { return malRequestManager },

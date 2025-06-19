@@ -2,8 +2,19 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
 import { BaseAnimeCard } from '../BaseAnimeCard';
 import { AnimeBase } from '../../../../types/anime';
+
+// Mock useNavigate hook
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
 // Mock the StatusBadgeDropdown component
 vi.mock('../../StatusBadgeDropdown', () => ({
@@ -63,19 +74,29 @@ describe('BaseAnimeCard - StatusDropdown Integration', () => {
   const mockOnStatusChange = vi.fn();
   const user = userEvent.setup();
 
+  // Helper function to render components with Router context
+  const renderWithRouter = (component: React.ReactElement) => {
+    return render(
+      <MemoryRouter>
+        {component}
+      </MemoryRouter>
+    );
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
+    mockNavigate.mockClear();
   });
 
   describe('statusDropdown prop handling', () => {
     it('should not render StatusBadgeDropdown when statusDropdown is not provided', () => {
-      render(<BaseAnimeCard anime={mockAnime} />);
+      renderWithRouter(<BaseAnimeCard anime={mockAnime} />);
 
       expect(screen.queryByTestId('status-badge-dropdown')).not.toBeInTheDocument();
     });
 
     it('should not render StatusBadgeDropdown when statusDropdown.enabled is false', () => {
-      render(
+      renderWithRouter(
         <BaseAnimeCard 
           anime={mockAnime}
           statusDropdown={{
@@ -89,7 +110,7 @@ describe('BaseAnimeCard - StatusDropdown Integration', () => {
     });
 
     it('should render StatusBadgeDropdown when statusDropdown.enabled is true', () => {
-      render(
+      renderWithRouter(
         <BaseAnimeCard 
           anime={mockAnime}
           statusDropdown={{
@@ -105,7 +126,7 @@ describe('BaseAnimeCard - StatusDropdown Integration', () => {
 
   describe('StatusBadgeDropdown props', () => {
     it('should pass correct props to StatusBadgeDropdown', () => {
-      render(
+      renderWithRouter(
         <BaseAnimeCard 
           anime={mockAnime}
           statusDropdown={{
@@ -123,7 +144,7 @@ describe('BaseAnimeCard - StatusDropdown Integration', () => {
     });
 
     it('should pass isAuthenticated from statusDropdown prop', () => {
-      render(
+      renderWithRouter(
         <BaseAnimeCard 
           anime={mockAnime}
           statusDropdown={{
@@ -139,7 +160,7 @@ describe('BaseAnimeCard - StatusDropdown Integration', () => {
     });
 
     it('should default isAuthenticated to true when not provided', () => {
-      render(
+      renderWithRouter(
         <BaseAnimeCard 
           anime={mockAnime}
           statusDropdown={{
@@ -156,7 +177,7 @@ describe('BaseAnimeCard - StatusDropdown Integration', () => {
 
   describe('positioning', () => {
     it('should apply default overlay positioning classes', () => {
-      render(
+      renderWithRouter(
         <BaseAnimeCard 
           anime={mockAnime}
           statusDropdown={{
@@ -173,7 +194,7 @@ describe('BaseAnimeCard - StatusDropdown Integration', () => {
     });
 
     it('should always position status badge in top-right (mirroring score badge)', () => {
-      render(
+      renderWithRouter(
         <BaseAnimeCard 
           anime={mockAnime}
           statusDropdown={{
@@ -191,7 +212,7 @@ describe('BaseAnimeCard - StatusDropdown Integration', () => {
     });
 
     it('should position consistently regardless of position prop', () => {
-      render(
+      renderWithRouter(
         <BaseAnimeCard 
           anime={mockAnime}
           statusDropdown={{
@@ -211,7 +232,7 @@ describe('BaseAnimeCard - StatusDropdown Integration', () => {
 
   describe('status change handling', () => {
     it('should call onStatusChange when status is changed', async () => {
-      render(
+      renderWithRouter(
         <BaseAnimeCard 
           anime={mockAnime}
           statusDropdown={{
@@ -230,7 +251,7 @@ describe('BaseAnimeCard - StatusDropdown Integration', () => {
     it('should handle async onStatusChange', async () => {
       const asyncStatusChange = vi.fn().mockResolvedValue(undefined);
 
-      render(
+      renderWithRouter(
         <BaseAnimeCard 
           anime={mockAnime}
           statusDropdown={{
@@ -255,7 +276,7 @@ describe('BaseAnimeCard - StatusDropdown Integration', () => {
         userStatus: 'CURRENT'
       };
 
-      render(
+      renderWithRouter(
         <BaseAnimeCard 
           anime={anilistAnime}
           statusDropdown={{
@@ -277,7 +298,7 @@ describe('BaseAnimeCard - StatusDropdown Integration', () => {
         userStatus: 'completed'
       };
 
-      render(
+      renderWithRouter(
         <BaseAnimeCard 
           anime={jikanAnime}
           statusDropdown={{
@@ -300,7 +321,7 @@ describe('BaseAnimeCard - StatusDropdown Integration', () => {
         userStatus: undefined
       };
 
-      render(
+      renderWithRouter(
         <BaseAnimeCard 
           anime={animeWithoutStatus}
           statusDropdown={{
@@ -317,7 +338,7 @@ describe('BaseAnimeCard - StatusDropdown Integration', () => {
 
   describe('combined with existing props', () => {
     it('should work with expanded state', () => {
-      render(
+      renderWithRouter(
         <BaseAnimeCard 
           anime={mockAnime}
           expanded={true}
@@ -337,7 +358,7 @@ describe('BaseAnimeCard - StatusDropdown Integration', () => {
     });
 
     it('should work with custom className', () => {
-      render(
+      renderWithRouter(
         <BaseAnimeCard 
           anime={mockAnime}
           className="custom-class"
@@ -354,7 +375,7 @@ describe('BaseAnimeCard - StatusDropdown Integration', () => {
     it('should work with onClick handler', () => {
       const mockOnClick = vi.fn();
 
-      render(
+      renderWithRouter(
         <BaseAnimeCard 
           anime={mockAnime}
           onClick={mockOnClick}

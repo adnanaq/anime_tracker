@@ -14,12 +14,15 @@ export interface AnimeInfoCardProps {
     onStatusChange?: (newStatus: string) => Promise<void> | void;
     isAuthenticated?: boolean;
   };
+  // Optional navigation handler for title clicks
+  onTitleClick?: () => void;
 }
 
 export const AnimeInfoCard: React.FC<AnimeInfoCardProps> = ({
   anime,
   className = "",
   statusDropdown,
+  onTitleClick,
 }) => {
   const truncateText = (text: string, maxLength: number): string => {
     if (text.length <= maxLength) return text;
@@ -35,7 +38,15 @@ export const AnimeInfoCard: React.FC<AnimeInfoCardProps> = ({
           <Typography
             variant="h4"
             color="primary"
-            className="mb-2 line-clamp-2 text-white"
+            className={`mb-2 line-clamp-2 text-white ${onTitleClick ? 'cursor-pointer hover:text-blue-200 transition-colors' : ''}`}
+            onClick={onTitleClick ? (e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              onTitleClick();
+            } : undefined}
+            role={onTitleClick ? "button" : undefined}
+            tabIndex={onTitleClick ? 0 : undefined}
+            data-anime-info-title="true"
           >
             {anime.title}
           </Typography>

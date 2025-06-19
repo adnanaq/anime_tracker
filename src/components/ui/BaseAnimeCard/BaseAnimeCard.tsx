@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { AnimeBase } from "../../../types/anime";
 import { useDimensions } from "../../../hooks/useDimensions";
 import { useAutoCycling } from "../../../hooks/useAutoCycling";
@@ -65,6 +66,9 @@ export const BaseAnimeCard: React.FC<BaseAnimeCardProps> = ({
   // Built-in expanded content
   expandedContent,
 }) => {
+  // Navigation hook
+  const navigate = useNavigate();
+  
   // State to track image loading errors
   const [imageError, setImageError] = React.useState(false);
 
@@ -105,6 +109,24 @@ export const BaseAnimeCard: React.FC<BaseAnimeCardProps> = ({
     handleInteraction();
     // Call the provided onClick callback
     onClick && onClick();
+  };
+
+  // Handle title click navigation
+  const handleTitleClick = (event: React.MouseEvent | React.KeyboardEvent) => {
+    event.stopPropagation(); // Prevent card expansion
+    event.preventDefault(); // Prevent any default behavior
+    
+    // Navigate to anime detail page
+    const source = anime.source || 'mal'; // Default to 'mal' if source is undefined
+    navigate(`/anime/${source}/${anime.id}`);
+  };
+
+  // Handle title keyboard navigation
+  const handleTitleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleTitleClick(event);
+    }
   };
 
   return (
@@ -182,11 +204,16 @@ export const BaseAnimeCard: React.FC<BaseAnimeCardProps> = ({
           <div className="absolute bottom-0 left-0 right-0 p-3">
             <Typography
               variant="h6"
-              className="mb-1 line-clamp-2 text-sm text-white"
+              className="mb-1 line-clamp-2 text-sm text-white cursor-pointer hover:text-blue-200 transition-colors"
+              onClick={handleTitleClick}
+              onKeyDown={handleTitleKeyDown}
+              role="button"
+              tabIndex={0}
+              data-anime-title="true"
             >
               {anime.title}
             </Typography>
-            <div className="flex items-center gap-2 text-xs text-white/90">
+            <div className="flex items-center gap-2 text-xs text-white/90 card-metadata">
               {anime.year && <span>📅 {anime.year}</span>}
               {anime.episodes && <span>📺 {anime.episodes} eps</span>}
             </div>
@@ -207,6 +234,10 @@ export const BaseAnimeCard: React.FC<BaseAnimeCardProps> = ({
                   }
                 : undefined
             }
+            onTitleClick={() => {
+              const source = anime.source || 'mal';
+              navigate(`/anime/${source}/${anime.id}`);
+            }}
           />
         </div>
       ) : shouldShowBuiltInContent ? null : statusDropdown?.enabled ? (

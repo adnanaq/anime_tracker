@@ -1,5 +1,6 @@
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
+import { MemoryRouter } from "react-router-dom";
 import { BaseAnimeCard } from "../components/ui/BaseAnimeCard";
 import { AnimeInfoCard } from "../components/ui/AnimeInfoCard";
 import { AnimeBase } from "../types/anime";
@@ -78,6 +79,13 @@ const animeWithBrokenImage: AnimeBase = {
 const meta: Meta<typeof BaseAnimeCard> = {
   title: "UI/BaseAnimeCard",
   component: BaseAnimeCard,
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
   parameters: {
     layout: "centered",
     docs: {
@@ -2122,156 +2130,78 @@ export const StatusDropdownWithExpansion: Story = {
   },
 };
 
-export const StatusDropdownClickTest: Story = {
+export const TitleNavigation: Story = {
   render: () => {
-    const [expansionClicks, setExpansionClicks] = React.useState<
-      Record<string, number>
-    >({});
-    const [statusChanges, setStatusChanges] = React.useState<
-      Record<string, string[]>
-    >({});
-
-    const handleCardClick = (animeId: string) => {
-      setExpansionClicks((prev) => ({
-        ...prev,
-        [animeId]: (prev[animeId] || 0) + 1,
-      }));
-      console.log(`🎯 Card clicked for expansion: ${animeId}`);
-    };
-
-    const handleStatusChange = (animeId: string, newStatus: string) => {
-      setStatusChanges((prev) => ({
-        ...prev,
-        [animeId]: [...(prev[animeId] || []), newStatus],
-      }));
-      console.log(`📝 Status changed for ${animeId}: ${newStatus}`);
-    };
-
     return (
       <div className="space-y-6">
         <div className="text-center">
           <h3 className="text-lg font-semibold mb-2">
-            🧪 Click Propagation Test
+            Title Navigation Demo
           </h3>
           <p className="text-sm text-gray-600 mb-4">
-            Test that status badge clicks don't trigger card expansion
+            Demonstrates title click navigation in both expanded and collapsed states
           </p>
-          <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg text-sm">
-            <p className="font-medium text-blue-900 dark:text-blue-200 mb-1">
-              Expected behavior:
-            </p>
-            <ul className="text-left text-blue-800 dark:text-blue-300 text-xs space-y-1">
-              <li>
-                • Clicking status badge should open dropdown WITHOUT expanding
-                card
-              </li>
-              <li>• Clicking card background should expand card</li>
-              <li>
-                • Dropdown should appear in same position regardless of card
-                state
-              </li>
-            </ul>
-          </div>
+          <p className="text-xs text-blue-600">
+            Click anime titles to see navigation behavior (check browser console for route logs)
+          </p>
         </div>
 
-        <div className="flex gap-4 justify-center overflow-x-auto p-4">
-          <div
-            className="relative cursor-pointer"
-            onClick={() => handleCardClick("test-1")}
-          >
+        <div className="flex gap-6 justify-center flex-wrap">
+          {/* Collapsed Card */}
+          <div className="flex flex-col items-center gap-2">
+            <h4 className="text-sm font-medium text-gray-700">Collapsed State</h4>
             <BaseAnimeCard
-              anime={{
-                ...attackOnTitan,
-                userStatus: "watching",
-              }}
-              groupName="click-test"
+              anime={mockAnime}
+              groupName="nav-demo"
               cardIndex={0}
               width="13rem"
               height="21rem"
               expandedWidth="30rem"
-              statusDropdown={{
-                enabled: true,
-                position: "overlay",
-                onStatusChange: (newStatus) =>
-                  handleStatusChange("test-1", newStatus),
-                isAuthenticated: true,
-              }}
-            >
-              <div className="card-expanded-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-800 pointer-events-none rounded-xl p-4">
-                <AnimeInfoCard anime={attackOnTitan} />
-              </div>
-            </BaseAnimeCard>
+            />
+            <p className="text-xs text-gray-500 text-center max-w-[13rem]">
+              Click the title at the bottom of the card
+            </p>
           </div>
 
-          <div
-            className="relative cursor-pointer"
-            onClick={() => handleCardClick("test-2")}
-          >
+          {/* Expanded Card */}
+          <div className="flex flex-col items-center gap-2">
+            <h4 className="text-sm font-medium text-gray-700">Expanded State</h4>
             <BaseAnimeCard
-              anime={{
-                ...spiritedAway,
-                userStatus: "COMPLETED",
-              }}
-              groupName="click-test"
+              anime={{...mockAnime, id: 2}}
+              groupName="nav-demo"
               cardIndex={1}
               width="13rem"
               height="21rem"
               expandedWidth="30rem"
+              expanded={true}
+              expandedContent={true}
               statusDropdown={{
                 enabled: true,
-                position: "overlay",
-                onStatusChange: (newStatus) =>
-                  handleStatusChange("test-2", newStatus),
+                onStatusChange: (newStatus) => {
+                  console.log(`Status changed to: ${newStatus}`);
+                },
                 isAuthenticated: true,
               }}
-            >
-              <div className="card-expanded-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-800 pointer-events-none rounded-xl p-4">
-                <AnimeInfoCard anime={spiritedAway} />
-              </div>
-            </BaseAnimeCard>
+            />
+            <p className="text-xs text-gray-500 text-center max-w-[30rem]">
+              Click the large title in the expanded content area
+            </p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-          <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
-            <h4 className="text-sm font-semibold mb-2 text-green-900 dark:text-green-200">
-              ✅ Card Expansion Clicks
-            </h4>
-            <div className="space-y-1 text-xs text-green-700 dark:text-green-300">
-              {Object.entries(expansionClicks).map(([animeId, count]) => (
-                <div key={animeId}>
-                  {animeId}: {count} clicks
-                </div>
-              ))}
-              {Object.keys(expansionClicks).length === 0 && (
-                <div className="text-green-600 dark:text-green-400">
-                  No card expansion clicks yet
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
-            <h4 className="text-sm font-semibold mb-2 text-purple-900 dark:text-purple-200">
-              📝 Status Changes
-            </h4>
-            <div className="space-y-1 text-xs text-purple-700 dark:text-purple-300">
-              {Object.entries(statusChanges).map(([animeId, changes]) => (
-                <div key={animeId}>
-                  {animeId}: {changes.join(" → ")}
-                </div>
-              ))}
-              {Object.keys(statusChanges).length === 0 && (
-                <div className="text-purple-600 dark:text-purple-400">
-                  No status changes yet
-                </div>
-              )}
-            </div>
+        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg max-w-2xl mx-auto">
+          <h4 className="text-sm font-semibold mb-2 text-blue-900 dark:text-blue-200">
+            💡 How It Works
+          </h4>
+          <div className="space-y-2 text-sm text-blue-700 dark:text-blue-300">
+            <div><strong>Collapsed:</strong> Click the small title at bottom → navigates to anime detail</div>
+            <div><strong>Expanded:</strong> Click the large title in expanded content → navigates to anime detail</div>
+            <div><strong>Interactive:</strong> Status dropdowns and other elements remain fully functional</div>
           </div>
         </div>
 
         <div className="text-center text-xs text-gray-500">
-          💡 Open browser console to see detailed click logs
+          🔍 Open browser console to see navigation route calls
         </div>
       </div>
     );
@@ -2280,8 +2210,9 @@ export const StatusDropdownClickTest: Story = {
     docs: {
       description: {
         story:
-          "Interactive test for verifying that status badge clicks properly prevent event propagation and do not trigger card expansion. Includes visual counters to track different types of interactions.",
+          "Demonstrates the title navigation functionality in both collapsed and expanded states. In collapsed state, users click the small title at the bottom. In expanded state, users click the prominent title in the AnimeInfoCard content area.",
       },
     },
   },
 };
+

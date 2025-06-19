@@ -135,4 +135,4 @@ src/
 - `vite.config.ts` - Build configuration
 - `vitest.config.ts` - Test configuration
 - `PLANNING.md` - Development roadmap and technical planning
-- `TASKS.md` - Current development tasks and implementation guides
+- `TASK.md` - Current development tasks and sprint planning

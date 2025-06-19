@@ -1,6 +1,18 @@
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
 import { BaseAnimeCard } from '../BaseAnimeCard';
 import { AnimeBase } from '../../../../types/anime';
+
+// Mock useNavigate hook
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
 const createMockAnime = (overrides: Partial<AnimeBase> = {}): AnimeBase => ({
   id: 1,
@@ -15,11 +27,23 @@ const createMockAnime = (overrides: Partial<AnimeBase> = {}): AnimeBase => ({
   ...overrides,
 });
 
+// Helper function to render components with Router context
+const renderWithRouter = (component: React.ReactElement) => {
+  return render(
+    <MemoryRouter>
+      {component}
+    </MemoryRouter>
+  );
+};
+
 describe('BaseAnimeCard - AiringIndicator Integration', () => {
+  beforeEach(() => {
+    mockNavigate.mockClear();
+  });
   describe('airing indicator visibility', () => {
     it('should show airing indicator when anime status is RELEASING', () => {
       const anime = createMockAnime({ status: 'RELEASING' });
-      render(<BaseAnimeCard anime={anime} />);
+      renderWithRouter(<BaseAnimeCard anime={anime} />);
       
       const indicator = screen.getByTestId('airing-indicator');
       expect(indicator).toBeInTheDocument();
@@ -27,7 +51,7 @@ describe('BaseAnimeCard - AiringIndicator Integration', () => {
 
     it('should show airing indicator when anime status is currently_airing', () => {
       const anime = createMockAnime({ status: 'currently_airing' });
-      render(<BaseAnimeCard anime={anime} />);
+      renderWithRouter(<BaseAnimeCard anime={anime} />);
       
       const indicator = screen.getByTestId('airing-indicator');
       expect(indicator).toBeInTheDocument();
@@ -38,7 +62,7 @@ describe('BaseAnimeCard - AiringIndicator Integration', () => {
         status: 'FINISHED', 
         airingStatus: 'airing' 
       });
-      render(<BaseAnimeCard anime={anime} />);
+      renderWithRouter(<BaseAnimeCard anime={anime} />);
       
       const indicator = screen.getByTestId('airing-indicator');
       expect(indicator).toBeInTheDocument();
@@ -46,7 +70,7 @@ describe('BaseAnimeCard - AiringIndicator Integration', () => {
 
     it('should not show airing indicator when anime is finished', () => {
       const anime = createMockAnime({ status: 'FINISHED' });
-      render(<BaseAnimeCard anime={anime} />);
+      renderWithRouter(<BaseAnimeCard anime={anime} />);
       
       const indicator = screen.queryByTestId('airing-indicator');
       expect(indicator).not.toBeInTheDocument();
@@ -54,7 +78,7 @@ describe('BaseAnimeCard - AiringIndicator Integration', () => {
 
     it('should not show airing indicator when no airing status is provided', () => {
       const anime = createMockAnime({ status: undefined, airingStatus: undefined });
-      render(<BaseAnimeCard anime={anime} />);
+      renderWithRouter(<BaseAnimeCard anime={anime} />);
       
       const indicator = screen.queryByTestId('airing-indicator');
       expect(indicator).not.toBeInTheDocument();
@@ -64,7 +88,7 @@ describe('BaseAnimeCard - AiringIndicator Integration', () => {
   describe('airing indicator positioning', () => {
     it('should position airing indicator at top-right when no status dropdown', () => {
       const anime = createMockAnime({ status: 'RELEASING' });
-      render(<BaseAnimeCard anime={anime} />);
+      renderWithRouter(<BaseAnimeCard anime={anime} />);
       
       const indicator = screen.getByTestId('airing-indicator');
       expect(indicator).toHaveClass('top-3', 'right-3');
@@ -81,7 +105,7 @@ describe('BaseAnimeCard - AiringIndicator Integration', () => {
         isAuthenticated: true,
       };
       
-      render(
+      renderWithRouter(
         <BaseAnimeCard 
           anime={anime} 
           statusDropdown={statusDropdown}
@@ -96,7 +120,7 @@ describe('BaseAnimeCard - AiringIndicator Integration', () => {
   describe('airing indicator styling', () => {
     it('should have small size and backdrop blur styling', () => {
       const anime = createMockAnime({ status: 'RELEASING' });
-      render(<BaseAnimeCard anime={anime} />);
+      renderWithRouter(<BaseAnimeCard anime={anime} />);
       
       const indicator = screen.getByTestId('airing-indicator');
       expect(indicator).toHaveClass('w-4', 'h-4', 'backdrop-blur-sm');
@@ -104,7 +128,7 @@ describe('BaseAnimeCard - AiringIndicator Integration', () => {
 
     it('should contain card ripple overlay when airing', () => {
       const anime = createMockAnime({ status: 'RELEASING' });
-      render(<BaseAnimeCard anime={anime} />);
+      renderWithRouter(<BaseAnimeCard anime={anime} />);
       
       const cardRipple = screen.getByTestId('card-ripple-overlay');
       expect(cardRipple).toBeInTheDocument();
@@ -113,7 +137,7 @@ describe('BaseAnimeCard - AiringIndicator Integration', () => {
 
     it('should have proper accessibility attributes', () => {
       const anime = createMockAnime({ status: 'RELEASING' });
-      render(<BaseAnimeCard anime={anime} />);
+      renderWithRouter(<BaseAnimeCard anime={anime} />);
       
       const indicator = screen.getByTestId('airing-indicator');
       expect(indicator).toHaveAttribute('aria-label', 'Currently airing');
@@ -127,7 +151,7 @@ describe('BaseAnimeCard - AiringIndicator Integration', () => {
         status: 'RELEASING',
         score: 8.5 
       });
-      render(<BaseAnimeCard anime={anime} />);
+      renderWithRouter(<BaseAnimeCard anime={anime} />);
       
       const scoreBadge = screen.getByText('8.5');
       const airingIndicator = screen.getByTestId('airing-indicator');
@@ -147,7 +171,7 @@ describe('BaseAnimeCard - AiringIndicator Integration', () => {
         isAuthenticated: true,
       };
       
-      render(
+      renderWithRouter(
         <BaseAnimeCard 
           anime={anime} 
           statusDropdown={statusDropdown}
@@ -170,7 +194,7 @@ describe('BaseAnimeCard - AiringIndicator Integration', () => {
         year: 2023,
         episodes: 12
       });
-      render(<BaseAnimeCard anime={anime} />);
+      renderWithRouter(<BaseAnimeCard anime={anime} />);
       
       const title = screen.getByText('Test Airing Anime');
       const year = screen.getByText('📅 2023');
@@ -187,7 +211,7 @@ describe('BaseAnimeCard - AiringIndicator Integration', () => {
   describe('edge cases', () => {
     it('should handle mixed case status values correctly', () => {
       const anime = createMockAnime({ status: 'releasing' });
-      render(<BaseAnimeCard anime={anime} />);
+      renderWithRouter(<BaseAnimeCard anime={anime} />);
       
       const indicator = screen.getByTestId('airing-indicator');
       expect(indicator).toBeInTheDocument();
@@ -198,7 +222,7 @@ describe('BaseAnimeCard - AiringIndicator Integration', () => {
         status: 'FINISHED',
         airingStatus: 'airing'
       });
-      render(<BaseAnimeCard anime={anime} />);
+      renderWithRouter(<BaseAnimeCard anime={anime} />);
       
       const indicator = screen.getByTestId('airing-indicator');
       expect(indicator).toBeInTheDocument();
@@ -209,7 +233,7 @@ describe('BaseAnimeCard - AiringIndicator Integration', () => {
         status: 'RELEASING',
         coverImage: undefined 
       });
-      render(<BaseAnimeCard anime={anime} />);
+      renderWithRouter(<BaseAnimeCard anime={anime} />);
       
       const indicator = screen.getByTestId('airing-indicator');
       const fallback = screen.getByText('No Image');

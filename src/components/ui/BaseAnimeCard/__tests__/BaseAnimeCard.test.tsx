@@ -1,7 +1,18 @@
 import { render, fireEvent } from '@testing-library/react';
 import { vi } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
 import { BaseAnimeCard } from '../BaseAnimeCard';
 import { AnimeBase } from '../../../../types/anime';
+
+// Mock useNavigate hook
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
 const mockAnime: AnimeBase = {
   id: 1,
@@ -15,12 +26,26 @@ const mockAnime: AnimeBase = {
   genres: ['Action', 'Drama'],
   description: 'Test description',
   season: 'SPRING',
-  userStatus: 'WATCHING'
+  userStatus: 'WATCHING',
+  source: 'mal'
+};
+
+// Helper function to render components with Router context
+const renderWithRouter = (component: React.ReactElement) => {
+  return render(
+    <MemoryRouter>
+      {component}
+    </MemoryRouter>
+  );
 };
 
 describe('BaseAnimeCard', () => {
+  beforeEach(() => {
+    mockNavigate.mockClear();
+  });
+
   it('renders with correct normal dimensions', () => {
-    const { container } = render(<BaseAnimeCard anime={mockAnime} />);
+    const { container } = renderWithRouter(<BaseAnimeCard anime={mockAnime} />);
     const card = container.firstChild as HTMLElement;
     expect(card.style.width).toBe('13rem');
     expect(card.style.height).toBe('21rem');
@@ -28,7 +53,7 @@ describe('BaseAnimeCard', () => {
 
   describe('Title and Metadata Display', () => {
     it('displays anime title in gradient overlay', () => {
-      const { getByText } = render(<BaseAnimeCard anime={mockAnime} />);
+      const { getByText } = renderWithRouter(<BaseAnimeCard anime={mockAnime} />);
       const title = getByText('Test Anime');
       expect(title).toBeInTheDocument();
       expect(title.tagName).toBe('H6');
@@ -36,14 +61,14 @@ describe('BaseAnimeCard', () => {
     });
 
     it('displays year with calendar emoji when year is provided', () => {
-      const { getByText } = render(<BaseAnimeCard anime={mockAnime} />);
+      const { getByText } = renderWithRouter(<BaseAnimeCard anime={mockAnime} />);
       const year = getByText('📅 2023');
       expect(year).toBeInTheDocument();
       expect(year.parentElement).toHaveClass('flex', 'items-center', 'gap-2', 'text-xs', 'text-white/90');
     });
 
     it('displays episodes with TV emoji when episodes is provided', () => {
-      const { getByText } = render(<BaseAnimeCard anime={mockAnime} />);
+      const { getByText } = renderWithRouter(<BaseAnimeCard anime={mockAnime} />);
       const episodes = getByText('📺 12 eps');
       expect(episodes).toBeInTheDocument();
       expect(episodes.parentElement).toHaveClass('flex', 'items-center', 'gap-2', 'text-xs', 'text-white/90');
@@ -51,24 +76,24 @@ describe('BaseAnimeCard', () => {
 
     it('does not display year when year is null', () => {
       const animeWithoutYear = { ...mockAnime, year: null };
-      const { queryByText } = render(<BaseAnimeCard anime={animeWithoutYear} />);
+      const { queryByText } = renderWithRouter(<BaseAnimeCard anime={animeWithoutYear} />);
       expect(queryByText(/📅/)).not.toBeInTheDocument();
     });
 
     it('does not display episodes when episodes is null', () => {
       const animeWithoutEpisodes = { ...mockAnime, episodes: null };
-      const { queryByText } = render(<BaseAnimeCard anime={animeWithoutEpisodes} />);
+      const { queryByText } = renderWithRouter(<BaseAnimeCard anime={animeWithoutEpisodes} />);
       expect(queryByText(/📺/)).not.toBeInTheDocument();
     });
 
     it('displays both year and episodes when both are provided', () => {
-      const { getByText } = render(<BaseAnimeCard anime={mockAnime} />);
+      const { getByText } = renderWithRouter(<BaseAnimeCard anime={mockAnime} />);
       expect(getByText('📅 2023')).toBeInTheDocument();
       expect(getByText('📺 12 eps')).toBeInTheDocument();
     });
 
     it('renders gradient overlay with correct classes', () => {
-      const { container } = render(<BaseAnimeCard anime={mockAnime} />);
+      const { container } = renderWithRouter(<BaseAnimeCard anime={mockAnime} />);
       const gradientOverlay = container.querySelector('.bg-gradient-to-t');
       expect(gradientOverlay).toBeInTheDocument();
       expect(gradientOverlay).toHaveClass(
@@ -78,7 +103,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('positions bottom info correctly', () => {
-      const { container } = render(<BaseAnimeCard anime={mockAnime} />);
+      const { container } = renderWithRouter(<BaseAnimeCard anime={mockAnime} />);
       const bottomInfo = container.querySelector('.absolute.bottom-0.left-0.right-0.p-3');
       expect(bottomInfo).toBeInTheDocument();
       expect(bottomInfo).toHaveClass('absolute', 'bottom-0', 'left-0', 'right-0', 'p-3');
@@ -87,7 +112,7 @@ describe('BaseAnimeCard', () => {
 
   describe('Image Display', () => {
     it('displays image when coverImage is provided', () => {
-      const { container } = render(<BaseAnimeCard anime={mockAnime} />);
+      const { container } = renderWithRouter(<BaseAnimeCard anime={mockAnime} />);
       const image = container.querySelector('img');
       expect(image).toBeInTheDocument();
       expect(image).toHaveAttribute('src', 'https://example.com/test.jpg');
@@ -98,7 +123,7 @@ describe('BaseAnimeCard', () => {
 
     it('displays fallback when coverImage is null', () => {
       const animeWithoutImage = { ...mockAnime, coverImage: null };
-      const { getByText, container } = render(<BaseAnimeCard anime={animeWithoutImage} />);
+      const { getByText, container } = renderWithRouter(<BaseAnimeCard anime={animeWithoutImage} />);
       const fallback = getByText('No Image');
       expect(fallback).toBeInTheDocument();
       expect(fallback.parentElement).toHaveClass(
@@ -109,7 +134,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('displays fallback when image fails to load', () => {
-      const { container, getByText } = render(<BaseAnimeCard anime={mockAnime} />);
+      const { container, getByText } = renderWithRouter(<BaseAnimeCard anime={mockAnime} />);
       const image = container.querySelector('img');
       
       // Simulate image load error
@@ -120,7 +145,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('resets image error state when anime changes', () => {
-      const { container, rerender } = render(<BaseAnimeCard anime={mockAnime} />);
+      const { container, rerender } = renderWithRouter(<BaseAnimeCard anime={mockAnime} />);
       const image = container.querySelector('img');
       
       // Simulate image load error
@@ -128,7 +153,11 @@ describe('BaseAnimeCard', () => {
       
       // Change anime (should reset error state)
       const newAnime = { ...mockAnime, id: 2, coverImage: 'https://example.com/new.jpg' };
-      rerender(<BaseAnimeCard anime={newAnime} />);
+      rerender(
+        <MemoryRouter>
+          <BaseAnimeCard anime={newAnime} />
+        </MemoryRouter>
+      );
       
       const newImage = container.querySelector('img');
       expect(newImage).toBeInTheDocument();
@@ -137,7 +166,7 @@ describe('BaseAnimeCard', () => {
   });
 
   it('starts with radio checked when expanded prop is true', () => {
-    const { container } = render(<BaseAnimeCard anime={mockAnime} expanded />);
+    const { container } = renderWithRouter(<BaseAnimeCard anime={mockAnime} expanded />);
     const radio = container.querySelector('input[type="radio"]') as HTMLInputElement;
     const card = container.firstChild as HTMLElement;
     expect(radio.checked).toBe(true);
@@ -145,27 +174,27 @@ describe('BaseAnimeCard', () => {
   });
 
   it('renders with rounded corners and overflow hidden', () => {
-    const { container } = render(<BaseAnimeCard anime={mockAnime} />);
+    const { container } = renderWithRouter(<BaseAnimeCard anime={mockAnime} />);
     expect(container.firstChild).toHaveClass('rounded-xl', 'overflow-hidden');
   });
 
   it('renders with background and border styles', () => {
-    const { container } = render(<BaseAnimeCard anime={mockAnime} />);
+    const { container } = renderWithRouter(<BaseAnimeCard anime={mockAnime} />);
     expect(container.firstChild).toHaveClass('bg-gray-200', 'border', 'border-gray-300');
   });
 
   it('has base-anime-card class for CSS transitions', () => {
-    const { container } = render(<BaseAnimeCard anime={mockAnime} />);
+    const { container } = renderWithRouter(<BaseAnimeCard anime={mockAnime} />);
     expect(container.firstChild).toHaveClass('base-anime-card');
   });
 
   it('applies custom className', () => {
-    const { container } = render(<BaseAnimeCard anime={mockAnime} className="custom-class" />);
+    const { container } = renderWithRouter(<BaseAnimeCard anime={mockAnime} className="custom-class" />);
     expect(container.firstChild).toHaveClass('custom-class');
   });
 
   it('renders children content', () => {
-    const { getByText } = render(
+    const { getByText } = renderWithRouter(
       <BaseAnimeCard anime={mockAnime}>
         <div>Custom content</div>
       </BaseAnimeCard>
@@ -174,21 +203,21 @@ describe('BaseAnimeCard', () => {
   });
 
   it('defaults to non-expanded state', () => {
-    const { container } = render(<BaseAnimeCard anime={mockAnime} />);
+    const { container } = renderWithRouter(<BaseAnimeCard anime={mockAnime} />);
     const card = container.firstChild as HTMLElement;
     expect(card.style.width).toBe('13rem');
     expect(card.style.getPropertyValue('--expanded-width')).toBe('30rem');
   });
 
   it('applies interactive styles', () => {
-    const { container } = render(<BaseAnimeCard anime={mockAnime} />);
+    const { container } = renderWithRouter(<BaseAnimeCard anime={mockAnime} />);
     expect(container.firstChild).toHaveClass('cursor-pointer');
     expect(container.firstChild).toHaveAttribute('role', 'button');
     expect(container.firstChild).toHaveAttribute('tabIndex', '0');
   });
 
   it('toggles radio button state when clicked', () => {
-    const { container } = render(<BaseAnimeCard anime={mockAnime} />);
+    const { container } = renderWithRouter(<BaseAnimeCard anime={mockAnime} />);
     const card = container.firstChild as HTMLElement;
     const radio = container.querySelector('input[type="radio"]') as HTMLInputElement;
     
@@ -207,7 +236,7 @@ describe('BaseAnimeCard', () => {
 
   it('calls onClick callback when provided', () => {
     const onClickMock = vi.fn();
-    const { container } = render(<BaseAnimeCard anime={mockAnime} onClick={onClickMock} />);
+    const { container } = renderWithRouter(<BaseAnimeCard anime={mockAnime} onClick={onClickMock} />);
     const card = container.firstChild as HTMLElement;
     
     fireEvent.click(card);
@@ -218,7 +247,7 @@ describe('BaseAnimeCard', () => {
   });
 
   it('toggles on Enter key press', () => {
-    const { container } = render(<BaseAnimeCard anime={mockAnime} />);
+    const { container } = renderWithRouter(<BaseAnimeCard anime={mockAnime} />);
     const card = container.firstChild as HTMLElement;
     const radio = container.querySelector('input[type="radio"]') as HTMLInputElement;
     
@@ -232,7 +261,7 @@ describe('BaseAnimeCard', () => {
   });
 
   it('toggles on Space key press', () => {
-    const { container } = render(<BaseAnimeCard anime={mockAnime} />);
+    const { container } = renderWithRouter(<BaseAnimeCard anime={mockAnime} />);
     const card = container.firstChild as HTMLElement;
     const radio = container.querySelector('input[type="radio"]') as HTMLInputElement;
     
@@ -246,7 +275,7 @@ describe('BaseAnimeCard', () => {
   });
 
   it('does not toggle on other key presses', () => {
-    const { container } = render(<BaseAnimeCard anime={mockAnime} />);
+    const { container } = renderWithRouter(<BaseAnimeCard anime={mockAnime} />);
     const card = container.firstChild as HTMLElement;
     const radio = container.querySelector('input[type="radio"]') as HTMLInputElement;
     
@@ -262,7 +291,7 @@ describe('BaseAnimeCard', () => {
 
   describe('Group behavior with radio buttons', () => {
     it('only one card can be expanded at a time in radio group', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <div>
           <BaseAnimeCard anime={mockAnime} groupName="test-group" cardIndex={0} />
           <BaseAnimeCard anime={{...mockAnime, id: 2}} groupName="test-group" cardIndex={1} />
@@ -313,7 +342,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('uses default group name when none provided', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <div>
           <BaseAnimeCard anime={mockAnime} />
           <BaseAnimeCard anime={{...mockAnime, id: 2}} />
@@ -339,7 +368,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('allows different groups to work independently', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <div>
           <BaseAnimeCard anime={mockAnime} groupName="group1" cardIndex={0} />
           <BaseAnimeCard anime={{...mockAnime, id: 2}} groupName="group2" cardIndex={0} />
@@ -362,7 +391,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('creates radio buttons with correct attributes', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <div>
           <BaseAnimeCard anime={mockAnime} groupName="my-group" cardIndex={5} />
           <BaseAnimeCard anime={{...mockAnime, id: 2}} groupName="my-group" cardIndex={10} />
@@ -384,12 +413,12 @@ describe('BaseAnimeCard', () => {
 
   describe('Non-expandable state', () => {
     it('applies non-expandable styling when expandable prop is false', () => {
-      const { container } = render(<BaseAnimeCard anime={mockAnime} expandable={false} />);
+      const { container } = renderWithRouter(<BaseAnimeCard anime={mockAnime} expandable={false} />);
       expect(container.firstChild).toHaveClass('non-expandable');
     });
 
     it('does not expand when non-expandable and clicked', () => {
-      const { container } = render(<BaseAnimeCard anime={mockAnime} expandable={false} />);
+      const { container } = renderWithRouter(<BaseAnimeCard anime={mockAnime} expandable={false} />);
       const card = container.firstChild as HTMLElement;
       const radio = container.querySelector('input[type="radio"]') as HTMLInputElement;
       
@@ -401,7 +430,7 @@ describe('BaseAnimeCard', () => {
 
     it('still calls onClick callback when non-expandable', () => {
       const onClickMock = vi.fn();
-      const { container } = render(<BaseAnimeCard anime={mockAnime} expandable={false} onClick={onClickMock} />);
+      const { container } = renderWithRouter(<BaseAnimeCard anime={mockAnime} expandable={false} onClick={onClickMock} />);
       const card = container.firstChild as HTMLElement;
       
       fireEvent.click(card);
@@ -409,7 +438,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('non-expandable cards stay at 13rem width even when radio is checked', () => {
-      const { container } = render(<BaseAnimeCard anime={mockAnime} expandable={false} expanded />);
+      const { container } = renderWithRouter(<BaseAnimeCard anime={mockAnime} expandable={false} expanded />);
       const card = container.firstChild as HTMLElement;
       const radio = container.querySelector('input[type="radio"]') as HTMLInputElement;
       
@@ -420,7 +449,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('works with keyboard interaction when non-expandable', () => {
-      const { container } = render(<BaseAnimeCard anime={mockAnime} expandable={false} />);
+      const { container } = renderWithRouter(<BaseAnimeCard anime={mockAnime} expandable={false} />);
       const card = container.firstChild as HTMLElement;
       const radio = container.querySelector('input[type="radio"]') as HTMLInputElement;
       
@@ -436,7 +465,7 @@ describe('BaseAnimeCard', () => {
 
   describe('Custom dimensions', () => {
     it('applies custom width and height', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <BaseAnimeCard anime={mockAnime} width={300} height={450} />
       );
       const card = container.firstChild as HTMLElement;
@@ -446,7 +475,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('applies custom expanded width', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <BaseAnimeCard anime={mockAnime} width={250} expandedWidth={600} />
       );
       const card = container.firstChild as HTMLElement;
@@ -456,7 +485,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('supports string dimensions with units', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <BaseAnimeCard anime={mockAnime} width="20rem" height="30rem" expandedWidth="40rem" />
       );
       const card = container.firstChild as HTMLElement;
@@ -467,7 +496,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('uses default dimensions when no custom dimensions provided', () => {
-      const { container } = render(<BaseAnimeCard anime={mockAnime} />);
+      const { container } = renderWithRouter(<BaseAnimeCard anime={mockAnime} />);
       const card = container.firstChild as HTMLElement;
       
       expect(card.style.width).toBe('13rem');
@@ -476,7 +505,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('applies fixed height regardless of width changes', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <BaseAnimeCard anime={mockAnime} width={300} height={400} expandedWidth={600} />
       );
       const card = container.firstChild as HTMLElement;
@@ -487,7 +516,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('works with percentage and viewport units', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <BaseAnimeCard anime={mockAnime} width="50%" height="50vh" expandedWidth="80%" />
       );
       const card = container.firstChild as HTMLElement;
@@ -500,7 +529,7 @@ describe('BaseAnimeCard', () => {
 
   describe('Horizontal expansion only', () => {
     it('height remains constant during expansion', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <BaseAnimeCard anime={mockAnime} width={200} height={300} expandedWidth={400} />
       );
       const card = container.firstChild as HTMLElement;
@@ -523,7 +552,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('height remains constant with different width values', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <BaseAnimeCard anime={mockAnime} width={200} height={250} expandedWidth={400} />
       );
       const card = container.firstChild as HTMLElement;
@@ -541,7 +570,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('non-expandable cards never change dimensions', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <BaseAnimeCard anime={mockAnime} width={250} height={350} expandedWidth={500} expandable={false} />
       );
       const card = container.firstChild as HTMLElement;
@@ -581,7 +610,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('does not auto-cycle when autoLoop is false', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <div>
           <BaseAnimeCard anime={mockAnime} groupName="test-group" cardIndex={0} autoLoop={false} />
           <BaseAnimeCard anime={{...mockAnime, id: 2}} groupName="test-group" cardIndex={1} autoLoop={false} />
@@ -604,7 +633,7 @@ describe('BaseAnimeCard', () => {
 
     it('auto-cycles through cards when autoLoop is enabled', () => {
       const onAutoLoopMock = vi.fn();
-      const { container } = render(
+      const { container } = renderWithRouter(
         <div>
           <BaseAnimeCard 
             anime={mockAnime} 
@@ -653,7 +682,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('pauses auto-cycling when user clicks a card', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <div>
           <BaseAnimeCard 
             anime={mockAnime} 
@@ -711,7 +740,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('does not pause when pauseOnInteraction is false', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <div>
           <BaseAnimeCard 
             anime={mockAnime} 
@@ -749,7 +778,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('does not auto-cycle when expandable is false', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <div>
           <BaseAnimeCard 
             anime={mockAnime} 
@@ -783,7 +812,7 @@ describe('BaseAnimeCard', () => {
 
   describe('Dimension validation', () => {
     it('prevents negative width values', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <BaseAnimeCard anime={mockAnime} width={-100} />
       );
       const card = container.firstChild as HTMLElement;
@@ -793,7 +822,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('prevents negative height values', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <BaseAnimeCard anime={mockAnime} height={-200} />
       );
       const card = container.firstChild as HTMLElement;
@@ -803,7 +832,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('prevents negative expandedWidth values', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <BaseAnimeCard anime={mockAnime} width={200} expandedWidth={-300} />
       );
       const card = container.firstChild as HTMLElement;
@@ -813,7 +842,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('ensures expandedWidth is greater than width', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <BaseAnimeCard anime={mockAnime} width={200} expandedWidth={200} />
       );
       const card = container.firstChild as HTMLElement;
@@ -823,7 +852,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('ensures expandedWidth is greater than width when expandedWidth is smaller', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <BaseAnimeCard anime={mockAnime} width={300} expandedWidth={250} />
       );
       const card = container.firstChild as HTMLElement;
@@ -833,7 +862,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('allows valid expandedWidth that is greater than width', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <BaseAnimeCard anime={mockAnime} width={200} expandedWidth={400} />
       );
       const card = container.firstChild as HTMLElement;
@@ -843,7 +872,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('handles zero values correctly', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <BaseAnimeCard anime={mockAnime} width={0} height={0} expandedWidth={0} />
       );
       const card = container.firstChild as HTMLElement;
@@ -856,7 +885,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('does not validate string dimension values', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <BaseAnimeCard 
           anime={mockAnime} 
           width="10rem" 
@@ -873,7 +902,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('handles mixed string and number dimensions', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <BaseAnimeCard 
           anime={mockAnime} 
           width={150} 
@@ -890,7 +919,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('validates expandedWidth only when both width and expandedWidth are numbers', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <BaseAnimeCard 
           anime={mockAnime} 
           width="10rem" 
@@ -905,7 +934,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('handles edge case with very small positive values', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <BaseAnimeCard anime={mockAnime} width={1} expandedWidth={1} />
       );
       const card = container.firstChild as HTMLElement;
@@ -916,7 +945,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('preserves original-width CSS variable correctly', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <BaseAnimeCard anime={mockAnime} width={250} expandedWidth={200} />
       );
       const card = container.firstChild as HTMLElement;
@@ -936,7 +965,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('should automatically render AnimeInfoCard in expanded state when expandedContent is enabled', () => {
-      const { container, getByText } = render(
+      const { container, getByText } = renderWithRouter(
         <BaseAnimeCard 
           anime={mockAnime} 
           expandedContent={true}
@@ -954,7 +983,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('should not render AnimeInfoCard when expandedContent is false', () => {
-      const { queryByText, container } = render(
+      const { queryByText, container } = renderWithRouter(
         <BaseAnimeCard 
           anime={mockAnime} 
           expandedContent={false}
@@ -968,7 +997,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('should not render AnimeInfoCard when card is not expanded', () => {
-      const { queryByText, container } = render(
+      const { queryByText, container } = renderWithRouter(
         <BaseAnimeCard 
           anime={mockAnime} 
           expandedContent={true}
@@ -982,7 +1011,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('should automatically pass statusDropdown props to built-in AnimeInfoCard', () => {
-      const { container } = render(
+      const { container } = renderWithRouter(
         <BaseAnimeCard 
           anime={mockAnime} 
           expandedContent={true}
@@ -1005,7 +1034,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('should default expandedContent to true when statusDropdown is enabled', () => {
-      const { getByText } = render(
+      const { getByText } = renderWithRouter(
         <BaseAnimeCard 
           anime={mockAnime} 
           expanded={true}
@@ -1024,7 +1053,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('should maintain backward compatibility with manually provided children', () => {
-      const { getByText, queryByText, container } = render(
+      const { getByText, queryByText, container } = renderWithRouter(
         <BaseAnimeCard 
           anime={mockAnime} 
           expandedContent={true}
@@ -1043,7 +1072,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('should prioritize custom children over built-in expandedContent', () => {
-      const { getByText, queryByText, container } = render(
+      const { getByText, queryByText, container } = renderWithRouter(
         <BaseAnimeCard 
           anime={mockAnime} 
           expandedContent={true}
@@ -1059,6 +1088,245 @@ describe('BaseAnimeCard', () => {
       // Should not find built-in AnimeInfoCard content
       const infoCard = container.querySelector('.anime-info-card');
       expect(infoCard).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Title Click Navigation', () => {
+    beforeEach(() => {
+      mockNavigate.mockClear();
+    });
+
+    it('should navigate to anime detail page when title is clicked in non-expandable state', () => {
+      const { getByText } = renderWithRouter(
+        <BaseAnimeCard anime={mockAnime} expandable={false} />
+      );
+      
+      const title = getByText('Test Anime');
+      expect(title).toBeInTheDocument();
+      
+      fireEvent.click(title);
+      
+      expect(mockNavigate).toHaveBeenCalledWith('/anime/mal/1');
+      expect(mockNavigate).toHaveBeenCalledTimes(1);
+    });
+
+    it('should navigate to anime detail page when title is clicked in expandable collapsed state', () => {
+      const { getByText } = renderWithRouter(
+        <BaseAnimeCard anime={mockAnime} expanded={false} />
+      );
+      
+      const title = getByText('Test Anime');
+      expect(title).toBeInTheDocument();
+      
+      fireEvent.click(title);
+      
+      expect(mockNavigate).toHaveBeenCalledWith('/anime/mal/1');
+      expect(mockNavigate).toHaveBeenCalledTimes(1);
+    });
+
+    it('should navigate to anime detail page when title is clicked in expanded state', () => {
+      const { getByText } = renderWithRouter(
+        <BaseAnimeCard anime={mockAnime} expanded={true} />
+      );
+      
+      const title = getByText('Test Anime');
+      expect(title).toBeInTheDocument();
+      
+      fireEvent.click(title);
+      
+      expect(mockNavigate).toHaveBeenCalledWith('/anime/mal/1');
+      expect(mockNavigate).toHaveBeenCalledTimes(1);
+    });
+
+    it('should stop event propagation when title is clicked to prevent card expansion', () => {
+      const mockOnClick = vi.fn();
+      const { getByText } = renderWithRouter(
+        <BaseAnimeCard anime={mockAnime} onClick={mockOnClick} />
+      );
+      
+      const title = getByText('Test Anime');
+      fireEvent.click(title);
+      
+      // Navigation should occur
+      expect(mockNavigate).toHaveBeenCalledWith('/anime/mal/1');
+      
+      // Card onClick should not be triggered due to stopPropagation
+      expect(mockOnClick).not.toHaveBeenCalled();
+    });
+
+    it('should navigate with correct route format for different sources', () => {
+      const anilistAnime = { ...mockAnime, source: 'anilist', id: 123, title: 'AniList Anime' };
+      const jikanAnime = { ...mockAnime, source: 'jikan', id: 456, title: 'Jikan Anime' };
+      
+      // Test AniList source
+      const { getByText: getByTextAnilist } = renderWithRouter(
+        <BaseAnimeCard anime={anilistAnime} />
+      );
+      
+      fireEvent.click(getByTextAnilist('AniList Anime'));
+      expect(mockNavigate).toHaveBeenCalledWith('/anime/anilist/123');
+      
+      mockNavigate.mockClear();
+      
+      // Test Jikan source
+      const { getByText: getByTextJikan } = renderWithRouter(
+        <BaseAnimeCard anime={jikanAnime} />
+      );
+      
+      fireEvent.click(getByTextJikan('Jikan Anime'));
+      expect(mockNavigate).toHaveBeenCalledWith('/anime/jikan/456');
+    });
+
+    it('should handle missing source gracefully with fallback', () => {
+      const animeWithoutSource = { ...mockAnime };
+      delete animeWithoutSource.source;
+      
+      const { getByText } = renderWithRouter(
+        <BaseAnimeCard anime={animeWithoutSource} />
+      );
+      
+      fireEvent.click(getByText('Test Anime'));
+      
+      // Should default to 'mal' when source is undefined
+      expect(mockNavigate).toHaveBeenCalledWith('/anime/mal/1');
+    });
+
+    it('should not interfere with existing card expansion behavior', () => {
+      const { container, getByText } = renderWithRouter(
+        <BaseAnimeCard anime={mockAnime} />
+      );
+      
+      const card = container.firstChild as HTMLElement;
+      const radio = container.querySelector('input[type="radio"]') as HTMLInputElement;
+      const title = getByText('Test Anime');
+      
+      // Initially not expanded
+      expect(radio.checked).toBe(false);
+      
+      // Click title - should navigate but not expand card
+      fireEvent.click(title);
+      expect(mockNavigate).toHaveBeenCalledWith('/anime/mal/1');
+      expect(radio.checked).toBe(false); // Card should not expand
+      
+      mockNavigate.mockClear();
+      
+      // Click card (not title) - should expand
+      fireEvent.click(card);
+      expect(radio.checked).toBe(true); // Card should expand
+      expect(mockNavigate).not.toHaveBeenCalled(); // Should not navigate
+    });
+
+    it('should work with keyboard navigation on title', () => {
+      const { getByText } = renderWithRouter(
+        <BaseAnimeCard anime={mockAnime} />
+      );
+      
+      const title = getByText('Test Anime');
+      
+      // Test Enter key
+      fireEvent.keyDown(title, { key: 'Enter' });
+      expect(mockNavigate).toHaveBeenCalledWith('/anime/mal/1');
+      
+      mockNavigate.mockClear();
+      
+      // Test Space key
+      fireEvent.keyDown(title, { key: ' ' });
+      expect(mockNavigate).toHaveBeenCalledWith('/anime/mal/1');
+    });
+
+    it('should not navigate on other key presses', () => {
+      const { getByText } = renderWithRouter(
+        <BaseAnimeCard anime={mockAnime} />
+      );
+      
+      const title = getByText('Test Anime');
+      
+      fireEvent.keyDown(title, { key: 'Tab' });
+      fireEvent.keyDown(title, { key: 'Escape' });
+      fireEvent.keyDown(title, { key: 'a' });
+      
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    it('should be accessible with proper ARIA attributes', () => {
+      const { getByText } = renderWithRouter(
+        <BaseAnimeCard anime={mockAnime} />
+      );
+      
+      const title = getByText('Test Anime');
+      
+      expect(title).toHaveAttribute('role', 'button');
+      expect(title).toHaveAttribute('tabIndex', '0');
+      expect(title).toHaveClass('cursor-pointer');
+    });
+
+    it('should work correctly when statusDropdown is enabled', () => {
+      const mockStatusChange = vi.fn();
+      const { getByText } = renderWithRouter(
+        <BaseAnimeCard 
+          anime={mockAnime} 
+          statusDropdown={{
+            enabled: true,
+            onStatusChange: mockStatusChange,
+            isAuthenticated: true
+          }}
+        />
+      );
+      
+      const title = getByText('Test Anime');
+      fireEvent.click(title);
+      
+      expect(mockNavigate).toHaveBeenCalledWith('/anime/mal/1');
+      expect(mockStatusChange).not.toHaveBeenCalled();
+    });
+
+    it('should navigate when title is clicked even in expanded card state', () => {
+      const { container, getByText } = renderWithRouter(
+        <BaseAnimeCard anime={mockAnime} expanded={true} />
+      );
+      
+      const card = container.firstChild as HTMLElement;
+      const radio = container.querySelector('input[type="radio"]') as HTMLInputElement;
+      const title = getByText('Test Anime');
+      
+      // Card should start expanded
+      expect(radio.checked).toBe(true);
+      
+      // Click title - should navigate and NOT toggle card state
+      fireEvent.click(title);
+      expect(mockNavigate).toHaveBeenCalledWith('/anime/mal/1');
+      expect(radio.checked).toBe(true); // Card should remain expanded
+      
+      mockNavigate.mockClear();
+      
+      // Click card area (not title) - should collapse
+      fireEvent.click(card);
+      expect(radio.checked).toBe(false); // Card should collapse
+      expect(mockNavigate).not.toHaveBeenCalled(); // Should not navigate
+    });
+
+
+    it('should not interfere with card expansion when clicking non-title areas', () => {
+      const { container } = renderWithRouter(
+        <BaseAnimeCard anime={mockAnime} />
+      );
+      
+      const card = container.firstChild as HTMLElement;
+      const radio = container.querySelector('input[type="radio"]') as HTMLInputElement;
+      const imageContainer = container.querySelector('.card-image-container') as HTMLElement;
+      
+      // Initially not expanded
+      expect(radio.checked).toBe(false);
+      
+      // Click image container (not title) - should expand card
+      fireEvent.click(imageContainer);
+      expect(radio.checked).toBe(true); // Card should expand
+      expect(mockNavigate).not.toHaveBeenCalled(); // Should not navigate
+      
+      // Click again to collapse
+      fireEvent.click(imageContainer);
+      expect(radio.checked).toBe(false); // Card should collapse
+      expect(mockNavigate).not.toHaveBeenCalled(); // Should not navigate
     });
   });
 });

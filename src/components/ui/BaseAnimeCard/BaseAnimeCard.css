@@ -76,6 +76,12 @@
 
 .base-anime-card:has(input[type="radio"]:checked) .card-expanded-overlay {
   opacity: 1;
+  /* Only allow pointer events on the content area, not the entire overlay */
+  pointer-events: none;
+}
+
+/* Enable pointer events only on the actual content inside the overlay */
+.base-anime-card:has(input[type="radio"]:checked) .card-expanded-overlay .anime-info-card {
   pointer-events: auto;
 }
 

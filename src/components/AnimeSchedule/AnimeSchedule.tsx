@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { animeScheduleService } from "../../services/animeSchedule";
 import { jikanService } from "../../services/jikan";
 import { AnimeBase } from "../../types/anime";
-import { Typography, Button, AnimeGridSkeleton } from "../ui";
+import { Typography, Button, AnimeGridSkeleton, Badge } from "../ui";
 import { Temporal } from "@js-temporal/polyfill";
+import { AiringCountdown } from "./AiringCountdown";
+import { useAnimeStore } from "../../store/animeStore";
 
 const getCurrentWeek = (): { week: number; year: number } => {
   const today = Temporal.Now.plainDateISO();
@@ -74,6 +76,7 @@ interface ScheduleData {
 
 export const AnimeSchedule = () => {
   const navigate = useNavigate();
+  const { updateAnimeStatus, currentSource, applyUserData } = useAnimeStore();
   const [scheduleData, setScheduleData] = useState<ScheduleData>({});
   const [selectedDay, setSelectedDay] = useState<string>(() => {
     const today = Temporal.Now.plainDateISO().dayOfWeek; // 1 (Monday) to 7 (Sunday)
@@ -124,6 +127,9 @@ export const AnimeSchedule = () => {
           timezone: selectedTimezone,
         });
 
+        // Apply user data (scores and status) to episodes
+        const episodesWithUserData = applyUserData(allEpisodes);
+
         // Group episodes by day of week
         const weeklySchedule: ScheduleData = {
           monday: [],
@@ -135,7 +141,7 @@ export const AnimeSchedule = () => {
           sunday: [],
         };
 
-        allEpisodes.forEach((episode) => {
+        episodesWithUserData.forEach((episode) => {
           if (episode.episodeDate) {
             const airDate = new Date(episode.episodeDate);
             const dayName = airDate
@@ -179,6 +185,27 @@ export const AnimeSchedule = () => {
       }
     } catch (error) {
       console.error("Error searching for anime:", error);
+    }
+  };
+
+  // Watchlist functionality
+  const handleWatchlistToggle = (anime: AnimeBase, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent navigation when clicking watchlist button
+    
+    if (!anime.hasValidId || !anime.malId) {
+      console.warn("Cannot add to watchlist: anime has no valid MAL ID");
+      return;
+    }
+
+    const currentStatus = anime.userStatus;
+    const isInWatchlist = currentStatus && currentStatus !== "";
+    
+    if (isInWatchlist) {
+      // Remove from watchlist
+      updateAnimeStatus(anime.malId, "mal", "");
+    } else {
+      // Add to Plan to Watch
+      updateAnimeStatus(anime.malId, "mal", "plan_to_watch");
     }
   };
 
@@ -444,11 +471,49 @@ export const AnimeSchedule = () => {
 
                           <div className="space-y-2 text-sm">
                             {(anime as ScheduledAnime).episodeNumber && (
-                              <div className="flex items-center space-x-2">
-                                <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded text-xs font-medium">
-                                  Episode{" "}
-                                  {(anime as ScheduledAnime).episodeNumber}
-                                </span>
+                              <div className="flex items-center space-x-2 flex-wrap">
+                                <Badge variant="info" size="xs" shape="rounded">
+                                  Episode {(anime as ScheduledAnime).episodeNumber}
+                                </Badge>
+                                
+                                {/* Airing Status Badge */}
+                                {(anime as any).airingStatus && (
+                                  <Badge 
+                                    variant={
+                                      (anime as any).airingStatus === "aired"
+                                        ? "success"
+                                        : (anime as any).airingStatus === "airing"
+                                        ? "danger"
+                                        : (anime as any).airingStatus === "delayed"
+                                        ? "warning"
+                                        : (anime as any).airingStatus === "skipped"
+                                        ? "neutral"
+                                        : "primary"
+                                    }
+                                    size="xs" 
+                                    shape="rounded"
+                                    animated={(anime as any).airingStatus === "airing"}
+                                    icon={(anime as any).airingStatus === "airing" ? <div className="w-2 h-2 bg-current rounded-full"></div> : undefined}
+                                  >
+                                    {(anime as any).airingStatus === "aired"
+                                      ? "Aired"
+                                      : (anime as any).airingStatus === "airing"
+                                      ? "Live"
+                                      : (anime as any).airingStatus === "delayed"
+                                      ? "Delayed"
+                                      : (anime as any).airingStatus === "skipped"
+                                      ? "Skipped"
+                                      : "TBA"}
+                                  </Badge>
+                                )}
+
+                                {/* Episode Delay Badge */}
+                                {(anime as any).episodeDelay && (anime as any).episodeDelay > 0 && (
+                                  <Badge variant="warning" size="xs" shape="rounded">
+                                    +{(anime as any).episodeDelay}min
+                                  </Badge>
+                                )}
+
                                 {(anime as ScheduledAnime).lengthMin && (
                                   <Typography variant="bodySmall" color="muted">
                                     {(anime as ScheduledAnime).lengthMin}min
@@ -458,21 +523,47 @@ export const AnimeSchedule = () => {
                             )}
 
                             {(anime as ScheduledAnime).episodeDate && (
-                              <Typography variant="bodySmall" color="muted">
-                                🕒{" "}
-                                {new Date(
-                                  (anime as ScheduledAnime).episodeDate!,
-                                ).toLocaleTimeString([], {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                  timeZone: selectedTimezone,
-                                  timeZoneName: "short",
-                                })}
-                              </Typography>
+                              <div className="space-y-1">
+                                <Typography variant="bodySmall" color="muted">
+                                  🕒{" "}
+                                  {new Date(
+                                    (anime as ScheduledAnime).episodeDate!,
+                                  ).toLocaleTimeString([], {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    timeZone: selectedTimezone,
+                                    timeZoneName: "short",
+                                  })}
+                                </Typography>
+                                <AiringCountdown 
+                                  episodeDate={(anime as ScheduledAnime).episodeDate!}
+                                  airingStatus={(anime as any).airingStatus}
+                                  timezone={selectedTimezone}
+                                />
+                              </div>
                             )}
                           </div>
                         </div>
                       </ContentArea>
+
+                      {/* Watchlist Button */}
+                      {anime.hasValidId && anime.malId && (
+                        <div className="flex-shrink-0">
+                          <Button
+                            onClick={(e) => handleWatchlistToggle(anime, e)}
+                            variant={anime.userStatus ? "warning" : "ghost"}
+                            size="sm"
+                            className="h-8 w-8 p-0 rounded-full"
+                            title={
+                              anime.userStatus 
+                                ? `Remove from list (${anime.userStatus})` 
+                                : "Add to Plan to Watch"
+                            }
+                          >
+                            {anime.userStatus ? "✓" : "+"}
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 );

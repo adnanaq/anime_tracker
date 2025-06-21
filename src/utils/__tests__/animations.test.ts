@@ -181,7 +181,7 @@ describe('animation utilities', () => {
       // Mock container with children
       const mockContainer = {
         children: [mockChild1, mockChild2]
-      } as HTMLElement
+      } as unknown as HTMLElement
 
       staggerChildren(mockContainer)
 

@@ -757,7 +757,7 @@ export const malService = {
         status: anime.status,
         genres: anime.genres?.map((g: JikanGenre) => g.name) || [],
         year: anime.year || (anime.aired?.from ? new Date(anime.aired.from).getFullYear() : undefined),
-        season: anime.season,
+        season: undefined, // Season not available in Jikan API for upcoming anime
         format: anime.type,
         source: 'mal' as const
       }))

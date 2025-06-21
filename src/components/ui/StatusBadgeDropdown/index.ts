@@ -1,2 +1,2 @@
 export { StatusBadgeDropdown } from './StatusBadgeDropdown';
-export type { StatusBadgeDropdownProps, AnimeStatus } from './StatusBadgeDropdown';
+export type { StatusBadgeDropdownProps } from './StatusBadgeDropdown';

@@ -1,6 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { BrowserRouter } from 'react-router-dom';
 import { Button } from '../../ui';
 
 // Mock the watchlist integration logic from AnimeSchedule component
@@ -52,7 +51,7 @@ const WatchlistButton = ({ anime }: { anime: MockAnime }) => {
 
   return (
     <Button
-      onClick={(e) => handleWatchlistToggle(anime, e)}
+      onClick={(e: React.MouseEvent) => handleWatchlistToggle(anime, e)}
       variant={anime.userStatus ? "warning" : "ghost"}
       size="sm"
       className="h-8 w-8 p-0 rounded-full"

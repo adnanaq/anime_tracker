@@ -45,8 +45,8 @@ const mockSearchResults = [
   }
 ]
 
-// Get mocked functions
-const mockedMalService = malService as {
+// Get mocked functions with proper typing
+const mockedMalService = malService as unknown as {
   getGenres: Mock
   searchAnime: Mock
 }

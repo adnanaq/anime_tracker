@@ -16,6 +16,7 @@ const mockAnime: AnimeBase = {
   status: "FINISHED",
   episodes: 25,
   genres: ["Action", "Drama", "Fantasy"],
+  source: "anilist",
   synopsis:
     "Humanity fights for survival against the giant humanoid Titans who have brought humanity to the brink of extinction.",
   season: "SPRING",
@@ -37,6 +38,7 @@ const animeWithImage: AnimeBase = {
   status: "FINISHED",
   episodes: 1,
   genres: ["Romance", "Drama", "Supernatural"],
+  source: "anilist",
   synopsis:
     "Two teenagers share a profound, magical connection upon discovering they are swapping bodies.",
   season: undefined,
@@ -56,6 +58,7 @@ const animeWithoutImage: AnimeBase = {
   status: "ONGOING",
   episodes: 12,
   genres: ["Action", "Adventure"],
+  source: "mal",
   synopsis: "Test anime for demonstrating fallback image behavior.",
   season: "WINTER",
   userStatus: "WATCHING",
@@ -71,6 +74,7 @@ const animeWithBrokenImage: AnimeBase = {
   status: "FINISHED",
   episodes: 3,
   genres: ["Comedy"],
+  source: "jikan",
   synopsis: "Test anime for demonstrating broken image handling.",
   season: undefined,
   userStatus: "PLAN_TO_WATCH",
@@ -1097,9 +1101,9 @@ export const AutoLoopingCards: Story = {
           <p className="text-sm text-gray-600 mb-4">
             {args.autoLoop
               ? `Cards automatically cycle every ${
-                  args.loopInterval / 1000
+                  (args.loopInterval || 5000) / 1000
                 } seconds. Click any card to pause for ${
-                  args.pauseDuration / 1000
+                  (args.pauseDuration || 3000) / 1000
                 } seconds.`
               : 'Auto-cycling is disabled. Toggle the "autoLoop" control to enable it.'}
           </p>
@@ -1221,7 +1225,7 @@ export const AutoLoopingCards: Story = {
           {args.autoLoop
             ? `Cards cycle automatically: 1 → 2 → 3 → 4 → 1... ${
                 args.pauseOnInteraction
-                  ? `Click any card to pause for ${args.pauseDuration / 1000}s.`
+                  ? `Click any card to pause for ${(args.pauseDuration || 3000) / 1000}s.`
                   : "Pause on interaction is disabled."
               }`
             : "Auto-cycling is disabled. Use the controls to configure and enable it."}

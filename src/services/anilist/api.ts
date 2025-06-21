@@ -80,7 +80,6 @@ export const normalizeAniListAnime = (anime: AniListAnime, includeRelated: boole
     id: anime.id,
     title: anime.title.english || anime.title.romaji || anime.title.native || '',
     synopsis: anime.description?.replace(/<[^>]*>/g, ''), // Remove HTML tags
-    imageUrl: anime.coverImage?.large || anime.coverImage?.medium || '',
     image: anime.coverImage?.large || anime.coverImage?.medium || '',
     coverImage: anime.coverImage?.large || anime.coverImage?.medium || '',
     score: anime.averageScore ? anime.averageScore / 10 : undefined,
@@ -94,7 +93,7 @@ export const normalizeAniListAnime = (anime: AniListAnime, includeRelated: boole
     format: anime.format,
     source: 'anilist',
     // Enhanced metadata
-    duration: anime.duration,
+    duration: anime.duration?.toString(),
     studios: anime.studios?.edges?.map(edge => edge.node.name) || [],
     popularity: anime.popularity,
   };
@@ -415,7 +414,7 @@ export const anilistService = {
         const collection = data.data.MediaListCollection as AniListMediaListCollection
         collection.lists.forEach((list: AniListMediaList) => {
           list.entries?.forEach((entry: AniListMediaListEntry) => {
-            const normalizedAnime = normalizeAniListAnime(entry.media)
+            const normalizedAnime = normalizeAniListAnime(entry.media as AniListAnime)
             // Add user data from the entry
             normalizedAnime.userScore = entry.score && entry.score > 0 ? entry.score : undefined
             normalizedAnime.userStatus = entry.status || undefined

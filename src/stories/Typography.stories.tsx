@@ -417,7 +417,7 @@ export const TextUtilities: Story = {
       
       <div>
         <Typography variant="overline" color="secondary">Line Clamped (2 lines)</Typography>
-        <Typography lineClamp="2">
+        <Typography lineClamp={2}>
           This is a longer paragraph of text that will be clamped to exactly two lines. 
           Any additional content beyond the second line will be hidden with an ellipsis. 
           This is useful for previews, cards, or any content that needs consistent height.
@@ -426,7 +426,7 @@ export const TextUtilities: Story = {
       
       <div>
         <Typography variant="overline" color="secondary">Line Clamped (3 lines)</Typography>
-        <Typography lineClamp="3">
+        <Typography lineClamp={3}>
           This paragraph demonstrates the three-line clamp utility. It will show exactly three lines 
           of text before truncating with an ellipsis. This provides more content than the two-line version 
           while still maintaining a predictable layout. Perfect for article previews, product descriptions, 
@@ -514,7 +514,7 @@ export const FormTextExamples: Story = {
   render: () => (
     <div className="max-w-md space-y-6">
       <div>
-        <Typography variant="label" as="label" htmlFor="anime-search">
+        <Typography variant="label" as="label">
           Search Anime
         </Typography>
         <Typography variant="bodySmall" color="secondary">
@@ -523,7 +523,7 @@ export const FormTextExamples: Story = {
       </div>
       
       <div>
-        <Typography variant="label" as="label" htmlFor="rating">
+        <Typography variant="label" as="label">
           Your Rating
         </Typography>
         <Typography variant="caption" color="tertiary">
@@ -599,19 +599,19 @@ export const AccessibilityExample: Story = {
         <ul className="space-y-2 mt-4">
           <li>
             <Typography variant="body" as="span">
-              <Typography variant="body" weight="semibold" as="strong">Semantic HTML:</Typography> 
+              <Typography variant="body" weight="semibold">Semantic HTML:</Typography> 
               {" "}Proper heading hierarchy and element usage
             </Typography>
           </li>
           <li>
             <Typography variant="body" as="span">
-              <Typography variant="body" weight="semibold" as="strong">Color Contrast:</Typography> 
+              <Typography variant="body" weight="semibold">Color Contrast:</Typography> 
               {" "}WCAG AA compliant color combinations
             </Typography>
           </li>
           <li>
             <Typography variant="body" as="span">
-              <Typography variant="body" weight="semibold" as="strong">Font Scaling:</Typography> 
+              <Typography variant="body" weight="semibold">Font Scaling:</Typography> 
               {" "}Respects user font size preferences
             </Typography>
           </li>

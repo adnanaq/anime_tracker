@@ -20,7 +20,7 @@ vi.mock('../../shared/BaseAuthService', () => ({
       this.tokenKey = tokenKey;
     }
     
-    protected preventDuplicateExchange = vi.fn((key: string, fn: () => Promise<any>) => fn());
+    protected preventDuplicateExchange = vi.fn((_key: string, fn: () => Promise<any>) => fn());
     protected saveToken = vi.fn();
     protected getToken = vi.fn();
     protected clearToken = vi.fn();
@@ -161,7 +161,7 @@ describe('AniListAuthService', () => {
 
 
     it('should prevent duplicate token exchanges', async () => {
-      const preventDuplicateSpy = vi.fn((key: string, fn: () => Promise<any>) => fn());
+      const preventDuplicateSpy = vi.fn((_key: string, fn: () => Promise<any>) => fn());
       // @ts-ignore
       authService.preventDuplicateExchange = preventDuplicateSpy;
       

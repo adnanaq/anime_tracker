@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
+import { vi } from 'vitest';
 import { SearchBar } from '../components/SearchBar';
 
 // Mock the anime store
@@ -85,10 +87,10 @@ export const Loading: Story = {
 export const WithMockResults: Story = {
   beforeEach: () => {
     mockAnimeStore.loading.search = false;
-    mockAnimeStore.searchResults = [
-      { id: 1, title: 'Attack on Titan', score: 8.9 },
-      { id: 2, title: 'Death Note', score: 8.7 },
-      { id: 3, title: 'Demon Slayer', score: 8.6 },
+    (mockAnimeStore as any).searchResults = [
+      { id: 1, title: 'Attack on Titan', score: 8.9, source: 'mal', genres: [], synopsis: '' },
+      { id: 2, title: 'Death Note', score: 8.7, source: 'mal', genres: [], synopsis: '' },
+      { id: 3, title: 'Demon Slayer', score: 8.6, source: 'mal', genres: [], synopsis: '' },
     ];
   },
   parameters: {

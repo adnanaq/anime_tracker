@@ -4,7 +4,6 @@ import { animeScheduleService } from "../../services/animeSchedule";
 import { jikanService } from "../../services/jikan";
 import { AnimeBase } from "../../types/anime";
 import { Typography, Button, AnimeGridSkeleton, Badge } from "../ui";
-import { Temporal } from "@js-temporal/polyfill";
 import { AiringCountdown } from "./AiringCountdown";
 import { useAnimeStore } from "../../store/animeStore";
 import { getCurrentWeek, getWeeksInYear, getCurrentDay, getTimezoneOffset, getUserTimezone, DAYS_OF_WEEK } from "../../utils/dateUtils";
@@ -46,7 +45,7 @@ interface ScheduleData {
 
 export const AnimeSchedule = () => {
   const navigate = useNavigate();
-  const { updateAnimeStatus, currentSource, applyUserData } = useAnimeStore();
+  const { updateAnimeStatus, applyUserData } = useAnimeStore();
   const [scheduleData, setScheduleData] = useState<ScheduleData>({});
   const [selectedDay, setSelectedDay] = useState<string>(() => getCurrentDay());
   const [selectedTimezone, setSelectedTimezone] = useState<string>(() => {
@@ -383,7 +382,7 @@ export const AnimeSchedule = () => {
           <>
             <div className="mb-6">
               <Typography variant="h3" className="mb-2">
-                {selectedDayInfo.emoji} Airing on {selectedDayInfo.label}
+                📺 Airing on {selectedDayInfo.label}
               </Typography>
               <Typography variant="body" color="muted">
                 {selectedDayData.length} anime
@@ -521,7 +520,7 @@ export const AnimeSchedule = () => {
                       {anime.hasValidId && anime.malId && (
                         <div className="flex-shrink-0">
                           <Button
-                            onClick={(e) => handleWatchlistToggle(anime, e)}
+                            onClick={(e: React.MouseEvent) => handleWatchlistToggle(anime, e)}
                             variant={anime.userStatus ? "warning" : "ghost"}
                             size="sm"
                             className="h-8 w-8 p-0 rounded-full"

@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest'
-import { render, screen, fireEvent, waitFor, within, act } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest'
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import { AdvancedSearch } from '../AdvancedSearch'
 import { malService } from '../../../services/mal'
@@ -85,8 +85,8 @@ const mockSearchResults = [
   }
 ]
 
-// Get mocked functions
-const mockedMalService = malService as {
+// Get mocked functions with proper typing
+const mockedMalService = malService as unknown as {
   getGenres: Mock
   searchAnime: Mock
   advancedSearchAnime: Mock

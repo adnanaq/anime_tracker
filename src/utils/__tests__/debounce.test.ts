@@ -195,7 +195,7 @@ describe('debounce utilities', () => {
   describe('createDebouncedValue', () => {
     it('should debounce value changes', () => {
       const onChange = vi.fn()
-      const debouncedValue = createDebouncedValue('initial', 100, onChange)
+      const debouncedValue = createDebouncedValue<string>('initial', 100, onChange)
 
       expect(debouncedValue.getValue()).toBe('initial')
       expect(debouncedValue.getDebouncedValue()).toBe('initial')
@@ -212,7 +212,7 @@ describe('debounce utilities', () => {
 
     it('should handle flush correctly', () => {
       const onChange = vi.fn()
-      const debouncedValue = createDebouncedValue('initial', 100, onChange)
+      const debouncedValue = createDebouncedValue<string>('initial', 100, onChange)
 
       debouncedValue.setValue('flushed')
       expect(debouncedValue.pending()).toBe(true)
@@ -225,7 +225,7 @@ describe('debounce utilities', () => {
 
     it('should handle cleanup correctly', () => {
       const onChange = vi.fn()
-      const debouncedValue = createDebouncedValue('initial', 100, onChange)
+      const debouncedValue = createDebouncedValue<string>('initial', 100, onChange)
 
       debouncedValue.setValue('cleaned')
       expect(debouncedValue.pending()).toBe(true)
@@ -240,7 +240,7 @@ describe('debounce utilities', () => {
 
     it('should clear existing timeout when setting new value', () => {
       const onChange = vi.fn()
-      const debouncedValue = createDebouncedValue('initial', 100, onChange)
+      const debouncedValue = createDebouncedValue<string>('initial', 100, onChange)
 
       // Set first value
       debouncedValue.setValue('first')

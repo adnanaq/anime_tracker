@@ -252,12 +252,12 @@ export const BaseAnimeCard: React.FC<BaseAnimeCardProps> = ({
                   (grandChild) => {
                     if (
                       React.isValidElement(grandChild) &&
-                      (grandChild.type?.displayName === "AnimeInfoCard" ||
-                        grandChild.type?.name === "AnimeInfoCard" ||
+                      ((grandChild.type as any)?.displayName === "AnimeInfoCard" ||
+                        (grandChild.type as any)?.name === "AnimeInfoCard" ||
                         String(grandChild.type).includes("AnimeInfoCard"))
                     ) {
                       return React.cloneElement(grandChild, {
-                        ...grandChild.props,
+                        ...(grandChild.props as any),
                         statusDropdown: {
                           enabled: true,
                           onStatusChange: statusDropdown.onStatusChange,
@@ -272,8 +272,8 @@ export const BaseAnimeCard: React.FC<BaseAnimeCardProps> = ({
             }
             // Direct AnimeInfoCard
             else if (
-              child.type?.displayName === "AnimeInfoCard" ||
-              child.type?.name === "AnimeInfoCard" ||
+              (child.type as any)?.displayName === "AnimeInfoCard" ||
+              (child.type as any)?.name === "AnimeInfoCard" ||
               String(child.type).includes("AnimeInfoCard")
             ) {
               return React.cloneElement(child, {

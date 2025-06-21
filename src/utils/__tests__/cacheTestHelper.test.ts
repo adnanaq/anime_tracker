@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { getCacheTestReport, type CacheTestReport } from '../cacheTestHelper'
+import { getCacheTestReport } from '../cacheTestHelper'
 
 // Mock the cache utilities
 vi.mock('../../lib/cache', () => ({
@@ -20,7 +20,9 @@ describe('cacheTestHelper utilities', () => {
       vi.mocked(getCacheStats).mockReturnValue({
         hitCount: 50,
         missCount: 10,
-        totalRequests: 60
+        totalRequests: 60,
+        cacheSize: 15,
+        lastClearTime: Date.now()
       })
       vi.mocked(getHitRate).mockReturnValue(83.33)
 
@@ -106,7 +108,9 @@ describe('cacheTestHelper utilities', () => {
       vi.mocked(getCacheStats).mockReturnValue({
         hitCount: 30,
         missCount: 5,
-        totalRequests: 35
+        totalRequests: 35,
+        cacheSize: 12,
+        lastClearTime: Date.now()
       })
       vi.mocked(getHitRate).mockImplementation(() => {
         throw new Error('Hit rate calculation error')
@@ -143,7 +147,9 @@ describe('cacheTestHelper utilities', () => {
       vi.mocked(getCacheStats).mockReturnValue({
         hitCount: 100,
         missCount: 20,
-        totalRequests: 120
+        totalRequests: 120,
+        cacheSize: 25,
+        lastClearTime: Date.now()
       })
       vi.mocked(getHitRate).mockReturnValue(83.33)
 

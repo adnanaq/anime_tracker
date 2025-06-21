@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { StatusBadgeDropdown, type AnimeStatus } from "../StatusBadgeDropdown";
+import { StatusBadgeDropdown } from "../StatusBadgeDropdown";
 
 // Mock the Badge component
 vi.mock("../../Badge", () => ({

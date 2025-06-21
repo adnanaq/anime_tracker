@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { AiringIndicator } from '../AiringIndicator';
 
 // Mock animations to avoid timing issues in tests

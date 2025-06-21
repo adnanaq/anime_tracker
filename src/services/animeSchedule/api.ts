@@ -120,7 +120,7 @@ const normalizeAnimeScheduleEntry = (entry: AnimeScheduleEntry): AnimeBase => {
     episodeNumber: entry.episodeNumber,
     episodeDate: entry.episodeDate,
     lengthMin: entry.lengthMin,
-    airingStatus: actualAiringStatus,
+    airingStatus: actualAiringStatus === "unaired" ? "tba" : actualAiringStatus,
     episodeDelay: calculatedEpisodeDelay,
     delayedFrom: entry.delayedFrom,
     delayedUntil: entry.delayedUntil,

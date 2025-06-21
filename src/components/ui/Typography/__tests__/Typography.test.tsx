@@ -149,7 +149,7 @@ describe('Typography Component', () => {
       expect(element).not.toHaveClass('truncate')
     })
 
-    const lineClamps = ['1', '2', '3', '4'] as const
+    const lineClamps = [1, 2, 3, 4] as const
 
     lineClamps.forEach(clamp => {
       it(`should apply line-clamp-${clamp} class when lineClamp is ${clamp}`, () => {

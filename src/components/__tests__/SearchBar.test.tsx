@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest'
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest'
+import { render, screen, fireEvent, act } from '@testing-library/react'
 import { SearchBar } from '../SearchBar'
 import { useAnimeStore } from '../../store/animeStore'
 
@@ -31,8 +31,8 @@ vi.mock('../ui', () => ({
   )
 }))
 
-// Get mocked functions
-const mockedUseAnimeStore = useAnimeStore as Mock
+// Get mocked functions with proper typing
+const mockedUseAnimeStore = useAnimeStore as unknown as Mock
 
 describe('SearchBar Component', () => {
   beforeEach(() => {

@@ -113,25 +113,48 @@ The app supports dual OAuth authentication:
 
 ### Data Flow Pattern
 
-1. **User Action** ’ Component
-2. **Component** ’ Zustand Store Action
-3. **Store Action** ’ Service Layer
-4. **Service Layer** ’ Cache Check ’ API Call (if needed)
-5. **Response** ’ Data Normalization ’ Store Update
-6. **Store Update** ’ Component Re-render
+1. **User Action** ï¿½ Component
+2. **Component** ï¿½ Zustand Store Action
+3. **Store Action** ï¿½ Service Layer
+4. **Service Layer** ï¿½ Cache Check ï¿½ API Call (if needed)
+5. **Response** ï¿½ Data Normalization ï¿½ Store Update
+6. **Store Update** ï¿½ Component Re-render
 
 ## Development Guidelines
 
+### Security Best Practices
+
+**CRITICAL**: All code must follow security best practices:
+- Never expose or log secrets, API keys, or sensitive user data
+- Never commit secrets or keys to the repository
+- Sanitize all user inputs to prevent XSS attacks
+- Use proper authentication and authorization patterns
+- Validate all API responses before processing
+- Implement proper error handling without exposing internal details
+- Use HTTPS for all external API calls
+- Follow OAuth 2.0 security guidelines for token handling
+
+### Test-Driven Development (TDD)
+
+**MANDATORY**: Always write tests before implementation:
+1. Write failing tests first that describe the expected behavior
+2. Run tests to confirm they fail (red phase)
+3. Write minimal code to make tests pass (green phase)
+4. Refactor code while keeping tests passing (refactor phase)
+5. Execute tests after each iteration to validate changes
+6. Never write production code without corresponding tests
+
 ### Component Development
 
-- Always use TDD
+- Always use TDD - write tests before components
 - All UI components in `src/components/ui/` must have:
   - TypeScript interfaces for props
   - CSS module for styling
-  - Comprehensive test coverage
+  - Comprehensive test coverage (written first)
   - Storybook stories
 - Use the existing design system components before creating new ones
 - Follow the established component patterns (index.ts exports, etc.)
+- Validate all props and handle edge cases securely
 
 ### API Integration
 
@@ -139,6 +162,9 @@ The app supports dual OAuth authentication:
 - Handle both authenticated and unauthenticated states
 - Implement proper error handling and fallbacks
 - Use the existing caching system for performance
+- Validate and sanitize all API responses
+- Never expose API keys or sensitive data in client-side code
+- Use secure token storage and refresh mechanisms
 
 ### State Management
 
@@ -146,14 +172,18 @@ The app supports dual OAuth authentication:
 - Follow the established patterns for loading states and error handling
 - When adding new actions, maintain the same patterns as existing actions
 - Update user data merging logic when adding new user-specific features
+- Ensure state updates are secure and don't expose sensitive information
 
 ### Testing Requirements
 
+- **ALWAYS write tests BEFORE implementing logic/functionality**
+- Execute tests during development to guide implementation
 - Write tests for all new utilities (aim for 100% coverage like existing utils)
-- Use mocks whereever possible
+- Use mocks wherever possible
 - Component tests should cover user interactions and edge cases
 - Integration tests for complex user flows
 - E2E tests for critical paths using Playwright
+- Test security scenarios (invalid inputs, edge cases, error conditions)
 
 ### Performance Considerations
 

@@ -186,7 +186,7 @@ describe("Dashboard Component", () => {
       fetchCurrentlyWatching: vi.fn(),
     };
 
-    mockUseAnimeStore.mockImplementation((selector) => {
+    mockUseAnimeStore.mockImplementation((selector: any) => {
       return selector(mockStore);
     });
   });
@@ -231,7 +231,7 @@ describe("Dashboard Component", () => {
 
     it("should handle different sources correctly", () => {
       const anilistStore = { ...mockStore, currentSource: "anilist" };
-      mockUseAnimeStore.mockImplementation((selector) =>
+      mockUseAnimeStore.mockImplementation((selector: any) =>
         selector(anilistStore),
       );
 
@@ -247,7 +247,7 @@ describe("Dashboard Component", () => {
         ...mockStore,
         loading: { ...mockStore.loading, trending: true },
       };
-      mockUseAnimeStore.mockImplementation((selector) =>
+      mockUseAnimeStore.mockImplementation((selector: any) =>
         selector(loadingStore),
       );
 
@@ -262,7 +262,7 @@ describe("Dashboard Component", () => {
         ...mockStore,
         loading: { ...mockStore.loading, trending: true },
       };
-      mockUseAnimeStore.mockImplementation((selector) =>
+      mockUseAnimeStore.mockImplementation((selector: any) =>
         selector(loadingStore),
       );
 
@@ -279,7 +279,7 @@ describe("Dashboard Component", () => {
         ...mockStore,
         trendingAnime: mockAnime,
       };
-      mockUseAnimeStore.mockImplementation((selector) =>
+      mockUseAnimeStore.mockImplementation((selector: any) =>
         selector(storeWithTrending),
       );
 
@@ -294,7 +294,7 @@ describe("Dashboard Component", () => {
         ...mockStore,
         trendingAnime: mockAnime,
       };
-      mockUseAnimeStore.mockImplementation((selector) =>
+      mockUseAnimeStore.mockImplementation((selector: any) =>
         selector(storeWithTrending),
       );
 
@@ -319,7 +319,7 @@ describe("Dashboard Component", () => {
         ...mockStore,
         currentlyWatching: mockAnime,
       };
-      mockUseAnimeStore.mockImplementation((selector) =>
+      mockUseAnimeStore.mockImplementation((selector: any) =>
         selector(storeWithWatching),
       );
 
@@ -337,7 +337,7 @@ describe("Dashboard Component", () => {
         ...mockStore,
         searchResults: mockAnime,
       };
-      mockUseAnimeStore.mockImplementation((selector) =>
+      mockUseAnimeStore.mockImplementation((selector: any) =>
         selector(storeWithSearch),
       );
 
@@ -359,7 +359,7 @@ describe("Dashboard Component", () => {
         searchResults: mockAnime,
         trendingAnime: mockAnime,
       };
-      mockUseAnimeStore.mockImplementation((selector) =>
+      mockUseAnimeStore.mockImplementation((selector: any) =>
         selector(storeWithSearchAndTrending),
       );
 
@@ -378,7 +378,7 @@ describe("Dashboard Component", () => {
         trendingAnime: mockAnime,
         currentlyWatching: mockAnime,
       };
-      mockUseAnimeStore.mockImplementation((selector) =>
+      mockUseAnimeStore.mockImplementation((selector: any) =>
         selector(storeWithSearchAndTrending),
       );
 
@@ -402,7 +402,7 @@ describe("Dashboard Component", () => {
         currentSeasonAnime: mockAnime,
         currentlyWatching: mockAnime,
       };
-      mockUseAnimeStore.mockImplementation((selector) =>
+      mockUseAnimeStore.mockImplementation((selector: any) =>
         selector(storeWithData),
       );
 
@@ -443,7 +443,7 @@ describe("Dashboard Component", () => {
 
     it("should call additional functions for AniList source", async () => {
       const anilistStore = { ...mockStore, currentSource: "anilist" };
-      mockUseAnimeStore.mockImplementation((selector) =>
+      mockUseAnimeStore.mockImplementation((selector: any) =>
         selector(anilistStore),
       );
 
@@ -467,7 +467,7 @@ describe("Dashboard Component", () => {
         ...mockStore,
         loading: { ...mockStore.loading, trending: true },
       };
-      mockUseAnimeStore.mockImplementation((selector) =>
+      mockUseAnimeStore.mockImplementation((selector: any) =>
         selector(loadingStore),
       );
 
@@ -483,7 +483,7 @@ describe("Dashboard Component", () => {
         searchResults: mockAnime,
         loading: { ...mockStore.loading, search: false },
       };
-      mockUseAnimeStore.mockImplementation((selector) =>
+      mockUseAnimeStore.mockImplementation((selector: any) =>
         selector(storeWithSearch),
       );
 
@@ -507,7 +507,7 @@ describe("Dashboard Component", () => {
         searchResults: [],
         currentlyWatching: [],
       };
-      mockUseAnimeStore.mockImplementation((selector) => selector(emptyStore));
+      mockUseAnimeStore.mockImplementation((selector: any) => selector(emptyStore));
 
       render(<Dashboard />);
 
@@ -533,7 +533,7 @@ describe("Dashboard Component", () => {
           currentlyWatching: true,
         },
       };
-      mockUseAnimeStore.mockImplementation((selector) =>
+      mockUseAnimeStore.mockImplementation((selector: any) =>
         selector(allLoadingStore),
       );
 

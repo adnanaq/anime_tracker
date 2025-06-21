@@ -89,8 +89,8 @@ const mockRankingAnime = [
   }
 ]
 
-// Get mocked functions
-const mockedMalService = malService as {
+// Get mocked functions with proper typing
+const mockedMalService = malService as unknown as {
   getSeasonalAnime: Mock
   getUpcomingAnime: Mock
   getRankingAnime: Mock
@@ -186,7 +186,7 @@ describe('SeasonalAnime Business Logic', () => {
     it('should properly structure seasonal anime data', async () => {
       const result = await malService.getSeasonalAnime('winter', 2024)
       
-      result.forEach(anime => {
+      result.forEach((anime: any) => {
         expect(anime).toHaveProperty('id')
         expect(anime).toHaveProperty('title')
         expect(anime).toHaveProperty('source', 'mal')
@@ -200,7 +200,7 @@ describe('SeasonalAnime Business Logic', () => {
     it('should properly structure upcoming anime data', async () => {
       const result = await malService.getUpcomingAnime()
       
-      result.forEach(anime => {
+      result.forEach((anime: any) => {
         expect(anime).toHaveProperty('id')
         expect(anime).toHaveProperty('title')
         expect(anime).toHaveProperty('source', 'mal')

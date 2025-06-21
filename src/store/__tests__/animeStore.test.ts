@@ -41,17 +41,17 @@ vi.mock('../../services/mal', () => ({
 // Mock anime data
 const mockAnime: AnimeBase = {
   id: 1,
-  title: { romaji: 'Test Anime' },
+  title: 'Test Anime',
   source: 'mal' as const,
-  coverImage: { large: 'test.jpg' },
+  coverImage: 'test.jpg',
   userScore: 8,
   userStatus: 'watching'
 }
 
 const mockAnimeList: AnimeBase[] = [
   mockAnime,
-  { ...mockAnime, id: 2, title: { romaji: 'Test Anime 2' }, userStatus: 'completed' },
-  { ...mockAnime, id: 3, title: { romaji: 'Test Anime 3' }, userStatus: undefined }
+  { ...mockAnime, id: 2, title: 'Test Anime 2', userStatus: 'completed' },
+  { ...mockAnime, id: 3, title: 'Test Anime 3', userStatus: undefined }
 ]
 
 describe('AnimeStore', () => {
@@ -113,7 +113,10 @@ describe('AnimeStore', () => {
     it('should return token when authenticated', async () => {
       const mockAuthService = {
         isAuthenticated: vi.fn(() => true),
-        getToken: vi.fn(() => ({ access_token: 'test-token' }))
+        getToken: vi.fn(() => ({ access_token: 'test-token', token_type: 'Bearer' })),
+        initiateLogin: vi.fn(),
+        exchangeCodeForToken: vi.fn(),
+        logout: vi.fn()
       }
       
       const { getAuthService } = await import('../../services/shared')

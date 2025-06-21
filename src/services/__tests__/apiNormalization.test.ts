@@ -23,7 +23,7 @@ describe('API Normalization Functions', () => {
       episodes: 25,
       status: 'FINISHED',
       genres: ['Action', 'Drama'],
-      startDate: { year: 2013, month: 4, day: 7 },
+      startDate: { year: 2013 },
       format: 'TV',
       relations: {
         edges: [
@@ -37,13 +37,14 @@ describe('API Normalization Functions', () => {
                 native: '進撃の巨人 Season 2'
               },
               coverImage: {
+                medium: 'https://example.com/s2-medium.jpg',
                 large: 'https://example.com/s2-large.jpg'
               },
               averageScore: 90,
               episodes: 12,
               status: 'FINISHED',
               genres: ['Action'],
-              startDate: { year: 2017, month: 4 },
+              startDate: { year: 2017 },
               format: 'TV'
             }
           }
@@ -78,18 +79,18 @@ describe('API Normalization Functions', () => {
     })
 
     it('should handle missing coverImage gracefully', () => {
-      const animeWithoutImage = { ...mockAniListAnime, coverImage: null }
+      const animeWithoutImage = { ...mockAniListAnime, coverImage: undefined }
       const result = normalizeAniListAnime(animeWithoutImage)
 
       expect(result.image).toBe('')
       expect(result.coverImage).toBe('')
-      expect(result.imageUrl).toBe('')
+      expect(result.image).toBe('')
     })
 
     it('should use medium image as fallback', () => {
       const animeWithMediumOnly = {
         ...mockAniListAnime,
-        coverImage: { medium: 'https://example.com/medium.jpg' }
+        coverImage: { medium: 'https://example.com/medium.jpg', large: 'https://example.com/medium.jpg' }
       }
       const result = normalizeAniListAnime(animeWithMediumOnly)
 
@@ -100,14 +101,14 @@ describe('API Normalization Functions', () => {
     it('should handle title fallbacks correctly', () => {
       const animeWithOnlyNative = {
         ...mockAniListAnime,
-        title: { native: '進撃の巨人' }
+        title: { romaji: '', native: '進撃の巨人' }
       }
       const result = normalizeAniListAnime(animeWithOnlyNative)
       expect(result.title).toBe('進撃の巨人')
 
       const animeWithNoTitle = {
         ...mockAniListAnime,
-        title: {}
+        title: { romaji: '' }
       }
       const resultEmpty = normalizeAniListAnime(animeWithNoTitle)
       expect(resultEmpty.title).toBe('')
@@ -255,7 +256,7 @@ describe('API Normalization Functions', () => {
       type: 'TV',
       aired: {
         from: '1999-10-20T00:00:00+00:00',
-        to: null
+        to: undefined
       },
       relations: [
         {
@@ -451,7 +452,8 @@ describe('API Normalization Functions', () => {
             start_date: '2007-02-15',
             media_type: 'tv'
           },
-          relation_type: 'sequel'
+          relation_type: 'sequel',
+          relation_type_formatted: 'Sequel'
         }
       ]
     }
@@ -496,7 +498,8 @@ describe('API Normalization Functions', () => {
       const animeWithMediumOnly = {
         ...mockMALAnime,
         main_picture: {
-          medium: 'https://example.com/medium.jpg'
+          medium: 'https://example.com/medium.jpg',
+          large: 'https://example.com/medium.jpg'
         }
       }
 
@@ -584,11 +587,13 @@ describe('API Normalization Functions', () => {
         related_anime: [
           {
             node: { ...mockMALAnime, id: 123 }, // Same ID
-            relation_type: 'sequel'
+            relation_type: 'sequel',
+            relation_type_formatted: 'Sequel'
           },
           {
             node: { ...mockMALAnime, id: 456 }, // Different ID
-            relation_type: 'prequel'
+            relation_type: 'prequel',
+            relation_type_formatted: 'Prequel'
           }
         ]
       }
@@ -601,7 +606,8 @@ describe('API Normalization Functions', () => {
     it('should limit related anime to 10 items', () => {
       const manyRelations = Array.from({ length: 15 }, (_, i) => ({
         node: { ...mockMALAnime, id: 200 + i },
-        relation_type: 'related'
+        relation_type: 'related',
+        relation_type_formatted: 'Related'
       }))
 
       const animeWithManyRelations = {

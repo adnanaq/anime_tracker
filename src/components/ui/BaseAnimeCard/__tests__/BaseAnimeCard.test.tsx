@@ -24,7 +24,6 @@ const mockAnime: AnimeBase = {
   status: 'ONGOING',
   episodes: 12,
   genres: ['Action', 'Drama'],
-  description: 'Test description',
   season: 'SPRING',
   userStatus: 'WATCHING',
   source: 'mal'
@@ -75,13 +74,13 @@ describe('BaseAnimeCard', () => {
     });
 
     it('does not display year when year is null', () => {
-      const animeWithoutYear = { ...mockAnime, year: null };
+      const animeWithoutYear = { ...mockAnime, year: undefined };
       const { queryByText } = renderWithRouter(<BaseAnimeCard anime={animeWithoutYear} />);
       expect(queryByText(/📅/)).not.toBeInTheDocument();
     });
 
     it('does not display episodes when episodes is null', () => {
-      const animeWithoutEpisodes = { ...mockAnime, episodes: null };
+      const animeWithoutEpisodes = { ...mockAnime, episodes: undefined };
       const { queryByText } = renderWithRouter(<BaseAnimeCard anime={animeWithoutEpisodes} />);
       expect(queryByText(/📺/)).not.toBeInTheDocument();
     });
@@ -122,7 +121,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('displays fallback when coverImage is null', () => {
-      const animeWithoutImage = { ...mockAnime, coverImage: null };
+      const animeWithoutImage = { ...mockAnime, coverImage: undefined };
       const { getByText, container } = renderWithRouter(<BaseAnimeCard anime={animeWithoutImage} />);
       const fallback = getByText('No Image');
       expect(fallback).toBeInTheDocument();
@@ -1155,8 +1154,8 @@ describe('BaseAnimeCard', () => {
     });
 
     it('should navigate with correct route format for different sources', () => {
-      const anilistAnime = { ...mockAnime, source: 'anilist', id: 123, title: 'AniList Anime' };
-      const jikanAnime = { ...mockAnime, source: 'jikan', id: 456, title: 'Jikan Anime' };
+      const anilistAnime = { ...mockAnime, source: 'anilist' as const, id: 123, title: 'AniList Anime' };
+      const jikanAnime = { ...mockAnime, source: 'jikan' as const, id: 456, title: 'Jikan Anime' };
       
       // Test AniList source
       const { getByText: getByTextAnilist } = renderWithRouter(
@@ -1178,8 +1177,7 @@ describe('BaseAnimeCard', () => {
     });
 
     it('should handle missing source gracefully with fallback', () => {
-      const animeWithoutSource = { ...mockAnime };
-      delete animeWithoutSource.source;
+      const animeWithoutSource = { ...mockAnime, source: undefined as any };
       
       const { getByText } = renderWithRouter(
         <BaseAnimeCard anime={animeWithoutSource} />

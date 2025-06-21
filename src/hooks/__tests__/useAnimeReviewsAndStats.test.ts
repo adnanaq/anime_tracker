@@ -262,7 +262,7 @@ describe('useAnimeReviewsAndStats', () => {
     expect(result.current.statistics).toEqual(mockStatistics)
 
     // Change animeId to null
-    rerender({ animeId: null, source: 'mal' })
+    rerender({ animeId: undefined, source: 'mal' })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)

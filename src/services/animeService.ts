@@ -113,15 +113,23 @@ export class AnimeService {
 
   async getAnimeDetails(id: number, accessToken?: string): Promise<AnimeBase> {
     if (this.currentSource === 'mal') {
-      return await this.withErrorHandling(
+      const result = await this.withErrorHandling(
         () => malService.getAnimeDetails(id, accessToken),
         'getAnimeDetails'
       )
+      if (!result) {
+        throw new Error(`Anime with ID ${id} not found`)
+      }
+      return result
     } else {
-      return await this.withErrorHandling(
+      const result = await this.withErrorHandling(
         () => anilistService.getAnimeDetails(id),
         'getAnimeDetails'
       )
+      if (!result) {
+        throw new Error(`Anime with ID ${id} not found`)
+      }
+      return result
     }
   }
 

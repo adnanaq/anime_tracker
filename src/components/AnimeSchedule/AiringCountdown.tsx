@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Temporal } from "@js-temporal/polyfill";
-import { Typography, Badge } from "../ui";
+import { Badge } from "../ui";
 
 interface AiringCountdownProps {
   episodeDate: string;

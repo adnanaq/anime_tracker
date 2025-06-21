@@ -39,8 +39,7 @@ describe('AniList API Service', () => {
         { node: { id: 1, name: 'Test Studio' } }
       ]
     },
-    popularity: 5000,
-    source: 'anilist'
+    popularity: 5000
   };
 
   const mockGraphQLResponse = {
@@ -258,15 +257,14 @@ describe('AniList API Service', () => {
     it('should handle missing optional fields', () => {
       const minimalAnime: Partial<AniListAnime> = {
         id: 1,
-        title: { romaji: 'Test' },
-        source: 'anilist'
+        title: { romaji: 'Test' }
       };
 
       const result = normalizeAniListAnime(minimalAnime as AniListAnime);
 
       expect(result.id).toBe(1);
       expect(result.title).toBe('Test');
-      expect(result.imageUrl).toBe('');
+      expect(result.image).toBe('');
       expect(result.score).toBeUndefined();
     });
 

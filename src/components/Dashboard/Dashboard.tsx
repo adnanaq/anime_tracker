@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, memo } from "react";
+import { useEffect, useCallback, memo } from "react";
 import { useAnimeStore } from "../../store/animeStore";
 import { shallow } from "zustand/shallow";
 import { SourceToggle } from "../SourceToggle";

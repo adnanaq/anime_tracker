@@ -1,7 +1,8 @@
+import { useState, useEffect } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
+import { vi } from 'vitest';
 import { ThemeToggle } from '../components/ThemeToggle';
-import { useState } from 'react';
 
 // Mock theme context
 const mockThemeContext = {
@@ -96,7 +97,7 @@ export const InteractiveDemo: Story = {
     
     // Override the mock for this story
     mockThemeContext.isDark = isDark;
-    mockThemeContext.toggleTheme = () => {
+    (mockThemeContext as any).toggleTheme = () => {
       setIsDark(!isDark);
       fn()();
     };
@@ -308,7 +309,7 @@ export const AnimationShowcase: Story = {
     const themes = ['light', 'dark'];
     
     // Cycle through themes automatically
-    React.useEffect(() => {
+    useEffect(() => {
       const interval = setInterval(() => {
         setCurrentTheme(prev => (prev + 1) % themes.length);
       }, 2000);

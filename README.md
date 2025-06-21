@@ -34,7 +34,7 @@ npm run build
 - **🎨 Interactive UI**: Expandable cards with smooth animations
 - **📊 Personal Tracking**: View scores and watch status
 - **🔍 Advanced Search**: Genre filters, score ranges, real-time search
-- **📅 Anime Schedule**: Weekly calendar with timezone support
+- **📅 Anime Schedule**: Weekly calendar with timezone support and delayed episode tracking
 - **🎲 Discovery Features**: Random anime and recommendations
 - **🌊 Airing Status Indicator**: Subtle ripple effects for currently airing anime
 - **🧪 Comprehensive Testing**: 920+ tests with 100% pass rate and full utility coverage
@@ -49,6 +49,7 @@ npm run build
 - **Auth**: OAuth 2.0 with PKCE
 - **Cache**: Memory + IndexedDB + Request deduplication
 - **Testing**: Vitest + Testing Library + Playwright + Storybook
+- **Date/Time**: Temporal API for accurate timezone handling
 
 ## 🔧 Configuration
 
@@ -122,6 +123,7 @@ src/
 ├── store/               # Zustand state management
 ├── hooks/               # Custom React hooks
 ├── utils/               # Utility functions
+│   ├── dateUtils.ts     # Date and timezone utilities
 │   └── __tests__/       # Utility test files (100% coverage)
 ├── types/               # TypeScript definitions
 ├── styles/              # Design tokens and CSS

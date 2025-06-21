@@ -25,7 +25,9 @@ export interface AnimeBase {
   popularity?: number; // Popularity ranking
   lengthMin?: number; // Episode length in minutes
   airingStatus?: 'aired' | 'airing' | 'delayed' | 'skipped' | 'tba'; // Current airing status
-  episodeDelay?: number; // Episode delay information
+  episodeDelay?: number; // Episode delay information in minutes
+  delayedFrom?: string; // Date when delay started
+  delayedUntil?: string; // Date when delay is expected to end
 }
 
 export interface MALAnime {

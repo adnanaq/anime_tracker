@@ -7,20 +7,8 @@ import { Typography, Button, AnimeGridSkeleton, Badge } from "../ui";
 import { Temporal } from "@js-temporal/polyfill";
 import { AiringCountdown } from "./AiringCountdown";
 import { useAnimeStore } from "../../store/animeStore";
+import { getCurrentWeek, getWeeksInYear, getCurrentDay, getTimezoneOffset, getUserTimezone, DAYS_OF_WEEK } from "../../utils/dateUtils";
 
-const getCurrentWeek = (): { week: number; year: number } => {
-  const today = Temporal.Now.plainDateISO();
-
-  return {
-    week: today.weekOfYear ?? 1,
-    year: today.year,
-  };
-};
-
-const getWeeksInYear = (year: number): number => {
-  const date = Temporal.PlainDate.from(`${year}-12-28`);
-  return date.weekOfYear!;
-};
 
 interface ScheduledAnime extends AnimeBase {
   episodeNumber?: number;
@@ -44,31 +32,13 @@ const COMMON_TIMEZONES = [
 ];
 
 const COMMON_TIMEZONE_OPTIONS = COMMON_TIMEZONES.map((tz) => {
-  const offset = Temporal.Now.zonedDateTimeISO(tz).offset;
+  const offset = getTimezoneOffset(tz);
   return {
     value: tz,
     label: `${tz} (UTC${offset})`,
   };
 });
 
-// Function to detect user's timezone
-const getUserTimezone = () => {
-  try {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone;
-  } catch (error) {
-    return "UTC";
-  }
-};
-
-const DAYS_OF_WEEK = [
-  { key: "monday", label: "Monday" },
-  { key: "tuesday", label: "Tuesday" },
-  { key: "wednesday", label: "Wednesday" },
-  { key: "thursday", label: "Thursday" },
-  { key: "friday", label: "Friday" },
-  { key: "saturday", label: "Saturday" },
-  { key: "sunday", label: "Sunday" },
-];
 
 interface ScheduleData {
   [key: string]: AnimeBase[];
@@ -78,20 +48,7 @@ export const AnimeSchedule = () => {
   const navigate = useNavigate();
   const { updateAnimeStatus, currentSource, applyUserData } = useAnimeStore();
   const [scheduleData, setScheduleData] = useState<ScheduleData>({});
-  const [selectedDay, setSelectedDay] = useState<string>(() => {
-    const today = Temporal.Now.plainDateISO().dayOfWeek; // 1 (Monday) to 7 (Sunday)
-    const dayNames = [
-      "monday",
-      "tuesday",
-      "wednesday",
-      "thursday",
-      "friday",
-      "saturday",
-      "sunday",
-    ];
-    // Convert Temporal's 1–7 to 0–6 for array index
-    return dayNames[(today - 1) % 7];
-  });
+  const [selectedDay, setSelectedDay] = useState<string>(() => getCurrentDay());
   const [selectedTimezone, setSelectedTimezone] = useState<string>(() => {
     // Try to detect user's timezone, fallback to UTC
     const userTz = getUserTimezone();
@@ -507,12 +464,6 @@ export const AnimeSchedule = () => {
                                   </Badge>
                                 )}
 
-                                {/* Episode Delay Badge */}
-                                {(anime as any).episodeDelay && (anime as any).episodeDelay > 0 && (
-                                  <Badge variant="warning" size="xs" shape="rounded">
-                                    +{(anime as any).episodeDelay}min
-                                  </Badge>
-                                )}
 
                                 {(anime as ScheduledAnime).lengthMin && (
                                   <Typography variant="bodySmall" color="muted">
@@ -535,6 +486,26 @@ export const AnimeSchedule = () => {
                                     timeZoneName: "short",
                                   })}
                                 </Typography>
+                                
+                                {/* Show new air time for delayed episodes */}
+                                {(anime as any).airingStatus === "delayed" && (anime as any).delayedUntil && (
+                                  <Typography variant="bodySmall" color="warning">
+                                    📺 New air time: {" "}
+                                    {new Date((anime as any).delayedUntil).toLocaleTimeString([], {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      timeZone: selectedTimezone,
+                                      timeZoneName: "short",
+                                    })}
+                                    {" "}
+                                    {new Date((anime as any).delayedUntil).toLocaleDateString([], {
+                                      month: "short",
+                                      day: "numeric",
+                                      timeZone: selectedTimezone,
+                                    })}
+                                  </Typography>
+                                )}
+                                
                                 <AiringCountdown 
                                   episodeDate={(anime as ScheduledAnime).episodeDate!}
                                   airingStatus={(anime as any).airingStatus}

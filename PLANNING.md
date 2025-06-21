@@ -49,6 +49,8 @@ A modern, triple-source anime tracking and recommendation platform powered by **
 - ✅ **Advanced search** with genre filters and score ranges
 - ✅ **Anime recommendations system** with community data
 - ✅ **Reviews and community statistics**
+- ✅ **Date utilities refactoring** with shared dateUtils module for timezone handling
+- ✅ **Delayed episode tracking** with new air time display and comprehensive badge system
 - ✅ **High-Performance Caching System**: Multi-tiered cache with 60-80% hit rates
 - ✅ **Request deduplication** and intelligent rate limiting
 - ✅ **Persistent cache storage** with IndexedDB

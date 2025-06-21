@@ -46,10 +46,11 @@ export interface AnimeScheduleEntry {
   episodeNumber: number;
   lengthMin?: number;
   airType: "raw" | "sub" | "dub";
+  delayedText?: string;
   delayedFrom?: string;
   delayedUntil?: string;
   episodeDelay?: number;
-  airingStatus: "aired" | "airing" | "delayed" | "skipped" | "tba";
+  airingStatus: "aired" | "airing" | "delayed" | "skipped" | "tba" | "unaired";
   streams?: {
     crunchyroll?: string;
     funimation?: string;
@@ -72,6 +73,31 @@ export interface AnimeScheduleEntry {
 const normalizeAnimeScheduleEntry = (entry: AnimeScheduleEntry): AnimeBase => {
   const hasValidMalId = !!(entry.malId && entry.malId > 0);
 
+  // Handle delay logic based on delayedText presence
+  let actualAiringStatus = entry.airingStatus;
+  let calculatedEpisodeDelay = entry.episodeDelay;
+
+  // If delayedText is present, this episode is delayed
+  if (entry.delayedText) {
+    actualAiringStatus = "delayed";
+    
+    // Calculate episode delay from date range if not already provided by API
+    if (!calculatedEpisodeDelay && entry.delayedFrom && entry.delayedUntil) {
+      try {
+        const delayedFromDate = new Date(entry.delayedFrom);
+        const delayedUntilDate = new Date(entry.delayedUntil);
+        
+        // Check if dates are valid
+        if (!isNaN(delayedFromDate.getTime()) && !isNaN(delayedUntilDate.getTime())) {
+          const delayDurationMs = delayedUntilDate.getTime() - delayedFromDate.getTime();
+          calculatedEpisodeDelay = Math.round(delayDurationMs / (1000 * 60)); // Convert to minutes
+        }
+      } catch (error) {
+        // Invalid dates - keep calculatedEpisodeDelay as undefined
+      }
+    }
+  }
+
   return {
     id: hasValidMalId ? entry.malId! : Math.floor(Math.random() * 1000000), // Use random ID for display only
     title: entry.english || entry.romaji || entry.title,
@@ -81,10 +107,12 @@ const normalizeAnimeScheduleEntry = (entry: AnimeScheduleEntry): AnimeBase => {
     score: undefined,
     episodes: entry.episodes, // Total episodes if available
     status:
-      entry.airingStatus === "aired"
+      actualAiringStatus === "aired"
         ? "finished_airing"
-        : entry.airingStatus === "airing"
+        : actualAiringStatus === "airing"
         ? "currently_airing"
+        : actualAiringStatus === "delayed"
+        ? "not_yet_aired"
         : "not_yet_aired",
     genres: [],
     source: "mal" as const, // Using mal as source since these are MAL IDs
@@ -92,8 +120,10 @@ const normalizeAnimeScheduleEntry = (entry: AnimeScheduleEntry): AnimeBase => {
     episodeNumber: entry.episodeNumber,
     episodeDate: entry.episodeDate,
     lengthMin: entry.lengthMin,
-    airingStatus: entry.airingStatus,
-    episodeDelay: entry.episodeDelay,
+    airingStatus: actualAiringStatus,
+    episodeDelay: calculatedEpisodeDelay,
+    delayedFrom: entry.delayedFrom,
+    delayedUntil: entry.delayedUntil,
     hasValidId: hasValidMalId, // Flag to indicate this has a valid MAL ID
     malId: entry.malId, // Store the original MAL ID
   };

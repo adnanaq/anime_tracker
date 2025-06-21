@@ -1,6 +1,17 @@
 # 📋 AnimeTrackr - Sprint-Oriented Task Management
 
-## 🎯 Current Sprint: Enhanced Anime Schedule Features (Phase 1.10)
+## ✅ **Recently Completed: Delayed Episode Tracking & Date Utils Refactoring**
+
+**Completion Status**: ✅ **COMPLETE**  
+**Timeline**: Completed in current session  
+**Features Delivered**:
+1. **Delayed Episode Badge System** - Shows "Delayed" badge for episodes with delay information
+2. **New Air Time Display** - Shows rescheduled air times from `delayedUntil` field
+3. **Date Utilities Refactoring** - Extracted reusable date functions to `src/utils/dateUtils.ts`
+4. **API Enhancement** - Added delay detection logic in anime schedule service
+5. **Type Safety** - Added `delayedFrom` and `delayedUntil` fields to AnimeBase interface
+
+## 🎯 Next Sprint: Enhanced Anime Schedule Features (Phase 1.10)
 
 **Sprint Goal**: Implement advanced filtering, episode status display, real-time countdown, and watchlist integration for the anime schedule component to provide a comprehensive and personalized viewing experience.
 
@@ -10,9 +21,8 @@
 
 ### 🚀 **Features to Implement**
 1. **Advanced Filtering System** - Comprehensive filtering with air type, status, platform
-2. **Enhanced Episode Status Display** - Rich status badges with animations  
-3. **Real-time Airing Countdown** - Live countdown timers using Temporal API
-4. **Watchlist Integration** - Cross-reference with user's MAL/AniList data
+2. **Real-time Airing Countdown** - Live countdown timers using Temporal API
+3. **Watchlist Integration** - Cross-reference with user's MAL/AniList data
 
 ### ✅ **Previous Sprint Completed: SeasonalAnime Component Refactoring**
 **Status**: ✅ **AVAILABLE FOR FUTURE IMPLEMENTATION**  

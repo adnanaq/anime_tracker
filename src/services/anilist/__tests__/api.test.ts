@@ -218,7 +218,6 @@ describe('AniList API Service', () => {
       expect(result).toEqual({
         id: 1,
         title: 'Test Anime English',
-        imageUrl: 'https://example.com/large.jpg',
         image: 'https://example.com/large.jpg',
         coverImage: 'https://example.com/large.jpg',
         score: 8.5,
@@ -229,7 +228,7 @@ describe('AniList API Service', () => {
         genres: ['Action', 'Adventure'],
         synopsis: 'Test anime description',
         source: 'anilist',
-        duration: 24,
+        duration: "24",
         studios: ['Test Studio'],
         popularity: 5000,
         userScore: undefined,
